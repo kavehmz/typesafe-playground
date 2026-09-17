@@ -2,6 +2,8 @@ import * as THREE from '/vendor/three.module.js';
 import { LANES, seededRandom } from './simulation.mjs';
 import { CAMERA_CONFIG } from './perception.mjs';
 import { STOP_LINE_SETBACK_M } from './motion.mjs';
+import { cameraMount } from './vehicle.mjs';
+import { NO_PASS_APPROACH_M, NO_PASS_BEYOND_M } from './traffic.mjs';
 
 const sensorColors = { front: '#51cfb0', left: '#70a6ee', right: '#edb45d', rear: '#cd8db9' };
 
@@ -22,11 +24,13 @@ function makeCar(color, ego = false) {
   group.add(box(.07, .62, 2.1, paint, .75, 1.28, .22));
   const wheels = [];
   for (const x of [-.93, .93]) for (const z of [-1.35, 1.35]) {
+    const pivot = new THREE.Group(), roll = new THREE.Group(); pivot.position.set(x, .42, z); pivot.add(roll); group.add(pivot);
     const wheel = new THREE.Mesh(new THREE.CylinderGeometry(.39, .39, .25, 12), tire);
-    wheel.rotation.z = Math.PI / 2; wheel.position.set(x, .42, z); wheel.castShadow = true; group.add(wheel); wheels.push(wheel);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .26, 8), metal);
-    hub.rotation.z = Math.PI / 2; hub.position.copy(wheel.position); group.add(hub);
+    wheel.rotation.z = Math.PI / 2; wheel.castShadow = true; roll.add(wheel);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .26, 8), metal); hub.rotation.z = Math.PI / 2; roll.add(hub);
+    wheels.push({ pivot, roll, front: z < 0 });
   }
+  group.userData.wheels = wheels;
   const headlight = new THREE.MeshStandardMaterial({ color: '#ffffe6', emissive: '#fff2ab', emissiveIntensity: .4 });
   const brake = new THREE.MeshStandardMaterial({ color: '#fb6159', emissive: '#d92c1f', emissiveIntensity: .25 });
   for (const x of [-.6, .6]) { group.add(box(.42, .16, .07, headlight, x, .77, -2.17)); group.add(box(.48, .16, .07, brake, x, .78, 2.17)); }
@@ -119,7 +123,15 @@ export class World {
     this.static.add(box(10.4, .12, length, shoulder, 0, -.03, center));
     this.static.add(box(8.05, .1, length, asphalt, 0, .01, center));
     for (const x of [-3.72, 3.72]) this.static.add(box(.1, .011, length, line, x, .068, center));
-    for (let z = -100; z < sim.length + 160; z += 8) this.static.add(box(.12, .012, 3.2, line, 0, .069, -z));
+    const centrePaint = mat('#d6b85f');
+    for (let z = -100; z < sim.length + 160; z += 8) {
+      if (!sim.crossings.some(c => z >= c.z - NO_PASS_APPROACH_M - 2 && z <= c.z + NO_PASS_BEYOND_M + 2)) this.static.add(box(.14, .012, 3.2, centrePaint, 0, .069, -z));
+    }
+    for (const c of sim.crossings) for (const x of [-.12, .12]) this.static.add(box(.1, .014, NO_PASS_APPROACH_M + NO_PASS_BEYOND_M, centrePaint, x, .072, -c.z + (NO_PASS_APPROACH_M - NO_PASS_BEYOND_M) / 2));
+    for (let z = 45; z < sim.length; z += 115) for (const [lane, x] of Object.entries(LANES)) {
+      const shape = new THREE.Shape(); shape.moveTo(-.15, -1.4); shape.lineTo(.15, -1.4); shape.lineTo(.15, .1); shape.lineTo(.6, .1); shape.lineTo(0, 1.2); shape.lineTo(-.6, .1); shape.lineTo(-.15, .1); shape.closePath();
+      const arrow = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: '#e6e7cd', side: THREE.DoubleSide, transparent: true, opacity: .65 })); arrow.rotation.x = -Math.PI / 2; arrow.rotation.z = lane === 'left' ? Math.PI : 0; arrow.position.set(x, .081, -z); this.static.add(arrow);
+    }
     for (const x of [-5.7, 5.7]) this.static.add(box(2.4, .09, length, mat('#c8c4ad'), x, -.005, center));
     for (let z = -80; z < sim.length + 160; z += 12) {
       for (const side of [-1, 1]) {
@@ -139,7 +151,8 @@ export class World {
     }
     for (const crossing of sim.crossings) {
       for (let stripe = -2.4; stripe <= 2.4; stripe += .8) this.static.add(box(7.4, .014, .45, line, 0, .077, -crossing.z + stripe));
-      this.static.add(box(7.4, .014, .22, line, 0, .077, -crossing.z + STOP_LINE_SETBACK_M));
+      this.static.add(box(3.3, .014, .22, line, 1.8, .077, -crossing.z + STOP_LINE_SETBACK_M));
+      this.static.add(box(3.3, .014, .22, line, -1.8, .077, -crossing.z - STOP_LINE_SETBACK_M));
       for (const side of [-1, 1]) {
         this.static.add(box(.12, 2.8, .12, metal, side * 4.7, 1.4, -crossing.z));
         const globe = new THREE.Mesh(new THREE.SphereGeometry(.23, 10, 8), mat('#f5bd59')); globe.position.set(side * 4.7, 2.9, -crossing.z); this.static.add(globe);
@@ -181,10 +194,12 @@ export class World {
   render(sim, dt = .016) {
     const e = sim.ego, z = -e.z;
     this.ego.position.set(e.x, 0, z);
-    this.ego.rotation.y = THREE.MathUtils.lerp(this.ego.rotation.y, Math.abs(LANES[e.target] - e.x) > .1 ? -(LANES[e.target] - e.x) * .08 : 0, .1);
-    this.ego.userData.brake.emissiveIntensity = ['slow', 'brake', 'emergency'].includes(e.control) ? 3 : .25;
+    this.ego.rotation.y = -e.headingRad;
+    for (const wheel of this.ego.userData.wheels) { wheel.pivot.rotation.y = wheel.front ? -e.steeringAngle : 0; wheel.roll.rotation.x -= e.speed * dt / .39; }
+    this.ego.userData.brake.emissiveIntensity = e.acceleration < -.2 ? 3 : .25;
     for (const o of sim.objects) {
       const mesh = this.meshes.get(o.id); mesh.position.set(o.x, 0, -o.z); mesh.visible = Math.abs(o.z - e.z) < 270;
+      if (o.kind === 'car') { mesh.rotation.y = (o.travelDirection ?? 1) < 0 ? Math.PI : 0; for (const wheel of mesh.userData.wheels) wheel.roll.rotation.x -= o.speed * dt / .39; }
       if (o.kind === 'pedestrian') {
         mesh.rotation.y = -o.direction * Math.PI / 2;
         const swing = o.motion === 'crossing' ? Math.sin(sim.time * 8 + o.id) * .55 : 0;
@@ -192,12 +207,12 @@ export class World {
         mesh.userData.arms.forEach((arm, i) => { arm.rotation.x = i ? swing : -swing; });
       }
     }
-    this.rays.position.set(e.x, 0, z); this.rays.visible = this.showSensors;
+    this.rays.position.set(e.x, 0, z); this.rays.rotation.y = -e.headingRad; this.rays.visible = this.showSensors;
     for (const [lane, zone] of Object.entries(this.zones)) { zone.position.set(LANES[lane], .083, z); zone.visible = this.showSensors; }
     this.sun.position.set(-45, 70, z - 15); this.sun.target.position.set(0, 0, z - 30);
     let target, look;
     if (this.mode === 'overhead') { target = new THREE.Vector3(0, 65, z + 8); look = new THREE.Vector3(0, 0, z - 20); }
-    else if (this.mode === 'driver') { target = new THREE.Vector3(e.x, 1.65, z - .7); look = new THREE.Vector3(e.x, 1.5, z - 60); }
+    else if (this.mode === 'driver') { target = new THREE.Vector3(e.x + Math.sin(e.headingRad) * .7, 1.65, z - Math.cos(e.headingRad) * .7); look = new THREE.Vector3(e.x + Math.sin(e.headingRad) * 60, 1.5, z - Math.cos(e.headingRad) * 60); }
     else { target = new THREE.Vector3(e.x + 13, 14, z + 23); look = new THREE.Vector3(0, 0, z - 16); }
     const k = Math.min(1, dt * 7); this.camera.position.lerp(target, k); this.lookAt.lerp(look, k); this.camera.lookAt(this.lookAt);
     this.renderer.setScissorTest(false); this.renderer.setViewport(0, 0, this.width, this.height); this.renderer.render(this.scene, this.camera);
@@ -208,8 +223,9 @@ export class World {
       const camera = this.feedCameras[name], rect = this.feedRects[name];
       camera.aspect = rect.width / rect.height;
       camera.fov = 2 * Math.atan(Math.tan(config.horizontal_fov_deg * Math.PI / 360) / camera.aspect) * 180 / Math.PI; camera.updateProjectionMatrix();
-      camera.position.set(e.x + config.mount_x_m, 1.05, z - config.mount_z_m);
-      camera.lookAt(camera.position.x + Math.sin(config.yaw_rad) * 40, 1.05, camera.position.z - Math.cos(config.yaw_rad) * 40);
+      const mount = cameraMount(e, config);
+      camera.position.set(mount.x, 1.05, -mount.z);
+      camera.lookAt(camera.position.x + Math.sin(mount.yaw) * 40, 1.05, camera.position.z - Math.cos(mount.yaw) * 40);
       this.renderer.setScissor(rect.x, rect.y, rect.width, rect.height); this.renderer.setViewport(rect.x, rect.y, rect.width, rect.height); this.renderer.render(this.scene, camera);
     }
     this.renderer.setScissorTest(false); this.renderer.shadowMap.autoUpdate = true;

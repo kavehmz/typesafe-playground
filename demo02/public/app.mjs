@@ -1,11 +1,13 @@
 import { Simulation, applyDecision, round } from './simulation.mjs';
 import { World } from './world.mjs';
-import { ACTION_ACCELERATIONS, buildMotionContext, CONTROL_INTERVAL_MS } from './motion.mjs';
+import { buildMotionContext, CONTROL_INTERVAL_MS } from './motion.mjs';
+import { buildPassingContext } from './passing.mjs';
+import { FRONT_RADAR_RANGE_M, REAR_RADAR_RANGE_M } from './traffic.mjs';
 
 const $ = id => document.getElementById(id);
-const colors = { accelerate: '#4c9b79', ease: '#8cb882', slow: '#d4bd71', coast: '#aac4b1', brake: '#dfa95b', emergency: '#d57259' };
-const names = { accelerate: 'Accelerating', ease: 'Easing forward', slow: 'Slowing gently', coast: 'Holding speed', brake: 'Braking', emergency: 'Hard braking' };
-const attention = { clear: 'A clear road ahead.', slower_traffic: 'Watching slower traffic ahead.', pedestrian: 'Watching people at the crossing.', speed_limit: 'Responding to a speed-limit sign.', adjacent_traffic: 'Watching adjacent traffic and rear approach.' };
+const speedColor = choice => choice === 'emergency' || Number(choice) === 0 ? '#d57259' : Number(choice) <= 10 ? '#d4bd71' : Number(choice) <= 25 ? '#8cb882' : '#4c9b79';
+const speedLabel = choice => choice === 'emergency' ? 'Emergency stop' : Number(choice) === 0 ? 'Stop' : `${choice} km/h`;
+const attention = { clear: 'A clear road ahead.', slower_traffic: 'Watching slower traffic ahead.', pedestrian: 'Watching people at the crossing.', speed_limit: 'Responding to a speed-limit sign.', adjacent_traffic: 'Watching nearby traffic and the return gap.', oncoming: 'Watching approaching traffic in the opposing lane.' };
 let sim = new Simulation(), world;
 let status = 'ready', generation = 0, controller = null, inFlight = false;
 let nextRequest = 0, lastDecisionTime = 0, last = null, questions = {}, tab = 'state';
@@ -44,7 +46,7 @@ function reset({ seed = Number($('seed').value), increment = false } = {}) {
   $('action-description').textContent = 'Five independent judgments. One sensor snapshot. Every 800 ms.';
   $('lane-confidence').textContent = '—'; $('speed-confidence').textContent = '—'; $('speed-lane').textContent = '';
   $('risk').textContent = '—'; $('decisions').textContent = '0'; $('latency').textContent = '—';
-  bars('lane-bars', { left: 0, right: 0 }, null); bars('speed-bars', Object.fromEntries(Object.keys(ACTION_ACCELERATIONS).map(k => [k, 0])), null);
+  bars('lane-bars', { left: 0, right: 0 }, null); bars('speed-bars', { '0': 0, '10': 0, '20': 0, '30': 0, '40': 0, '50': 0 }, null);
   drawTrace(); updateStatus(); renderTelemetry();
 }
 function pause() {
@@ -94,16 +96,17 @@ async function requestDecision(initial = false) {
 }
 function markStale() {
   if (!stale) { stale = true; fallbacks++; updateStatus(); }
-  sim.ego.control = 'emergency';
+  sim.setAction(sim.ego.target, 'emergency');
 }
 function bars(id, distribution, selected) {
-  const labels = { left: 'Left lane', right: 'Right lane', accelerate: 'Accelerate', ease: 'Ease forward', slow: 'Gentle brake', coast: 'Coast', brake: 'Brake', emergency: 'Emergency' };
+  const labels = { left: 'Left (opp.)', right: 'Right (ours)' };
   const root = $(id); root.replaceChildren();
-  const keys = id === 'lane-bars' ? ['left', 'right'] : Object.keys(ACTION_ACCELERATIONS);
+  const ranked = Object.keys(distribution).sort((a, b) => distribution[b] - distribution[a]);
+  const keys = id === 'lane-bars' ? ['left', 'right'] : selected ? [selected, ...ranked.filter(k => k !== selected).slice(0, 5)] : ranked.slice(0, 6);
   for (const key of keys) {
     const value = distribution[key];
     const row = document.createElement('div'); row.className = 'bar-row' + (selected === key ? ' selected' : '');
-    const label = document.createElement('span'); label.textContent = labels[key];
+    const label = document.createElement('span'); label.textContent = id === 'lane-bars' ? labels[key] : speedLabel(key);
     const track = document.createElement('div'); track.className = 'bar-track';
     const fill = document.createElement('div'); fill.className = 'bar-fill'; fill.style.width = `${value * 100}%`; track.append(fill);
     const val = document.createElement('span'); val.className = 'bar-value'; val.textContent = `${Math.round(value * 100)}%`;
@@ -113,9 +116,9 @@ function bars(id, distribution, selected) {
 function renderDecision() {
   if (!last) return;
   const a = last.answers, lane = a.lane.choice, longitudinal = a[`${lane}_speed`];
-  $('action-title').textContent = names[longitudinal.choice];
+  $('action-title').textContent = longitudinal.choice === 'emergency' ? 'Emergency stop' : `Target ${longitudinal.choice} km/h`;
   $('action-icon').textContent = lane === 'left' ? '↖' : '↗';
-  $('action-description').textContent = `Target: ${lane} lane. ${attention[a.attention.choice]}`;
+  $('action-description').textContent = `${lane === 'left' ? 'Opposing lane for passing.' : 'Right-hand driving lane.'} ${attention[a.attention.choice]}`;
   bars('lane-bars', a.lane.probabilities, lane); bars('speed-bars', longitudinal.probabilities, longitudinal.choice);
   $('lane-confidence').textContent = `${Math.round(a.lane.confidence * 100)}% confidence`;
   $('speed-confidence').textContent = `${Math.round(longitudinal.confidence * 100)}% confidence`;
@@ -132,19 +135,41 @@ function drawTrace() {
   const root = $('timeline'); root.replaceChildren();
   if (!trace.length) { const empty = document.createElement('span'); empty.className = 'trace-empty'; empty.textContent = 'The next move starts with a judgment.'; root.append(empty); return; }
   for (const t of trace.slice(-36)) {
-    const el = document.createElement('div'); el.className = 'trace-point'; el.style.background = colors[t.speed];
-    el.title = `${t.time}s · ${t.lane} lane · ${t.speed} · ${Math.round(t.confidence * 100)}% confidence`;
+    const el = document.createElement('div'); el.className = 'trace-point'; el.style.background = speedColor(t.speed);
+    el.title = `${t.time}s · ${t.lane} lane · target ${speedLabel(t.speed)} · ${Math.round(t.confidence * 100)}% confidence`;
     root.append(el);
   }
+}
+function collectObservations(state) {
+  const observations = new Map();
+  for (const [direction, feed] of Object.entries(state.cameras)) for (const o of feed.detections) {
+    if (!observations.has(o.id)) observations.set(o.id, { ...o, direction, cameras: [] }); observations.get(o.id).cameras.push(direction);
+  }
+  for (const radar of Object.values(state.radar)) for (const o of [radar.front_object, radar.rear_object, ...(radar.oncoming_objects || [])]) if (o) {
+    if (!observations.has(o.id)) observations.set(o.id, { ...o, direction: 'radar', cameras: [] });
+    if (!observations.get(o.id).cameras.includes('radar')) observations.get(o.id).cameras.push('radar');
+  }
+  return observations;
+}
+function renderPassing(passing) {
+  const labels = { keeping_right: 'KEEPING RIGHT ↑', entering_opposing_lane: 'MOVING OUT ←', in_opposing_lane: 'IN OPPOSING LANE ↓', returning_right: 'RETURNING RIGHT →' };
+  $('passing-phase').textContent = labels[passing.phase]; $('passing-phase').classList.toggle('opposing', passing.phase !== 'keeping_right');
+  const next = passing.oncoming[0];
+  $('oncoming-gap').textContent = next ? `${Math.round(next.gap_m)} m · ${Math.round(next.speed_kmh)} km/h` : `No return ≤${passing.oncoming_radar_range_m} m`;
+  $('oncoming-time').textContent = `${(next ? Math.min(next.time_to_contact_at_limit_s, passing.earliest_unseen_oncoming_arrival_at_limit_s) : passing.earliest_unseen_oncoming_arrival_at_limit_s).toFixed(1)} s`;
+  $('pass-estimate').textContent = passing.pass?.estimated_completion_at_limit_s != null ? `${passing.pass.estimated_completion_at_limit_s.toFixed(1)} s` : passing.pass ? 'No speed advantage' : 'No target car';
+  $('return-gap').textContent = passing.right_merge.observed_bodies_alongside.length ? 'Car alongside' : passing.pass && passing.pass.target_offset_forward_m < 0 ? `${Math.max(0, passing.pass.ego_rear_ahead_of_target_front_m).toFixed(1)} m behind` : `${Math.round(passing.right_merge.front_gap_m)} m ahead`;
+  $('centre-line').textContent = passing.current_center_line === 'solid' ? 'Solid · no pass' : 'Broken';
+  $('passing-note').textContent = `*At legal limit · original target ${passing.original_target_id || 'none'} · ${$('sensor-source').value === 'decision' && last ? "Jev's snapshot" : 'live measurements'} · no automatic lane correction`;
 }
 function renderRadar(s) {
   const canvas = $('radar'), ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  const roadLeft = w * .3, roadWidth = w * .4, originY = 20 + 110 * (h - 40) / 175, scale = (h - 40) / 175;
+  const roadLeft = w * .3, roadWidth = w * .4, originY = 20 + FRONT_RADAR_RANGE_M * (h - 40) / (FRONT_RADAR_RANGE_M + REAR_RADAR_RANGE_M), scale = (h - 40) / (FRONT_RADAR_RANGE_M + REAR_RADAR_RANGE_M);
   ctx.fillStyle = '#e1e8d9'; ctx.fillRect(roadLeft, 0, roadWidth, h);
   ctx.strokeStyle = '#c0ceba'; ctx.setLineDash([6, 7]); ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke(); ctx.setLineDash([]);
   ctx.font = '15px monospace'; ctx.fillStyle = '#8fa086';
-  for (const distance of [100, 50, 0, -50]) { const y = originY - distance * scale; ctx.fillText(`${distance}m`, w * .1, y + 4); ctx.strokeStyle = '#ccd7c3'; ctx.beginPath(); ctx.moveTo(roadLeft, y); ctx.lineTo(roadLeft + roadWidth, y); ctx.stroke(); }
+  for (const distance of [300, 150, 0, -50]) { const y = originY - distance * scale; ctx.fillText(`${distance}m`, w * .1, y + 4); ctx.strokeStyle = '#ccd7c3'; ctx.beginPath(); ctx.moveTo(roadLeft, y); ctx.lineTo(roadLeft + roadWidth, y); ctx.stroke(); }
   const egoX = s.ego.lateral_position_m, ex = w / 2 + egoX / 3.6 * roadWidth / 2;
   for (const [i, lane] of ['left', 'right'].entries()) {
     ctx.fillStyle = s.blind_spots[lane] ? '#eaa26588' : '#63baa433';
@@ -153,13 +178,13 @@ function renderRadar(s) {
   }
   ctx.fillStyle = '#289a7a'; ctx.fillRect(ex - 11, originY - 14, 22, 28);
   ctx.strokeStyle = '#5db49566'; ctx.beginPath(); ctx.moveTo(ex, originY - 14); ctx.lineTo(roadLeft + 12, 15); ctx.moveTo(ex, originY - 14); ctx.lineTo(roadLeft + roadWidth - 12, 15); ctx.stroke();
-  const observations = new Map();
-  for (const [direction, feed] of Object.entries(s.cameras)) for (const o of feed.detections) if (!observations.has(o.id)) observations.set(o.id, { ...o, direction });
+  const observations = collectObservations(s);
   const cameraColors = { front: '#398e74', left: '#5586bc', right: '#bd853d', rear: '#ad6c94' };
   for (const o of observations.values()) {
     const x = w / 2 + (egoX + o.offset_right_m) / 3.6 * roadWidth / 2, y = originY - o.offset_forward_m * scale;
-    ctx.fillStyle = o.kind === 'pedestrian' ? '#cc754b' : cameraColors[o.direction];
+    ctx.fillStyle = o.kind === 'pedestrian' ? '#cc754b' : o.travel_direction === 'oncoming' ? '#c15e54' : cameraColors[o.direction] || '#819a8b';
     ctx.fillRect(x - (o.kind === 'barrier' ? 17 : 9), y - 9, o.kind === 'barrier' ? 34 : 18, o.kind === 'barrier' ? 10 : 22);
+    if (o.kind === 'car') { const dy = o.travel_direction === 'oncoming' ? 1 : -1; ctx.fillStyle = '#f5f5e8'; ctx.beginPath(); ctx.moveTo(x, y + dy * 8); ctx.lineTo(x - 4, y - dy * 2); ctx.lineTo(x + 4, y - dy * 2); ctx.closePath(); ctx.fill(); }
     if (o.longitudinal_overlap) { ctx.strokeStyle = '#db7648'; ctx.lineWidth = 3; ctx.strokeRect(x - 15, y - 15, 30, 32); ctx.lineWidth = 1; }
     ctx.fillText(o.id.replace('car-', 'C').replace('pedestrian-', 'P').replace('barrier-', 'B'), x + 20, y + 6);
   }
@@ -206,17 +231,14 @@ function renderTelemetry() {
   $('passed').textContent = sim.passed.size; $('changes').textContent = `${sim.laneChanges} lane changes · ${sim.crossingsPassed.size} crossings`;
   for (const lane of ['left', 'right']) {
     const r = viewed.radar[lane];
-    $(lane + '-gap').textContent = `${r.front_gap_m >= 139 ? '>' : ''}${Math.round(r.front_gap_m)} / ${r.rear_gap_m >= 39 ? '>' : ''}${Math.round(r.rear_gap_m)} m`;
+    $(lane + '-gap').textContent = `${r.front_gap_m >= FRONT_RADAR_RANGE_M - 1 ? '>' : ''}${Math.round(r.front_gap_m)} / ${r.rear_gap_m >= REAR_RADAR_RANGE_M - 1 ? '>' : ''}${Math.round(r.rear_gap_m)} m`;
     $('blind-' + lane).textContent = viewed.blind_spots[lane] ? 'OCCUPIED' : 'No close return';
     $('zone-' + lane).classList.toggle('occupied', viewed.blind_spots[lane]);
   }
-  const seen = new Map();
-  for (const [direction, feed] of Object.entries(viewed.cameras)) for (const o of feed.detections) {
-    if (!seen.has(o.id)) seen.set(o.id, { ...o, cameras: [] }); seen.get(o.id).cameras.push(direction);
-  }
+  const seen = collectObservations(viewed);
   const nearest = [...seen.values()].sort((a, b) => Math.abs(a.offset_forward_m) - Math.abs(b.offset_forward_m)).slice(0, 2);
   $('detected-objects').replaceChildren(...nearest.map(o => {
-    const line = document.createElement('div'); line.textContent = o.kind === 'pedestrian' ? `${o.id} · ${o.motion} · ${o.lateral_speed_mps > 0 ? 'walking right' : o.lateral_speed_mps < 0 ? 'walking left' : 'standing'} · ${Math.abs(o.offset_forward_m).toFixed(1)} m ${o.relation}` : `${o.id} · ${o.lane} lane · ${o.longitudinal_overlap ? 'BODY OVERLAP' : `${Math.abs(o.offset_forward_m).toFixed(1)} m ${o.relation}`} · ${o.relative_forward_speed_mps > 0 ? '+' : ''}${o.relative_forward_speed_mps.toFixed(1)} m/s`; line.title = `Seen by ${o.cameras.join(', ')} cameras. Relative speed = object minus ego.`; return line;
+    const line = document.createElement('div'); line.textContent = o.kind === 'pedestrian' ? `${o.id} · ${o.motion} · ${o.lateral_speed_mps > 0 ? 'walking right' : o.lateral_speed_mps < 0 ? 'walking left' : 'standing'} · ${Math.abs(o.offset_forward_m).toFixed(1)} m ${o.relation}` : `${o.id} · ${o.travel_direction === 'oncoming' ? 'ONCOMING ↓' : 'FORWARD ↑'} · ${o.longitudinal_overlap ? 'BODY OVERLAP' : `${Math.abs(o.offset_forward_m).toFixed(1)} m ${o.relation}`} · ${o.relative_forward_speed_mps > 0 ? '+' : ''}${o.relative_forward_speed_mps.toFixed(1)} m/s`; line.title = `Observed via ${o.cameras.join(', ')}. Relative speed = signed object velocity minus ego.`; return line;
   }));
   if (!nearest.length) $('detected-objects').textContent = 'No visible camera detections in range.';
   $('snapshot-age').textContent = last ? `Jev snapshot ${Math.round((sim.time - lastCaptureTime) * 1000)} ms ago` : 'Live sensors · no decision yet';
@@ -226,14 +248,16 @@ function renderTelemetry() {
   $('fallback-count').textContent = `${fallbacks} stale fallbacks`;
   renderRadar(viewed);
   const measured = { ...viewed, control_timing: viewed.control_timing || { recent_round_trip_ms: roundTripSamples.length ? Math.round(roundTripSamples.reduce((sum, v) => sum + v, 0) / roundTripSamples.length) : null } };
-  renderApproach(viewed.motion || buildMotionContext(measured), viewed);
+  const motion = viewed.motion || buildMotionContext(measured);
+  renderApproach(motion, viewed);
+  renderPassing(viewed.passing || buildPassingContext(measured, motion));
 }
 function renderApproach(motion, state) {
   const crossing = motion.crossings.find(c => c.front_bumper_to_stop_line_m >= -2);
   const lane = state.ego.target_lane, front = state.radar[lane];
   $('approach-label').textContent = crossing ? 'TO STOP LINE' : 'FRONT GAP';
-  $('approach-gap').textContent = crossing ? `${Math.max(0, crossing.front_bumper_to_stop_line_m).toFixed(1)} m` : front.front_gap_m >= 140 ? '>140 m' : `${front.front_gap_m.toFixed(1)} m`;
-  $('approach-stop').textContent = `${motion.stop_distance_m.gentle.toFixed(1)} m`;
+  $('approach-gap').textContent = crossing ? `${Math.max(0, crossing.front_bumper_to_stop_line_m).toFixed(1)} m` : front.front_gap_m >= FRONT_RADAR_RANGE_M ? `>${FRONT_RADAR_RANGE_M} m` : `${front.front_gap_m.toFixed(1)} m`;
+  $('approach-stop').textContent = `${motion.stop_distance_m.normal.toFixed(1)} m`;
   $('approach-delay').textContent = `${motion.response_estimate_ms} ms`;
   $('approach-note').textContent = `${$('sensor-source').value === 'decision' && last ? "Jev's snapshot" : 'Live measurements'} · ${motion.timing_source.startsWith('startup') ? 'initial delay estimate' : 'measured round trip'} · estimates, not an override`;
 }
@@ -243,7 +267,7 @@ function endRun() {
   const result = sim.result;
   if (result.reason === 'finish') finishes++;
   if (result.reason === 'collision') collisions++;
-  history.push({ run: runNumber, seed: sim.seed, duration: sim.duration, density: sim.density, ...result, decisions: decisionCount, requests: runCalls, lane_changes: sim.laneChanges, passed: sim.passed.size, crossings_passed: sim.crossingsPassed.size, speeding_seconds: round(sim.speedingSeconds, 2), max_overspeed_kmh: round(sim.maxOverspeedKmh), signs_remembered: sim.signMemory.seen.size, min_gap_m: Number.isFinite(sim.minGap) ? round(sim.minGap) : null });
+  history.push({ run: runNumber, seed: sim.seed, duration: sim.duration, density: sim.density, ...result, decisions: decisionCount, requests: runCalls, lane_changes: sim.laneChanges, passed: sim.passed.size, crossings_passed: sim.crossingsPassed.size, opposing_lane_seconds: round(sim.opposingLaneSeconds, 2), minimum_oncoming_ttc_s: Number.isFinite(sim.minOncomingTtc) ? round(sim.minOncomingTtc, 2) : null, speeding_seconds: round(sim.speedingSeconds, 2), max_overspeed_kmh: round(sim.maxOverspeedKmh), signs_remembered: sim.signMemory.seen.size, min_gap_m: Number.isFinite(sim.minGap) ? round(sim.minGap) : null });
   $('run-result').hidden = false;
   $('result-kicker').textContent = `RUN ${String(runNumber).padStart(2, '0')} · ${result.reason === 'collision' ? 'COLLISION DETECTED' : 'COMPLETE'}`;
   $('result-title').textContent = result.reason === 'finish' ? 'Across the finish line.' : result.reason === 'collision' ? 'A decision to learn from.' : 'Time is up.';
@@ -258,7 +282,7 @@ function renderInspector() {
 
 $('start').addEventListener('click', start);
 $('reset').addEventListener('click', () => reset());
-$('shuffle').addEventListener('click', () => { $('seed').value = Math.floor(Math.random() * 999998) + 1; reset(); });
+$('shuffle').addEventListener('click', () => { $('seed').value = (sim.seed + Math.floor(Math.random() * 999998)) % 999999 + 1; reset(); });
 for (const id of ['duration', 'density', 'seed']) $(id).addEventListener('change', () => reset());
 $('loop').addEventListener('change', () => { if (!$('loop').checked) restartAt = 0; });
 $('sensors').addEventListener('change', () => { world.showSensors = $('sensors').checked; });

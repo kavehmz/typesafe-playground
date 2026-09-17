@@ -1,0 +1,2918 @@
+{
+  "checked_at": "2026-09-17T12:38:17.727Z",
+  "note": "8 fixed synthetic situations evaluated by the live Jev API. 345 ms timing is a scenario assumption. These are not a complete driving validation.",
+  "questions": {
+    "lane": {
+      "type": "choice",
+      "instructions": {
+        "question": "Choose RIGHT or LEFT now. This is a TWO-WAY road: normally drive RIGHT. LEFT is oncoming traffic, not a second cruising lane. Use passing, motion, radar and all four cameras.",
+        "start_pass": "Use LEFT only to pass a slower same-direction vehicle when a complete legal-speed pass AND return right fit within the available oncoming time and observed road conditions, with extra time margin. Compare passing.pass estimates with detected oncoming contact times and earliest_unseen_oncoming_arrival_at_limit_s. A missing return means only no vehicle detected within radar range, not infinite clear road. Do not count on exceeding the speed limit or oncoming traffic stopping for you. No pass over a solid centre line or if it would run into an observed no-passing segment or crossing.",
+        "continue_or_abort": "Reassess each snapshot. If already LEFT, use right_merge and the target body clearance before returning. Do not cut into a car alongside even when its centre is behind. If completing the pass is no longer feasible, slow to fall behind and return once the right-hand gap exists; while alongside, staying LEFT briefly can be necessary to create that gap. The speed question separately chooses the pedal action.",
+        "return_right": "Return RIGHT as soon as safely clear of the passed car with adequate front and rear gaps. Do not keep cruising LEFT after the overtake. If there is no useful or currently feasible pass, follow on the RIGHT. Do not overtake a vehicle yielding to pedestrians. Avoid initiating passes for distant traffic that is not yet constraining progress."
+      },
+      "criteria": {
+        "left": "Borrow or briefly remain in the opposing lane for an overtake whose conditions justify it, or while creating a safe right-hand merge gap during a pass already underway. Never a default cruising lane.",
+        "right": "Normal driving and following lane. Wait here for an adequate passing opportunity, or return here after passing/aborting once the observed vehicle gaps permit it."
+      }
+    },
+    "left_speed": {
+      "type": "choice",
+      "instructions": {
+        "question": "Assuming the target lane is left, choose the next speed action. RIGHT is our normal lane, LEFT is opposing traffic. Use radar.left, motion, passing, all cameras and the active speed limit.",
+        "overtaking": "For target left, account for any remaining lane-change time. If using LEFT to pass, make progress within the legal limit when the passing window allows; unnecessary slowing consumes that window. If conditions worsen, compare passing.pass with passing.abort and right_merge. Braking alone in the opposing lane does not remove an oncoming threat. If the right-hand car is alongside, first create clearance by completing the pass or slowing to drop behind; do not assume an instantaneous merge.",
+        "approach": "Yield means do not ENTER an occupied crossing. It does not mean stop wherever a pedestrian first becomes visible. Compare front_bumper_to_stop_line_m with motion.stop_distance_m. If there is ample room, approach under control; slow progressively and stop about 2 m before the line only if people are still crossing when you get there. At rest far from the line, ease forward if the nearer vehicle gap also allows it. Do not crawl through an occupied crossing.",
+        "following": "For SAME-DIRECTION vehicles, compare gap, closing speed and nominal_following_gap_m. An ONCOMING car is not a lead car to follow or stop behind; use the head-on timing and return-right geometry instead. A distant vehicle with ample following space is not a reason to brake immediately. A nearer lead car takes precedence over the crossing line. If its actual bumper gap is already BELOW motion.lane_approach for the target lane gentle_relative_stopping_gap_m and the gap is closing, gentle slowing is insufficient: choose firm or emergency braking, not slow. Check both occupied lanes during an unfinished lane change. Objects solely behind, cleared pedestrians, and crossings already behind are not front hazards.",
+        "speed_limit": "Cruise near road_rules.active_limit_kmh when clear. Consider the NEXT action_effects speed to avoid overshooting. A higher sign ahead does not apply until passed, but you may accelerate up to the current limit. At a stop line with people crossing, keep speed zero; after it clears, resume.",
+        "timing": "Motion values include measured response delay plus a decision interval. These are simplified estimates, not guarantees. Pedestrian clearance is an estimate only: approach and observe again before entering. Prefer gentle controls for normal adjustments, strong braking for short stopping margins."
+      },
+      "criteria": {
+        "accelerate": "Acceleration +3 m/s². Clear road, well below the active limit, and enough space for the projected extra speed and travel.",
+        "ease": "Gentle acceleration +1 m/s². Move forward from a premature distant stop, approach slowly with room remaining, or make a small speed increase. Does not enforce a target speed automatically.",
+        "coast": "Zero acceleration: hold current speed, including holding zero when correctly stopped near the line. Use for a suitable approach speed or matched following speed, not to remain stopped far away on a clear approach.",
+        "slow": "Gentle braking -1.5 m/s². Use while sufficient stopping space remains: ordinary speed trimming and gradual approaches. Do NOT choose when a closing vehicle gap is already smaller than gentle_relative_stopping_gap_m or a required stop cannot fit the gentle stop distance.",
+        "brake": "Firm braking -5 m/s². Use when the gap is too short for gentle slowing: a closing lead car below gentle_relative_stopping_gap_m, or an occupied crossing inside the gentle stopping distance. Do not use just because a hazard is visible far away.",
+        "emergency": "Hard braking -9 m/s². Contact or crossing entry is imminent and gentler braking is insufficient."
+      }
+    },
+    "right_speed": {
+      "type": "choice",
+      "instructions": {
+        "question": "Assuming the target lane is right, choose the next speed action. RIGHT is our normal lane, LEFT is opposing traffic. Use radar.right, motion, passing, all cameras and the active speed limit.",
+        "overtaking": "For target right, account for any remaining lane-change time. If using LEFT to pass, make progress within the legal limit when the passing window allows; unnecessary slowing consumes that window. If conditions worsen, compare passing.pass with passing.abort and right_merge. Braking alone in the opposing lane does not remove an oncoming threat. If the right-hand car is alongside, first create clearance by completing the pass or slowing to drop behind; do not assume an instantaneous merge.",
+        "approach": "Yield means do not ENTER an occupied crossing. It does not mean stop wherever a pedestrian first becomes visible. Compare front_bumper_to_stop_line_m with motion.stop_distance_m. If there is ample room, approach under control; slow progressively and stop about 2 m before the line only if people are still crossing when you get there. At rest far from the line, ease forward if the nearer vehicle gap also allows it. Do not crawl through an occupied crossing.",
+        "following": "For SAME-DIRECTION vehicles, compare gap, closing speed and nominal_following_gap_m. An ONCOMING car is not a lead car to follow or stop behind; use the head-on timing and return-right geometry instead. A distant vehicle with ample following space is not a reason to brake immediately. A nearer lead car takes precedence over the crossing line. If its actual bumper gap is already BELOW motion.lane_approach for the target lane gentle_relative_stopping_gap_m and the gap is closing, gentle slowing is insufficient: choose firm or emergency braking, not slow. Check both occupied lanes during an unfinished lane change. Objects solely behind, cleared pedestrians, and crossings already behind are not front hazards.",
+        "speed_limit": "Cruise near road_rules.active_limit_kmh when clear. Consider the NEXT action_effects speed to avoid overshooting. A higher sign ahead does not apply until passed, but you may accelerate up to the current limit. At a stop line with people crossing, keep speed zero; after it clears, resume.",
+        "timing": "Motion values include measured response delay plus a decision interval. These are simplified estimates, not guarantees. Pedestrian clearance is an estimate only: approach and observe again before entering. Prefer gentle controls for normal adjustments, strong braking for short stopping margins."
+      },
+      "criteria": {
+        "accelerate": "Acceleration +3 m/s². Clear road, well below the active limit, and enough space for the projected extra speed and travel.",
+        "ease": "Gentle acceleration +1 m/s². Move forward from a premature distant stop, approach slowly with room remaining, or make a small speed increase. Does not enforce a target speed automatically.",
+        "coast": "Zero acceleration: hold current speed, including holding zero when correctly stopped near the line. Use for a suitable approach speed or matched following speed, not to remain stopped far away on a clear approach.",
+        "slow": "Gentle braking -1.5 m/s². Use while sufficient stopping space remains: ordinary speed trimming and gradual approaches. Do NOT choose when a closing vehicle gap is already smaller than gentle_relative_stopping_gap_m or a required stop cannot fit the gentle stop distance.",
+        "brake": "Firm braking -5 m/s². Use when the gap is too short for gentle slowing: a closing lead car below gentle_relative_stopping_gap_m, or an occupied crossing inside the gentle stopping distance. Do not use just because a hazard is visible far away.",
+        "emergency": "Hard braking -9 m/s². Contact or crossing entry is imminent and gentler braking is insufficient."
+      }
+    },
+    "collision_risk": {
+      "type": "noul",
+      "instructions": "If the ego car continues its current target lane movement and speed for the next two seconds, is collision with an observed object likely? Use all four `cameras`, `radar`, `blind_spots`, and `ego.occupied_lanes`. Include head-on contact with oncoming traffic when the ego car occupies or is entering LEFT, plus pedestrians and side contact. Oncoming traffic safely confined to LEFT is not itself a collision threat while we stay RIGHT. This probability is a risk prediction, not severity."
+    },
+    "attention": {
+      "type": "choice",
+      "instructions": "Which observed situation most needs attention now? Use all four `cameras`, `radar`, `blind_spots`, `road_observations`, `road_rules`, and `ego`. A car partly alongside or approaching the proposed destination lane from behind counts as adjacent traffic.",
+      "criteria": {
+        "clear": "The driving path is clear and no nearby vehicle demands attention.",
+        "slower_traffic": "A slower vehicle ahead affects progress or following distance.",
+        "pedestrian": "A pedestrian is waiting near or walking across a marked crossing; anticipate or yield.",
+        "speed_limit": "A visible upcoming speed sign or overspeed relative to the remembered active limit requires a speed adjustment.",
+        "adjacent_traffic": "A nearby vehicle beside or behind the car constrains a lane change.",
+        "oncoming": "Opposite-direction traffic or limited forward visibility constrains starting, completing, or abandoning a pass."
+      }
+    }
+  },
+  "results": [
+    {
+      "case": "Wait right: oncoming traffic leaves insufficient passing time",
+      "expected_lane": "right",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "brake",
+      "matches_expectation": true,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.98,
+          "probabilities": {
+            "right": 0.99,
+            "left": 0.01
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "coast",
+          "confidence": 0.15,
+          "probabilities": {
+            "emergency": 0.13,
+            "ease": 0.06,
+            "coast": 0.3,
+            "brake": 0.19,
+            "accelerate": 0.15,
+            "slow": 0.17
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "brake",
+          "confidence": 0.53,
+          "probabilities": {
+            "emergency": 0.05,
+            "ease": 0.03,
+            "coast": 0.1,
+            "brake": 0.61,
+            "accelerate": 0.09,
+            "slow": 0.12
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.31
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "oncoming",
+          "confidence": 0.52,
+          "probabilities": {
+            "oncoming": 0.6,
+            "adjacent_traffic": 0.03,
+            "clear": 0,
+            "speed_limit": 0,
+            "pedestrian": 0,
+            "slower_traffic": 0.37
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5601,
+        "output_tokens": 248
+      },
+      "latency_ms": 940,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 12,
+          "speed_limit_mps": 13.89,
+          "speed_kmh": 43.2,
+          "lane": "right",
+          "target_lane": "right",
+          "changing_lane": false,
+          "lateral_position_m": 1.8,
+          "occupied_lanes": [
+            "right"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 28.14,
+          "desired_following_gap_m": 18.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 85.6,
+            "front_speed_mps": -10,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 3.89,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 90,
+              "offset_right_m": -3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 10,
+              "forward_velocity_mps": -10,
+              "relative_forward_speed_mps": -22,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 85.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 90,
+                "offset_right_m": -3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 10,
+                "forward_velocity_mps": -10,
+                "relative_forward_speed_mps": -22,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 85.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 15.6,
+            "front_speed_mps": 3.5,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 1.84,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 20,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 3.5,
+              "forward_velocity_mps": 3.5,
+              "relative_forward_speed_mps": -8.5,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 15.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 20,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 3.5,
+                "forward_velocity_mps": 3.5,
+                "relative_forward_speed_mps": -8.5,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 15.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 50,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 50,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 61.74,
+            "normal": 28.14,
+            "emergency": 21.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 22,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 78.01,
+              "time_headway_s": 7.13,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": 8.5,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 12.67,
+              "time_headway_s": 1.3,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": 36.82
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 51.84,
+              "travel_from_snapshot_m": 14.7
+            },
+            "ease": {
+              "speed_after_kmh": 46.08,
+              "travel_from_snapshot_m": 14.06
+            },
+            "coast": {
+              "speed_after_kmh": 43.2,
+              "travel_from_snapshot_m": 13.74
+            },
+            "slow": {
+              "speed_after_kmh": 38.88,
+              "travel_from_snapshot_m": 13.26
+            },
+            "brake": {
+              "speed_after_kmh": 28.8,
+              "travel_from_snapshot_m": 12.14
+            },
+            "emergency": {
+              "speed_after_kmh": 17.28,
+              "travel_from_snapshot_m": 10.86
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "keeping_right",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 12.96,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 85.6,
+              "speed_kmh": 36,
+              "closing_speed_mps": 22,
+              "time_to_contact_at_current_speed_s": 3.89,
+              "time_to_contact_at_limit_s": 3.58
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 12.6,
+            "target_offset_forward_m": 20,
+            "relative_gain_still_needed_m": 31.95,
+            "legal_speed_advantage_mps": 10.39,
+            "ego_rear_ahead_of_target_front_m": -24.4,
+            "nominal_return_rear_clearance_m": 7.55,
+            "estimated_completion_at_current_speed_s": 7.71,
+            "estimated_completion_at_limit_s": 7.66,
+            "estimated_forward_distance_at_limit_m": 106.32
+          },
+          "abort": null,
+          "right_merge": {
+            "front_gap_m": 15.6,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -12,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "Pass a slow car with a large observed window and return space",
+      "expected_lane": "left",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "brake",
+      "matches_expectation": false,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.67,
+          "probabilities": {
+            "right": 0.83,
+            "left": 0.17
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.19,
+          "probabilities": {
+            "emergency": 0.05,
+            "coast": 0.24,
+            "ease": 0.08,
+            "slow": 0.08,
+            "accelerate": 0.33,
+            "brake": 0.22
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "brake",
+          "confidence": 0.54,
+          "probabilities": {
+            "emergency": 0.13,
+            "ease": 0.03,
+            "coast": 0.06,
+            "brake": 0.62,
+            "accelerate": 0.09,
+            "slow": 0.07
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.46
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "slower_traffic",
+          "confidence": 0.79,
+          "probabilities": {
+            "oncoming": 0.09,
+            "pedestrian": 0,
+            "clear": 0,
+            "speed_limit": 0,
+            "adjacent_traffic": 0.08,
+            "slower_traffic": 0.83
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5587,
+        "output_tokens": 251
+      },
+      "latency_ms": 841,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 12,
+          "speed_limit_mps": 13.89,
+          "speed_kmh": 43.2,
+          "lane": "right",
+          "target_lane": "right",
+          "changing_lane": false,
+          "lateral_position_m": 1.8,
+          "occupied_lanes": [
+            "right"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 28.14,
+          "desired_following_gap_m": 18.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 325.6,
+            "front_speed_mps": -8,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 16.28,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 330,
+              "offset_right_m": -3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 8,
+              "forward_velocity_mps": -8,
+              "relative_forward_speed_mps": -20,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 325.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 330,
+                "offset_right_m": -3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": -8,
+                "relative_forward_speed_mps": -20,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 325.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 11.6,
+            "front_speed_mps": 3,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 1.29,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 16,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 3,
+              "forward_velocity_mps": 3,
+              "relative_forward_speed_mps": -9,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 11.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 16,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 3,
+                "forward_velocity_mps": 3,
+                "relative_forward_speed_mps": -9,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 11.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 50,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 50,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 61.74,
+            "normal": 28.14,
+            "emergency": 21.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 20,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 318.7,
+              "time_headway_s": 27.13,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": 9,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 8.5,
+              "time_headway_s": 0.97,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": 40.3
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 51.84,
+              "travel_from_snapshot_m": 14.7
+            },
+            "ease": {
+              "speed_after_kmh": 46.08,
+              "travel_from_snapshot_m": 14.06
+            },
+            "coast": {
+              "speed_after_kmh": 43.2,
+              "travel_from_snapshot_m": 13.74
+            },
+            "slow": {
+              "speed_after_kmh": 38.88,
+              "travel_from_snapshot_m": 13.26
+            },
+            "brake": {
+              "speed_after_kmh": 28.8,
+              "travel_from_snapshot_m": 12.14
+            },
+            "emergency": {
+              "speed_after_kmh": 17.28,
+              "travel_from_snapshot_m": 10.86
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "keeping_right",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 12.96,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 325.6,
+              "speed_kmh": 28.8,
+              "closing_speed_mps": 20,
+              "time_to_contact_at_current_speed_s": 16.28,
+              "time_to_contact_at_limit_s": 14.88
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 10.8,
+            "target_offset_forward_m": 16,
+            "relative_gain_still_needed_m": 27.3,
+            "legal_speed_advantage_mps": 10.89,
+            "ego_rear_ahead_of_target_front_m": -20.4,
+            "nominal_return_rear_clearance_m": 6.9,
+            "estimated_completion_at_current_speed_s": 6.98,
+            "estimated_completion_at_limit_s": 7.09,
+            "estimated_forward_distance_at_limit_m": 98.43
+          },
+          "abort": null,
+          "right_merge": {
+            "front_gap_m": 11.6,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -12,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "No detected oncoming car is not infinite visibility for a very slow pass",
+      "expected_lane": "right",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "coast",
+      "matches_expectation": true,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.99,
+          "probabilities": {
+            "left": 0,
+            "right": 1
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "coast",
+          "confidence": 0.29,
+          "probabilities": {
+            "slow": 0.07,
+            "ease": 0.19,
+            "coast": 0.4,
+            "accelerate": 0.31,
+            "brake": 0.02,
+            "emergency": 0.01
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "coast",
+          "confidence": 0.24,
+          "probabilities": {
+            "slow": 0.03,
+            "ease": 0.27,
+            "coast": 0.36,
+            "accelerate": 0.34,
+            "brake": 0,
+            "emergency": 0
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.05
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "slower_traffic",
+          "confidence": 0.26,
+          "probabilities": {
+            "clear": 0.2,
+            "speed_limit": 0.29,
+            "adjacent_traffic": 0.12,
+            "oncoming": 0.01,
+            "slower_traffic": 0.38,
+            "pedestrian": 0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5175,
+        "output_tokens": 250
+      },
+      "latency_ms": 352,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 7,
+          "speed_limit_mps": 8.33,
+          "speed_kmh": 25.2,
+          "lane": "right",
+          "target_lane": "right",
+          "changing_lane": false,
+          "lateral_position_m": 1.8,
+          "occupied_lanes": [
+            "right"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 12.92,
+          "desired_following_gap_m": 12.1,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 360,
+            "front_speed_mps": 0,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": null,
+            "front_object": null,
+            "rear_object": null,
+            "oncoming_objects": []
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 20.6,
+            "front_speed_mps": 8,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": null,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 25,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 8,
+              "forward_velocity_mps": 8,
+              "relative_forward_speed_mps": 1,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 20.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 25,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": 8,
+                "relative_forward_speed_mps": 1,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 20.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 30,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 30,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 24.35,
+            "normal": 12.92,
+            "emergency": 10.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": false,
+              "closing_speed_mps": 0,
+              "front_is_oncoming": false,
+              "gap_after_response_m": null,
+              "time_headway_s": null,
+              "nominal_following_gap_m": 12.1,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": -1,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 20.95,
+              "time_headway_s": 2.94,
+              "nominal_following_gap_m": 12.1,
+              "gentle_relative_stopping_gap_m": 3
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 33.84,
+              "travel_from_snapshot_m": 8.98
+            },
+            "ease": {
+              "speed_after_kmh": 28.08,
+              "travel_from_snapshot_m": 8.34
+            },
+            "coast": {
+              "speed_after_kmh": 25.2,
+              "travel_from_snapshot_m": 8.02
+            },
+            "slow": {
+              "speed_after_kmh": 20.88,
+              "travel_from_snapshot_m": 7.54
+            },
+            "brake": {
+              "speed_after_kmh": 10.8,
+              "travel_from_snapshot_m": 6.42
+            },
+            "emergency": {
+              "speed_after_kmh": 0,
+              "travel_from_snapshot_m": 5.14
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "keeping_right",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 16.2,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 28.8,
+            "target_offset_forward_m": 25,
+            "relative_gain_still_needed_m": 42.8,
+            "legal_speed_advantage_mps": 0.33,
+            "ego_rear_ahead_of_target_front_m": -29.4,
+            "nominal_return_rear_clearance_m": 13.4,
+            "estimated_completion_at_current_speed_s": null,
+            "estimated_completion_at_limit_s": 132.79,
+            "estimated_forward_distance_at_limit_m": 1106.62
+          },
+          "abort": null,
+          "right_merge": {
+            "front_gap_m": 20.6,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -7,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "Remain left briefly while the passed car still overlaps",
+      "expected_lane": "left",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "accelerate",
+      "matches_expectation": false,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.12,
+          "probabilities": {
+            "right": 0.56,
+            "left": 0.44
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.43,
+          "probabilities": {
+            "ease": 0.14,
+            "accelerate": 0.52,
+            "brake": 0.03,
+            "slow": 0.02,
+            "coast": 0.28,
+            "emergency": 0.01
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.18,
+          "probabilities": {
+            "ease": 0.13,
+            "accelerate": 0.32,
+            "brake": 0.11,
+            "slow": 0.17,
+            "coast": 0.26,
+            "emergency": 0.01
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.45
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "adjacent_traffic",
+          "confidence": 0.79,
+          "probabilities": {
+            "clear": 0,
+            "slower_traffic": 0,
+            "oncoming": 0.17,
+            "speed_limit": 0,
+            "pedestrian": 0,
+            "adjacent_traffic": 0.83
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5773,
+        "output_tokens": 252
+      },
+      "latency_ms": 344,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 12,
+          "speed_limit_mps": 13.89,
+          "speed_kmh": 43.2,
+          "lane": "left",
+          "target_lane": "left",
+          "changing_lane": false,
+          "lateral_position_m": -1.8,
+          "occupied_lanes": [
+            "left"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 28.14,
+          "desired_following_gap_m": 18.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 195.6,
+            "front_speed_mps": -8,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 9.78,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 200,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 8,
+              "forward_velocity_mps": -8,
+              "relative_forward_speed_mps": -20,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 195.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 200,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": -8,
+                "relative_forward_speed_mps": -20,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 195.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 360,
+            "front_speed_mps": 0,
+            "rear_gap_m": 0,
+            "rear_speed_mps": 3,
+            "ttc_s": null,
+            "front_object": null,
+            "rear_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": -1,
+              "offset_right_m": 3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 3,
+              "forward_velocity_mps": 3,
+              "relative_forward_speed_mps": -9,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 0,
+              "longitudinal_overlap": true,
+              "relation": "alongside"
+            },
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": true
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 200,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": -8,
+                "relative_forward_speed_mps": -20,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 195.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": -1,
+                "offset_right_m": 3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 3,
+                "forward_velocity_mps": 3,
+                "relative_forward_speed_mps": -9,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 0,
+                "longitudinal_overlap": true,
+                "relation": "alongside"
+              }
+            ]
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 50,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 50,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 61.74,
+            "normal": 28.14,
+            "emergency": 21.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 20,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 188.7,
+              "time_headway_s": 16.3,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": false,
+              "closing_speed_mps": 0,
+              "front_is_oncoming": false,
+              "gap_after_response_m": null,
+              "time_headway_s": null,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 51.84,
+              "travel_from_snapshot_m": 14.7
+            },
+            "ease": {
+              "speed_after_kmh": 46.08,
+              "travel_from_snapshot_m": 14.06
+            },
+            "coast": {
+              "speed_after_kmh": 43.2,
+              "travel_from_snapshot_m": 13.74
+            },
+            "slow": {
+              "speed_after_kmh": 38.88,
+              "travel_from_snapshot_m": 13.26
+            },
+            "brake": {
+              "speed_after_kmh": 28.8,
+              "travel_from_snapshot_m": 12.14
+            },
+            "emergency": {
+              "speed_after_kmh": 17.28,
+              "travel_from_snapshot_m": 10.86
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "in_opposing_lane",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 12.96,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 195.6,
+              "speed_kmh": 28.8,
+              "closing_speed_mps": 20,
+              "time_to_contact_at_current_speed_s": 9.78,
+              "time_to_contact_at_limit_s": 8.94
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 10.8,
+            "target_offset_forward_m": -1,
+            "relative_gain_still_needed_m": 10.3,
+            "legal_speed_advantage_mps": 10.89,
+            "ego_rear_ahead_of_target_front_m": -3.4,
+            "nominal_return_rear_clearance_m": 6.9,
+            "estimated_completion_at_current_speed_s": 3.69,
+            "estimated_completion_at_limit_s": 4.13,
+            "estimated_forward_distance_at_limit_m": 57.3
+          },
+          "abort": {
+            "target_id": "car-1",
+            "assumption": "Firm braking until this car is ahead, then a lateral return; other right-lane vehicles may prevent it.",
+            "estimated_drop_behind_and_return_s": 10.38
+          },
+          "right_merge": {
+            "front_gap_m": 360,
+            "rear_gap_m": 0,
+            "rear_closing_speed_mps": -9,
+            "observed_bodies_alongside": [
+              "car-1"
+            ],
+            "short_zone_occupied": true
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "Return right when fully clear of the passed car",
+      "expected_lane": "right",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "accelerate",
+      "matches_expectation": true,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.51,
+          "probabilities": {
+            "right": 0.75,
+            "left": 0.25
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.26,
+          "probabilities": {
+            "slow": 0.04,
+            "ease": 0.17,
+            "emergency": 0.02,
+            "brake": 0.07,
+            "accelerate": 0.38,
+            "coast": 0.32
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.12,
+          "probabilities": {
+            "slow": 0.15,
+            "ease": 0.16,
+            "emergency": 0.06,
+            "brake": 0.13,
+            "accelerate": 0.27,
+            "coast": 0.23
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.46
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "oncoming",
+          "confidence": 0.81,
+          "probabilities": {
+            "clear": 0,
+            "oncoming": 0.84,
+            "pedestrian": 0,
+            "adjacent_traffic": 0.16,
+            "slower_traffic": 0,
+            "speed_limit": 0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5787,
+        "output_tokens": 250
+      },
+      "latency_ms": 433,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 12,
+          "speed_limit_mps": 13.89,
+          "speed_kmh": 43.2,
+          "lane": "left",
+          "target_lane": "left",
+          "changing_lane": false,
+          "lateral_position_m": -1.8,
+          "occupied_lanes": [
+            "left"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 28.14,
+          "desired_following_gap_m": 18.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 115.6,
+            "front_speed_mps": -10,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 5.25,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 120,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 10,
+              "forward_velocity_mps": -10,
+              "relative_forward_speed_mps": -22,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 115.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 120,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 10,
+                "forward_velocity_mps": -10,
+                "relative_forward_speed_mps": -22,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 115.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 360,
+            "front_speed_mps": 0,
+            "rear_gap_m": 17.6,
+            "rear_speed_mps": 3,
+            "ttc_s": null,
+            "front_object": null,
+            "rear_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": -22,
+              "offset_right_m": 3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 3,
+              "forward_velocity_mps": 3,
+              "relative_forward_speed_mps": -9,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 17.6,
+              "longitudinal_overlap": false,
+              "relation": "behind"
+            },
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 120,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 10,
+                "forward_velocity_mps": -10,
+                "relative_forward_speed_mps": -22,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 115.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": -22,
+                "offset_right_m": 3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 3,
+                "forward_velocity_mps": 3,
+                "relative_forward_speed_mps": -9,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 17.6,
+                "longitudinal_overlap": false,
+                "relation": "behind"
+              }
+            ]
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 50,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 50,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 61.74,
+            "normal": 28.14,
+            "emergency": 21.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 22,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 108.01,
+              "time_headway_s": 9.63,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": false,
+              "closing_speed_mps": 0,
+              "front_is_oncoming": false,
+              "gap_after_response_m": null,
+              "time_headway_s": null,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 51.84,
+              "travel_from_snapshot_m": 14.7
+            },
+            "ease": {
+              "speed_after_kmh": 46.08,
+              "travel_from_snapshot_m": 14.06
+            },
+            "coast": {
+              "speed_after_kmh": 43.2,
+              "travel_from_snapshot_m": 13.74
+            },
+            "slow": {
+              "speed_after_kmh": 38.88,
+              "travel_from_snapshot_m": 13.26
+            },
+            "brake": {
+              "speed_after_kmh": 28.8,
+              "travel_from_snapshot_m": 12.14
+            },
+            "emergency": {
+              "speed_after_kmh": 17.28,
+              "travel_from_snapshot_m": 10.86
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "in_opposing_lane",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 12.96,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 115.6,
+              "speed_kmh": 36,
+              "closing_speed_mps": 22,
+              "time_to_contact_at_current_speed_s": 5.25,
+              "time_to_contact_at_limit_s": 4.84
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 10.8,
+            "target_offset_forward_m": -22,
+            "relative_gain_still_needed_m": 0,
+            "legal_speed_advantage_mps": 10.89,
+            "ego_rear_ahead_of_target_front_m": 17.6,
+            "nominal_return_rear_clearance_m": 6.9,
+            "estimated_completion_at_current_speed_s": 2.55,
+            "estimated_completion_at_limit_s": 2.55,
+            "estimated_forward_distance_at_limit_m": 35.42
+          },
+          "abort": {
+            "target_id": "car-1",
+            "assumption": "Firm braking until this car is ahead, then a lateral return; other right-lane vehicles may prevent it.",
+            "estimated_drop_behind_and_return_s": 17.38
+          },
+          "right_merge": {
+            "front_gap_m": 360,
+            "rear_gap_m": 17.6,
+            "rear_closing_speed_mps": -9,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "Abort an unfinishable pass: brake while alongside instead of cutting right",
+      "expected_lane": "left",
+      "expected_actions": [
+        "brake",
+        "emergency"
+      ],
+      "observed_lane": "right",
+      "observed_action": "slow",
+      "matches_expectation": false,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.56,
+          "probabilities": {
+            "right": 0.78,
+            "left": 0.22
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.19,
+          "probabilities": {
+            "brake": 0.11,
+            "emergency": 0.02,
+            "ease": 0.19,
+            "slow": 0.09,
+            "coast": 0.27,
+            "accelerate": 0.32
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "slow",
+          "confidence": 0.14,
+          "probabilities": {
+            "brake": 0.21,
+            "emergency": 0.04,
+            "ease": 0.1,
+            "slow": 0.28,
+            "coast": 0.23,
+            "accelerate": 0.14
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.53
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "adjacent_traffic",
+          "confidence": 0.71,
+          "probabilities": {
+            "clear": 0,
+            "oncoming": 0.23,
+            "slower_traffic": 0,
+            "speed_limit": 0.01,
+            "adjacent_traffic": 0.76,
+            "pedestrian": 0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5780,
+        "output_tokens": 250
+      },
+      "latency_ms": 532,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 7,
+          "speed_limit_mps": 8.33,
+          "speed_kmh": 25.2,
+          "lane": "left",
+          "target_lane": "left",
+          "changing_lane": false,
+          "lateral_position_m": -1.8,
+          "occupied_lanes": [
+            "left"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 12.92,
+          "desired_following_gap_m": 12.1,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 125.6,
+            "front_speed_mps": -10,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 7.39,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 130,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 10,
+              "forward_velocity_mps": -10,
+              "relative_forward_speed_mps": -17,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 125.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 130,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 10,
+                "forward_velocity_mps": -10,
+                "relative_forward_speed_mps": -17,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 125.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 0,
+            "front_speed_mps": 7.5,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": null,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 0,
+              "offset_right_m": 3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 7.5,
+              "forward_velocity_mps": 7.5,
+              "relative_forward_speed_mps": 0.5,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 0,
+              "longitudinal_overlap": true,
+              "relation": "alongside"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": true
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 130,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 10,
+                "forward_velocity_mps": -10,
+                "relative_forward_speed_mps": -17,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 125.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 0,
+                "offset_right_m": 3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 7.5,
+                "forward_velocity_mps": 7.5,
+                "relative_forward_speed_mps": 0.5,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 0,
+                "longitudinal_overlap": true,
+                "relation": "alongside"
+              }
+            ]
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 30,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 30,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 24.35,
+            "normal": 12.92,
+            "emergency": 10.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 17,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 119.73,
+              "time_headway_s": 17.94,
+              "nominal_following_gap_m": 12.1,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": -0.5,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 0.17,
+              "time_headway_s": 0,
+              "nominal_following_gap_m": 12.1,
+              "gentle_relative_stopping_gap_m": 3
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 33.84,
+              "travel_from_snapshot_m": 8.98
+            },
+            "ease": {
+              "speed_after_kmh": 28.08,
+              "travel_from_snapshot_m": 8.34
+            },
+            "coast": {
+              "speed_after_kmh": 25.2,
+              "travel_from_snapshot_m": 8.02
+            },
+            "slow": {
+              "speed_after_kmh": 20.88,
+              "travel_from_snapshot_m": 7.54
+            },
+            "brake": {
+              "speed_after_kmh": 10.8,
+              "travel_from_snapshot_m": 6.42
+            },
+            "emergency": {
+              "speed_after_kmh": 0,
+              "travel_from_snapshot_m": 5.14
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "in_opposing_lane",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 16.2,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 125.6,
+              "speed_kmh": 36,
+              "closing_speed_mps": 17,
+              "time_to_contact_at_current_speed_s": 7.39,
+              "time_to_contact_at_limit_s": 6.85
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 27,
+            "target_offset_forward_m": 0,
+            "relative_gain_still_needed_m": 17.15,
+            "legal_speed_advantage_mps": 0.83,
+            "ego_rear_ahead_of_target_front_m": -4.4,
+            "nominal_return_rear_clearance_m": 12.75,
+            "estimated_completion_at_current_speed_s": null,
+            "estimated_completion_at_limit_s": 23.57,
+            "estimated_forward_distance_at_limit_m": 196.45
+          },
+          "abort": {
+            "target_id": "car-1",
+            "assumption": "Firm braking until this car is ahead, then a lateral return; other right-lane vehicles may prevent it.",
+            "estimated_drop_behind_and_return_s": 3.36
+          },
+          "right_merge": {
+            "front_gap_m": 0,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -7,
+            "observed_bodies_alongside": [
+              "car-1"
+            ],
+            "short_zone_occupied": true
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "Solid centre line at a crossing prohibits starting a pass",
+      "expected_lane": "right",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "brake",
+      "matches_expectation": true,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 1,
+          "probabilities": {
+            "right": 1,
+            "left": 0
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "brake",
+          "confidence": 0.23,
+          "probabilities": {
+            "accelerate": 0.08,
+            "brake": 0.36,
+            "ease": 0.04,
+            "slow": 0.15,
+            "coast": 0.3,
+            "emergency": 0.07
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "brake",
+          "confidence": 0.52,
+          "probabilities": {
+            "accelerate": 0.06,
+            "brake": 0.6,
+            "ease": 0.03,
+            "slow": 0.1,
+            "coast": 0.1,
+            "emergency": 0.11
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.53
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "slower_traffic",
+          "confidence": 0.89,
+          "probabilities": {
+            "pedestrian": 0,
+            "slower_traffic": 0.91,
+            "adjacent_traffic": 0.06,
+            "speed_limit": 0.01,
+            "oncoming": 0.02,
+            "clear": 0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5386,
+        "output_tokens": 250
+      },
+      "latency_ms": 334,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 12,
+          "speed_limit_mps": 13.89,
+          "speed_kmh": 43.2,
+          "lane": "right",
+          "target_lane": "right",
+          "changing_lane": false,
+          "lateral_position_m": 1.8,
+          "occupied_lanes": [
+            "right"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 28.14,
+          "desired_following_gap_m": 18.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 360,
+            "front_speed_mps": 0,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": null,
+            "front_object": null,
+            "rear_object": null,
+            "oncoming_objects": []
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 11.6,
+            "front_speed_mps": 3,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 1.29,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 16,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 3,
+              "forward_velocity_mps": 3,
+              "relative_forward_speed_mps": -9,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 11.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 16,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 3,
+                "forward_velocity_mps": 3,
+                "relative_forward_speed_mps": -9,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 11.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [
+            {
+              "id": "crosswalk-1",
+              "distance_m": 30,
+              "seen_by": [
+                "front"
+              ]
+            }
+          ],
+          "lane_markings": {
+            "current_center_line": "solid",
+            "observed_range_m": 200,
+            "no_passing_segments": [
+              {
+                "start_distance_m": -5,
+                "end_distance_m": 45,
+                "seen_by": [
+                  "front"
+                ]
+              }
+            ]
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 50,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 50,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 61.74,
+            "normal": 28.14,
+            "emergency": 21.74
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": false,
+              "closing_speed_mps": 0,
+              "front_is_oncoming": false,
+              "gap_after_response_m": null,
+              "time_headway_s": null,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": 9,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 8.5,
+              "time_headway_s": 0.97,
+              "nominal_following_gap_m": 18.6,
+              "gentle_relative_stopping_gap_m": 40.3
+            }
+          },
+          "crossings": [
+            {
+              "id": "crosswalk-1",
+              "front_bumper_to_stop_line_m": 21.8,
+              "gap_after_response_m": 17.66,
+              "coasting_arrival_s": 1.82,
+              "observed_people_on_road": 0,
+              "observed_people_waiting": 0,
+              "observed_people_cleared": 0,
+              "estimated_clearance_s": 0
+            }
+          ],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 51.84,
+              "travel_from_snapshot_m": 14.7
+            },
+            "ease": {
+              "speed_after_kmh": 46.08,
+              "travel_from_snapshot_m": 14.06
+            },
+            "coast": {
+              "speed_after_kmh": 43.2,
+              "travel_from_snapshot_m": 13.74
+            },
+            "slow": {
+              "speed_after_kmh": 38.88,
+              "travel_from_snapshot_m": 13.26
+            },
+            "brake": {
+              "speed_after_kmh": 28.8,
+              "travel_from_snapshot_m": 12.14
+            },
+            "emergency": {
+              "speed_after_kmh": 17.28,
+              "travel_from_snapshot_m": 10.86
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "keeping_right",
+          "current_center_line": "solid",
+          "observed_no_passing_segments": [
+            {
+              "start_distance_m": -5,
+              "end_distance_m": 45,
+              "seen_by": [
+                "front"
+              ]
+            }
+          ],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 12.96,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 10.8,
+            "target_offset_forward_m": 16,
+            "relative_gain_still_needed_m": 27.3,
+            "legal_speed_advantage_mps": 10.89,
+            "ego_rear_ahead_of_target_front_m": -20.4,
+            "nominal_return_rear_clearance_m": 6.9,
+            "estimated_completion_at_current_speed_s": 6.98,
+            "estimated_completion_at_limit_s": 7.09,
+            "estimated_forward_distance_at_limit_m": 98.43
+          },
+          "abort": null,
+          "right_merge": {
+            "front_gap_m": 11.6,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -12,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    },
+    {
+      "case": "After dropping behind, return right into the opened gap",
+      "expected_lane": "right",
+      "expected_actions": null,
+      "observed_lane": "right",
+      "observed_action": "accelerate",
+      "matches_expectation": true,
+      "model": "jev-1.13.0",
+      "answers": {
+        "lane": {
+          "type": "choice",
+          "choice": "right",
+          "confidence": 0.9,
+          "probabilities": {
+            "left": 0.05,
+            "right": 0.95
+          }
+        },
+        "left_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.25,
+          "probabilities": {
+            "accelerate": 0.37,
+            "slow": 0.07,
+            "coast": 0.19,
+            "brake": 0.07,
+            "emergency": 0.02,
+            "ease": 0.28
+          }
+        },
+        "right_speed": {
+          "type": "choice",
+          "choice": "accelerate",
+          "confidence": 0.21,
+          "probabilities": {
+            "accelerate": 0.34,
+            "slow": 0.09,
+            "coast": 0.18,
+            "brake": 0.09,
+            "emergency": 0.02,
+            "ease": 0.28
+          }
+        },
+        "collision_risk": {
+          "type": "noul",
+          "noul": 0.27
+        },
+        "attention": {
+          "type": "choice",
+          "choice": "oncoming",
+          "confidence": 0.92,
+          "probabilities": {
+            "speed_limit": 0,
+            "oncoming": 0.93,
+            "pedestrian": 0,
+            "adjacent_traffic": 0.05,
+            "clear": 0,
+            "slower_traffic": 0.01
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 5907,
+        "output_tokens": 250
+      },
+      "latency_ms": 482,
+      "tick": 0,
+      "state": {
+        "tick": 0,
+        "environment": "Simulated TWO-WAY road. Drive on the RIGHT. The LEFT lane is for ONCOMING traffic; borrow it briefly only for an overtake with room to return right. Broken centre line permits consideration; solid centre line prohibits starting a pass. Return right after passing, and reassess or abandon a pass if conditions change. Four synthetic cameras supply detections, not images. Positive forward means ahead, negative behind; positive right means to your right. Duplicate IDs across cameras are the same object. Radar front/rear speeds and object forward_velocity_mps are SIGNED: positive along our travel, negative oncoming. speed_mps on objects is a magnitude. Relative forward speed = signed object velocity minus ego speed, so head-on closing speed is the SUM of magnitudes. Stopping in the opposing lane does not remove a head-on threat. Pedestrian lateral_speed_mps is positive walking right, negative walking left. Negative forward offset can still overlap the ego body. A remembered 30/50 km/h sign applies when passed, until the next sign is passed. Upcoming signs are observations, not active limits. Initial road rule is 50 km/h. Yield to pedestrians crossing the whole marked crosswalk; do not pass a yielding vehicle into that crossing. Mechanical maximum speed is not the legal speed limit.",
+        "ego": {
+          "speed_mps": 2,
+          "speed_limit_mps": 8.33,
+          "speed_kmh": 7.2,
+          "lane": "left",
+          "target_lane": "left",
+          "changing_lane": false,
+          "lateral_position_m": -1.8,
+          "occupied_lanes": [
+            "left"
+          ],
+          "remaining_lane_change_seconds": 0,
+          "length_m": 4.4,
+          "width_m": 1.85,
+          "lane_change_seconds": 1.4,
+          "normal_stopping_distance_m": 2.69,
+          "desired_following_gap_m": 5.6,
+          "current_control": "coast"
+        },
+        "radar": {
+          "left": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 75.6,
+            "front_speed_mps": -8,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": 7.56,
+            "front_object": {
+              "id": "car-2",
+              "kind": "car",
+              "lane": "left",
+              "travel_direction": "oncoming",
+              "offset_forward_m": 80,
+              "offset_right_m": 0,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 8,
+              "forward_velocity_mps": -8,
+              "relative_forward_speed_mps": -10,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 75.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": [
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 80,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": -8,
+                "relative_forward_speed_mps": -10,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 75.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "right": {
+            "range_m": 360,
+            "rear_range_m": 65,
+            "front_gap_m": 9.6,
+            "front_speed_mps": 7.5,
+            "rear_gap_m": 65,
+            "rear_speed_mps": 0,
+            "ttc_s": null,
+            "front_object": {
+              "id": "car-1",
+              "kind": "car",
+              "lane": "right",
+              "travel_direction": "same_direction",
+              "offset_forward_m": 14,
+              "offset_right_m": 3.6,
+              "length_m": 4.4,
+              "width_m": 1.85,
+              "speed_mps": 7.5,
+              "forward_velocity_mps": 7.5,
+              "relative_forward_speed_mps": 5.5,
+              "lateral_speed_mps": 0,
+              "longitudinal_gap_m": 9.6,
+              "longitudinal_overlap": false,
+              "relation": "ahead"
+            },
+            "rear_object": null,
+            "oncoming_objects": []
+          }
+        },
+        "blind_spots": {
+          "left": false,
+          "right": false
+        },
+        "blind_spot_coverage": "These flags report object centres within 7 m ahead or behind in each ROAD LANE. They are not a judgement that changing lane is safe. Inspect camera body overlap and rear approach as well.",
+        "cameras": {
+          "front": {
+            "range_m": 220,
+            "horizontal_fov_deg": 100,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 14,
+                "offset_right_m": 3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 7.5,
+                "forward_velocity_mps": 7.5,
+                "relative_forward_speed_mps": 5.5,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 9.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              },
+              {
+                "id": "car-2",
+                "kind": "car",
+                "lane": "left",
+                "travel_direction": "oncoming",
+                "offset_forward_m": 80,
+                "offset_right_m": 0,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 8,
+                "forward_velocity_mps": -8,
+                "relative_forward_speed_mps": -10,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 75.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "left": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": []
+          },
+          "right": {
+            "range_m": 35,
+            "horizontal_fov_deg": 150,
+            "detections": [
+              {
+                "id": "car-1",
+                "kind": "car",
+                "lane": "right",
+                "travel_direction": "same_direction",
+                "offset_forward_m": 14,
+                "offset_right_m": 3.6,
+                "length_m": 4.4,
+                "width_m": 1.85,
+                "speed_mps": 7.5,
+                "forward_velocity_mps": 7.5,
+                "relative_forward_speed_mps": 5.5,
+                "lateral_speed_mps": 0,
+                "longitudinal_gap_m": 9.6,
+                "longitudinal_overlap": false,
+                "relation": "ahead"
+              }
+            ]
+          },
+          "rear": {
+            "range_m": 65,
+            "horizontal_fov_deg": 110,
+            "detections": []
+          }
+        },
+        "road_observations": {
+          "visible_signs": [],
+          "visible_crosswalks": [],
+          "lane_markings": {
+            "current_center_line": "broken",
+            "observed_range_m": 200,
+            "no_passing_segments": []
+          }
+        },
+        "road_rules": {
+          "normal_lane": "right",
+          "opposing_lane": "left",
+          "active_limit_kmh": 30,
+          "active_sign_id": "sign-1",
+          "active_since_s": 0,
+          "source": "observed_sign_passed",
+          "upcoming_signs": [],
+          "sign_history": [
+            {
+              "id": "sign-1",
+              "limit_kmh": 30,
+              "distance_m": -1,
+              "first_seen_at_s": 0,
+              "passed_at_s": 0,
+              "visible_now": false
+            }
+          ]
+        },
+        "control_timing": {
+          "decision_interval_ms": 800,
+          "recent_round_trip_ms": 345,
+          "source": "scenario_assumption"
+        },
+        "motion": {
+          "basis": "Idealized kinematics, not a selected action or safety guarantee. Action effects hold the last command during estimated RTT, then the candidate for 0.8 s. Stop distances allow RTT plus one decision period, assuming no existing braking. Pedestrian clearance extrapolates only visible people at constant lateral speed.",
+          "timing_source": "scenario_assumption",
+          "response_estimate_ms": 345,
+          "decision_interval_ms": 800,
+          "reaction_horizon_s": 1.15,
+          "stop_distance_m": {
+            "gentle": 3.62,
+            "normal": 2.69,
+            "emergency": 2.51
+          },
+          "desired_stop_line_clearance_m": 2,
+          "lane_approach": {
+            "left": {
+              "front_return": true,
+              "closing_speed_mps": 10,
+              "front_is_oncoming": true,
+              "gap_after_response_m": 72.15,
+              "time_headway_s": 37.8,
+              "nominal_following_gap_m": 5.6,
+              "gentle_relative_stopping_gap_m": null
+            },
+            "right": {
+              "front_return": true,
+              "closing_speed_mps": -5.5,
+              "front_is_oncoming": false,
+              "gap_after_response_m": 11.5,
+              "time_headway_s": 4.8,
+              "nominal_following_gap_m": 5.6,
+              "gentle_relative_stopping_gap_m": 3
+            }
+          },
+          "crossings": [],
+          "action_effects": {
+            "accelerate": {
+              "speed_after_kmh": 15.84,
+              "travel_from_snapshot_m": 3.25
+            },
+            "ease": {
+              "speed_after_kmh": 10.08,
+              "travel_from_snapshot_m": 2.61
+            },
+            "coast": {
+              "speed_after_kmh": 7.2,
+              "travel_from_snapshot_m": 2.29
+            },
+            "slow": {
+              "speed_after_kmh": 2.88,
+              "travel_from_snapshot_m": 1.81
+            },
+            "brake": {
+              "speed_after_kmh": 0,
+              "travel_from_snapshot_m": 1.09
+            },
+            "emergency": {
+              "speed_after_kmh": 0,
+              "travel_from_snapshot_m": 0.91
+            }
+          }
+        },
+        "passing": {
+          "road": "RIGHT is the normal lane. LEFT carries oncoming traffic and may be borrowed temporarily only to pass and return safely.",
+          "phase": "in_opposing_lane",
+          "current_center_line": "broken",
+          "observed_no_passing_segments": [],
+          "forward_marking_visibility_m": 200,
+          "oncoming_radar_range_m": 360,
+          "earliest_unseen_oncoming_arrival_at_limit_s": 16.2,
+          "unseen_vehicle_assumption": "A vehicle immediately beyond radar range could approach at 50 km/h; absence of a return is not unlimited clear road.",
+          "oncoming": [
+            {
+              "id": "car-2",
+              "lane": "left",
+              "gap_m": 75.6,
+              "speed_kmh": 28.8,
+              "closing_speed_mps": 10,
+              "time_to_contact_at_current_speed_s": 7.56,
+              "time_to_contact_at_limit_s": 4.63
+            }
+          ],
+          "pass": {
+            "target_id": "car-1",
+            "target_speed_kmh": 27,
+            "target_offset_forward_m": 14,
+            "relative_gain_still_needed_m": 31.15,
+            "legal_speed_advantage_mps": 0.83,
+            "ego_rear_ahead_of_target_front_m": -18.4,
+            "nominal_return_rear_clearance_m": 12.75,
+            "estimated_completion_at_current_speed_s": null,
+            "estimated_completion_at_limit_s": 42.04,
+            "estimated_forward_distance_at_limit_m": 350.34
+          },
+          "abort": {
+            "target_id": "car-1",
+            "assumption": "Firm braking until this car is ahead, then a lateral return; other right-lane vehicles may prevent it.",
+            "estimated_drop_behind_and_return_s": 1.74
+          },
+          "right_merge": {
+            "front_gap_m": 9.6,
+            "rear_gap_m": 65,
+            "rear_closing_speed_mps": -2,
+            "observed_bodies_alongside": [],
+            "short_zone_occupied": false
+          },
+          "estimate_basis": "Pass timing assumes constant target speed, acceleration at +3 up to the legal limit, and adds full lateral transitions plus response margin. Estimates are not permissions or a selected action. Reassess every snapshot; do not count on speeding, an unseen gap, or an oncoming car yielding."
+        }
+      }
+    }
+  ]
+}

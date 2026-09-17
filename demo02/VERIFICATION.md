@@ -2,7 +2,36 @@
 
 The demo was built and run through the existing Podman-backed `docker compose` runtime, bound to `127.0.0.1:3002`. No packages were installed on macOS and no host `node_modules` directory was created. The parent `.env` was loaded by Compose at runtime; its value was not printed or copied into source or the image.
 
-## Final build
+## Traffic randomization update
+
+Shuffle previously added only 8–35 m of jitter around fixed car slots. It now samples substantially different positions and irregular gaps in a dedicated traffic random stream: first right-lane car 35–90 m, later right-lane cars spread across the route, first oncoming car 140–440 m, and independently varied oncoming spacing. Existing lane directions, car counts and speed ranges remain. The control is labelled **Randomize traffic** and always chooses a different seed; Reset reproduces the selected setup.
+
+**71 container tests passed**, including material position/gap variation across 100 seeds and nonoverlapping starts across 300 combinations of seed, duration and density. Example default right-lane starting positions: seed 42 = 56/227/450 m; seed 43 = 68/215/532 m; seed 44 = 79/345/447 m. Oncoming positions also differ. These are local generation tests; no extra Jev calls were made for this update. Prior driving traces describe their saved layouts and do not validate every new random layout.
+
+## Previous update: numeric speed targets, overtaking memory and curved motion
+
+This section supersedes the historical control descriptions and results below. Current sensor schema: `natural-drive-v4`.
+
+Jev now chooses a numerical target speed (0–50 km/h, or emergency) for each candidate lane. The selected lane chooses the corresponding speed answer. The actuator tracks that fixed target without consulting traffic, signs, pedestrians or gaps. There is no automatic lead-speed adaptation, pedestrian creep, return-to-right decision or lane veto. The existing counted stale-command brake remains the only emergency fallback.
+
+The vehicle follows a forward-distance curve with tangent-aligned heading and steering front wheels. It cannot slide sideways at zero speed. Repeated commands preserve the curve; reversals preserve pose and curvature. Collision geometry and camera mounts follow the actual heading. The original passing target stays in observed memory until the completed return right; a newly nearer vehicle cannot silently replace it. Lost observations are labelled constant-velocity projections using odometry, not hidden world positions.
+
+**69 tests passed in the final built container.** The updated Compose service was deployed on port 3002, and a fresh browser tab rendered the 3D scene, four feeds, numeric target-speed panel and configured API state. Browser module syntax checks and `git diff --check` also passed. No extra browser driving run was started.
+
+ Added regression coverage includes no stationary lateral movement, heading consistent with displacement, steering straightening, continuous retargeting, fixed-target speed matching, original passing target retention, observation-only projections, oriented collisions and rotated camera mounts. This checks application mechanics, not Jev reliability.
+
+### Real API evidence
+
+73 bounded real Jev requests were made for this update. Exact questions, state, answers, latency and usage are saved with each result:
+
+- `artifacts/natural-drive-check.json`: first 25-decision loop plus two crossing snapshots. Jev matched a 12 km/h lead without stopping, but never began the available pass and selected 0 while stopped 37 m before the crossing. These failures are preserved.
+- `artifacts/natural-rechecks.json`: three fixed rechecks after clarifying the choices. Far crossing selected 5, near crossing selected 0. It selected left for the pass but still chose 12 km/h; conditional speed wording was then clarified.
+- `artifacts/natural-drive-revised.json`: 25-decision closed-loop run, 19.47 simulated seconds, plus two crossing snapshots. It matched the 12 km/h lead, selected left/50 after the first oncoming car passed, then selected right after clearing its original target. The actual curved return finished at 19.26 s. No collision or stale fallback. It unnecessarily selected 15 km/h for the next vehicle more than 100 m ahead; the final following-distance wording was changed after this run. Far/near crossing snapshots selected 5/0.
+- `artifacts/approach-loop-check.json`: final wording, two traffic rechecks plus 14 actual closed-loop crossing decisions. Nearby lead selected right/12; returning with a distant next car selected right/50. With a slow pedestrian remaining on the roadway, the ego approached from 10 m before the stop line at 5 km/h, selected 0 near the line, and stopped at **0.23 m bumper clearance**. No collision or stale fallback. This is closer than the requested roughly 2 m clearance: the model does not precisely meet that margin. The full passing loop was not repeated after this final wording-only adjustment.
+
+All closed-loop tests ran the same Simulation/applyDecision code as the browser with real API delay, an 800 ms cadence and the explicit stale fallback. The scenes were synthetic, bounded diagnostics, not a full randomized 90-second driving benchmark. Camera inputs remain structured detections; no image inference is claimed. No user browser runs or results were reset during testing.
+
+## Initial build
 
 - Container health endpoint: `{ "ok": true, "configured": true, "model": "jev-latest" }`.
 - `docker compose exec -T app npm test`: **18 passed, 0 failed**.
@@ -10,7 +39,7 @@ The demo was built and run through the existing Podman-backed `docker compose` r
 - Real browser rendering checked in Follow, Aerial, and Driver modes. Console error/warning inspection returned no entries.
 - Seed changes were verified against the visible world identifier after fixing a pending-input mismatch.
 
-## Final live API run
+## Initial live API run
 
 Observed in the browser and in **Inspect model input & output → Run results**:
 
@@ -108,5 +137,32 @@ Seven bounded real Jev requests were made: six initial synthetic snapshots and o
 Initial results are retained in `artifacts/approach-probes.json`, including the failure. The single recheck is in `artifacts/approach-close-car-recheck.json`. The first five snapshots were not rerun after the final wording refinement. Confidence varied; these observations do not establish reliable driving or collision avoidance.
 
 The running image passed all 48 tests. The updated browser tab was inspected without starting another driving run: it loads the six control options and the new distance/stopping/delay panel, with zero live decisions and zero tokens. Existing tabs and run history were preserved by opening a fresh tab. **A complete driving run with this new control interface has not been verified.**
+
+## True two-way traffic and overtaking — 2026-09-17
+
+The current road uses **right-hand traffic**. Slow right-lane cars travel forward at seeded 10–20 km/h targets; left-lane cars approach in the opposite direction at 25–45 km/h targets, subject to background traffic/crossing rules. The normal 90-second scene contains three of each. Oncoming cars move toward decreasing road position, face the ego vehicle in the renderer, and are not counted as vehicles overtaken.
+
+Camera/radar observations now include direction and signed forward velocity. Front camera range is 220 m; front radar is 360 m, rear radar 65 m. Radar includes identified oncoming tracks. Head-on closing speeds sum the two speed magnitudes. The state reports finite visibility and the explicit assumption of an unseen vehicle immediately beyond range approaching at 50 km/h.
+
+The new passing state contains measured phase, right-hand body overlap/return gaps, estimates for passing and returning, an estimate for braking to fall behind, and numeric timing/visibility margins. These are input calculations, not an eligibility gate or action selector. Solid-line sections around crossings are observed and supplied as road conditions; the code does not veto a violating model choice. Oncoming NPCs are not specially stopped or steered to conceal an unsafe ego incursion.
+
+**62 local tests passed in the final container.** New tests cover reverse-direction traffic movement and following, oncoming pedestrian yields, summed closing speed, radar/camera range boundaries, overtaking counters, head-on collisions after unsafe raw Jev choices, full-pass/return timing, abort estimates, body-overlap clearance, finite unseen-traffic horizons, signed-value validation, and no hidden lane permission/override.
+
+Eleven bounded live API calls were made: eight fixed snapshots, followed by three rechecks after refining the question wording and providing calculated time margins. The original results and exact questions remain in `artifacts/two-way-probes.json`; the three rechecks are in `artifacts/two-way-rechecks.json`.
+
+| Situation | Initial observed choice | Recheck, if performed |
+| --- | --- | --- |
+| Close oncoming traffic leaves too little time | Right / brake | — |
+| Generous passing gap and return space | Right / brake (too conservative for the scenario) | Left / accelerate |
+| No visible oncoming car, but too little legal speed advantage to finish within the visibility horizon | Right / coast | — |
+| Already passing with the right-hand car still alongside | Right / accelerate (incorrect early merge) | Left / accelerate |
+| Fully clear of the passed car | Right / accelerate | — |
+| Cannot finish the pass, right-hand car still alongside, room to brake and drop behind | Right / slow (incorrect early merge) | Left / brake |
+| Solid centre line approaching a crossing | Right / brake | — |
+| Right-hand gap exists after dropping behind | Right / accelerate | — |
+
+The five initially matching scenarios were not rerun after the final wording refinement. Confidence and latency varied. This is a small diagnostic set, not proof that Jev can safely resolve every dynamic encounter.
+
+The new version was opened in a fresh browser tab, preserving existing runs. The page loads with 90 seconds / 810 m, opposing direction arrows, a yellow centre divider, oncoming radar markers, and the passing panel. The initial observed display showed an oncoming vehicle at about 240 m / 37 km/h, a 9.9 s oncoming-time estimate and 9.6 s pass estimate. No model call was triggered by this UI inspection; the new tab showed zero decisions/tokens. No browser console errors or warnings were observed. **A complete two-way driving run has not yet been verified.**
 
 A repeat live run on seed 42 with the same surround-perception build exhausted the 30-second budget at about **253 m** after **38 decisions** (346 ms average latency), with **no collision and no stale fallback**. Jev stopped behind a slower car despite the right lane being available. This illustrates the remaining model-decision limitation and is retained alongside the successful run rather than reporting only the finish. The live/Jev-snapshot selector and 3D-overlay toggle were exercised in the browser. No console errors or warnings were observed.
