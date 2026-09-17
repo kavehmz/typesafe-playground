@@ -2,6 +2,10 @@
 
 The demo was built and run through the existing Podman-backed `docker compose` runtime, bound to `127.0.0.1:3002`. No packages were installed on macOS and no host `node_modules` directory was created. The parent `.env` was loaded by Compose at runtime; its value was not printed or copied into source or the image.
 
+## Selectable runs up to three minutes
+
+The run-length selector offers 90, 120 and 180 seconds, with 90 seconds as the default. Route length already scales with the selected duration: 810, 1,080 and 1,620 m respectively. The standalone user brief was updated too. All 71 local container tests passed, now including 120/180-second expiry, valid sensor payloads and nonoverlapping traffic generation. The deployed browser selector was checked: choosing 180 seconds displays 3:00 and a 1,620 m route. No extra live Jev calls were made for this update.
+
 ## Traffic randomization update
 
 Shuffle previously added only 8–35 m of jitter around fixed car slots. It now samples substantially different positions and irregular gaps in a dedicated traffic random stream: first right-lane car 35–90 m, later right-lane cars spread across the route, first oncoming car 140–440 m, and independently varied oncoming spacing. Existing lane directions, car counts and speed ranges remain. The control is labelled **Randomize traffic** and always chooses a different seed; Reset reproduces the selected setup.

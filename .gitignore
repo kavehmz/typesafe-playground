@@ -4,3 +4,12 @@
 **/node_modules/
 **/test-results/
 **/.DS_Store
+
+# Local credentials and runtime logs
+.npmrc
+.netrc
+*.pem
+*.key
+*.p12
+*.pfx
+*.log

@@ -22,7 +22,7 @@ test('worlds reproduce by seed and change when shuffled', () => {
 });
 test('sensor state is valid across randomized worlds', () => {
   for (let seed = 1; seed <= 60; seed++) {
-    const sim = new Simulation(seed, [30, 60, 90][seed % 3], seed % 2 ? 'busy' : 'normal');
+    const sim = new Simulation(seed, [30, 60, 90, 120, 180][seed % 5], seed % 2 ? 'busy' : 'normal');
     for (let t = 0; t < 100; t++) { sim.step(.1); assert.doesNotThrow(() => validateState(sim.sensors())); }
   }
 });
@@ -61,8 +61,8 @@ test('braking stops without reversing', () => {
   for (let i = 0; i < 40; i++) sim.step(.1);
   assert.equal(sim.ego.speed, 0); assert.ok(sim.ego.z > 0 && sim.ego.z < 9);
 });
-test('30, 60 and 90 second budgets terminate, finish line also terminates', () => {
-  for (const duration of [30, 60, 90]) {
+test('run budgets through 180 seconds terminate, finish line also terminates', () => {
+  for (const duration of [30, 60, 90, 120, 180]) {
     const sim = new Simulation(42, duration); sim.objects = []; sim.ego.speed = 0;
     for (let i = 0; i < duration * 10 + 1; i++) sim.step(.1);
     assert.equal(sim.result.reason, 'time'); assert.equal(sim.result.time, duration);
@@ -304,7 +304,7 @@ test('seeds materially vary car positions and gaps, rather than just scenery or 
   assert.ok(spread(gaps) > 150);
 });
 test('all route lengths and densities spawn distinct nonoverlapping traffic in the proper lanes', () => {
-  for (const duration of [30, 60, 90]) for (const density of ['normal', 'busy']) for (let seed = 1; seed <= 50; seed++) {
+  for (const duration of [30, 60, 90, 120, 180]) for (const density of ['normal', 'busy']) for (let seed = 1; seed <= 50; seed++) {
     const sim = new Simulation(seed, duration, density), cars = sim.objects.filter(o => o.kind === 'car');
     assert.ok(cars.filter(c => c.lane === 'right').every(c => c.z >= 35 && c.z < sim.length && c.x === 1.8 && c.travelDirection === 1));
     assert.ok(cars.filter(c => c.lane === 'left').every(c => c.z >= 140 && c.x === -1.8 && c.travelDirection === -1));
