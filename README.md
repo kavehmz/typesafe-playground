@@ -12,7 +12,7 @@ The aim is to make the inputs, model judgments and resulting behaviour visible�
 | [demo02 — Jev Driving Lab](demo02/README.md) | Jev chooses lane and target speed for a car on a two-way road. Random traffic, overtaking, oncoming cars, pedestrian crossings and remembered 30/50 km/h signs create changing situations. Four camera views, sensor overlays and a decision inspector show what is happening. Runs last 90, 120 or 180 seconds. | [localhost:3002](http://localhost:3002) |
 | [demo03 — Fable implementation](demo03/) | A separate implementation of the same driving concept, being built with **Fable** to test another AI's interpretation of the brief. **Currently under development and being tested.** Its current runtime also calls TypeSafe Jev for driving decisions. | [localhost:3003](http://localhost:3003) |
 
-[driving-simultion.md](driving-simultion.md) is the consolidated driving brief: the intended experience and corrections, without prescribing an identical interface or implementation.
+[driving-simulation.md](driving-simulation.md) is the consolidated driving brief: the intended experience and corrections, without prescribing an identical interface or implementation.
 
 In demo01, routing is a preview: no real support ticket is sent and no refund is issued. In the driving demos, the camera views are rendered for the audience; Jev receives structured simulated sensor observations rather than camera images. Simulation and vehicle mechanics run in code. The implementations are experiments, not real autonomous-driving systems.
 
