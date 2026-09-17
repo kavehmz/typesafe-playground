@@ -1,0 +1,17 @@
+name: typesafe-demo01
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:${DEMO_PORT:-3001}:3000"
+    env_file:
+      - ../.env
+    environment:
+      PORT: "3000"
+      NODE_ENV: production
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    init: true

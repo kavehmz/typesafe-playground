@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eeeee6"><title>Jev / Driving Lab</title>
+  <link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/" aria-label="Jev Driving Lab home"><span class="brand-icon">j<span>↗</span></span><span>jev<span class="brand-slash"> / </span><b>driving lab</b></span></a>
+    <div class="experiment">SYSTEM ONE EXPERIMENT <span>02</span></div>
+    <div class="connection"><i id="connection-dot"></i><span id="connection">Connecting</span><code id="model">jev-latest</code></div>
+  </header>
+  <main>
+    <section class="intro"><div><div class="eyebrow">SMALL JUDGMENTS. A MOVING WORLD.</div><h1>Let Jev take the wheel<span>.</span></h1></div><p>Moving traffic. Pedestrian crossings.<br>Remember the signs. Make the next move.</p></section>
+    <section class="toolbar" aria-label="Simulation controls">
+      <div class="settings"><label>RUN LENGTH <select id="duration"><option value="30">30 seconds</option><option value="60">60 seconds</option><option value="90" selected>90 seconds</option></select></label><label>TRAFFIC <select id="density"><option value="normal">Normal</option><option value="busy">Busy</option></select></label><label class="seed-label">WORLD SEED <input id="seed" type="number" value="42" min="1" max="999999"></label><button id="shuffle" class="icon-button" title="Generate a new random world" aria-label="Shuffle world">⤨</button></div>
+      <label class="check"><input id="loop" type="checkbox" checked><span>Auto-restart</span></label>
+      <div class="run-controls"><button id="reset" class="secondary">↺ Reset</button><button id="start" class="primary" disabled><span>▶</span> Start driving</button></div>
+    </section>
+    <section class="road-awareness" aria-label="Observed road signs and pedestrian crossings">
+      <div class="active-rule"><div class="speed-sign" id="active-limit">50</div><div><span class="eyebrow">ACTIVE LIMIT · KM/H</span><strong id="speed-verdict">Within limit</strong><small id="limit-source">Initial road rule</small></div></div>
+      <div class="sign-observations"><div class="section-label"><span>SIGN MEMORY</span><b id="next-limit">Watching for signs</b></div><div id="sign-trail"></div></div>
+      <div class="crossing-awareness"><span class="eyebrow">CROSSING WATCH</span><strong id="crosswalk-status">Watching the road</strong><small id="pedestrian-status">People and markings from cameras</small></div>
+    </section>
+    <div id="error" role="alert" hidden></div>
+    <section class="workspace">
+      <div class="stage" id="stage">
+        <div class="stage-top"><div class="stage-label"><i></i><span id="run-label">WORLD 042</span><b id="run-status">READY</b></div><div class="views" aria-label="Camera view"><button class="active" data-view="follow">Follow</button><button data-view="overhead">Aerial</button><button data-view="driver">Driver</button></div></div>
+        <div class="stage-guide" id="stage-guide"><span class="guide-kicker">YOUR DRIVER IS READY</span><h2>Meet the decision engine.</h2><p>Start a run to give Jev the controls.<br>Watch its choices become motion.</p><span class="guide-line"><i></i> Cyan car = Jev · People have priority</span></div>
+        <div class="run-result" id="run-result" hidden><div id="result-kicker" class="eyebrow">RUN COMPLETE</div><h2 id="result-title"></h2><p id="result-text"></p></div>
+        <div class="surround-title"><span>360° PERCEPTION</span><small>LIVE VIEWS · STRUCTURED DETECTIONS TO JEV</small></div>
+        <div class="camera-strip" aria-label="Four simulated directional cameras">
+          <div class="camera-tile" data-camera="front"><span><i></i> FRONT <b id="front-count">0</b></span><small>110 m · 100°</small></div>
+          <div class="camera-tile" data-camera="left"><span><i></i> LEFT <b id="left-count">0</b></span><small>35 m · 150°</small></div>
+          <div class="camera-tile" data-camera="right"><span><i></i> RIGHT <b id="right-count">0</b></span><small>35 m · 150°</small></div>
+          <div class="camera-tile" data-camera="rear"><span><i></i> REAR <b id="rear-count">0</b></span><small>65 m · 110°</small></div>
+        </div>
+        <div class="drive-hud"><div class="speed"><strong id="speed">43</strong><span>KM/H</span></div><div class="hud-divider"></div><div class="run-clock"><strong id="clock">1:30</strong><span id="distance">0 / 810 m</span></div></div>
+        <div class="stage-footer"><span id="control-source">Awaiting Jev</span><span>TWO LANES · 30 / 50 KM/H SIGNS</span></div>
+      </div>
+      <aside class="decision-panel">
+        <div class="panel-heading"><h2>Inside the decision</h2><span class="live-tag" id="live-tag">STANDBY</span></div>
+        <div class="decision-main"><span class="eyebrow">JEV'S LATEST ACTION</span><div class="action-line"><span id="action-icon">→</span><h3 id="action-title">Ready to drive</h3></div><p id="action-description">Five independent judgments.<br>One sensor snapshot. Every 800 ms.</p></div>
+        <div class="probability-section"><div class="section-label"><span>TARGET LANE</span><span id="lane-confidence" title="Confidence measures distribution concentration, not driving correctness.">—</span></div><div id="lane-bars" class="bars"></div></div>
+        <div class="probability-section"><div class="section-label"><span>SPEED CONTROL <small id="speed-lane"></small></span><span id="speed-confidence">—</span></div><div id="speed-bars" class="bars"></div></div>
+        <div class="risk-row"><span>Collision risk <small>next 2 seconds</small></span><strong id="risk">—</strong></div>
+        <div class="approach-metrics" aria-label="Distance and stopping estimates sent to Jev"><div><span id="approach-label">TO STOP LINE</span><strong id="approach-gap">—</strong></div><div><span>GENTLE STOP</span><strong id="approach-stop">—</strong></div><div><span>RESPONSE DELAY</span><strong id="approach-delay">—</strong></div><small id="approach-note">Geometry and response timing · Jev chooses the action</small></div>
+        <div class="signal-flow" aria-label="Sensor to decision flow"><span id="flow-sense">SENSE</span><i>→</i><span id="flow-jev">JEV</span><i>→</i><span id="flow-act">ACT</span><small id="snapshot-age">No decision yet</small></div>
+        <div class="sensor-header"><label class="section-label" for="sensor-source">SENSOR MAP</label><select id="sensor-source" aria-label="Sensor map source"><option value="decision">Jev's last snapshot</option><option value="live">Live sensors</option></select></div>
+        <canvas id="radar" width="640" height="340" aria-label="Surround sensor map with detected objects, blind-spot zones and Jev target lane"></canvas>
+        <div class="sensor-readings"><div><span>LEFT FRONT / REAR</span><strong id="left-gap">—</strong></div><div><span>RIGHT FRONT / REAR</span><strong id="right-gap">—</strong></div></div>
+        <div class="blind-zones"><div id="zone-left"><span>LEFT LANE ZONE</span><b id="blind-left">Clear</b></div><div id="zone-right"><span>RIGHT LANE ZONE</span><b id="blind-right">Clear</b></div></div>
+        <div class="sensor-key"><span>Amber zones = object within ±7 m</span><label class="sensor-toggle"><input type="checkbox" id="sensors" checked> 3D overlays</label></div>
+        <div id="detected-objects" class="detected-objects">Waiting for sensor observations.</div>
+        <button class="inspect-button" id="inspect">Inspect model input & output <span>↗</span></button>
+      </aside>
+    </section>
+    <section class="telemetry">
+      <div class="metric"><span>JEV DECISIONS</span><strong id="decisions">0</strong><small>this run</small></div><div class="metric"><span>API LATENCY</span><strong id="latency">—</strong><small id="latency-label">last / average</small></div><div class="metric"><span>CARS OVERTAKEN</span><strong id="passed">0</strong><small id="changes">0 lane changes</small></div><div class="metric"><span>SESSION RESULTS</span><strong id="outcomes">0 / 0</strong><small id="outcome-label">finishes / collisions</small></div>
+      <div class="trace"><div class="section-label"><span>DECISION TRACE</span><span id="token-count">0 tokens</span></div><div id="timeline"><span class="trace-empty">The next move starts with a judgment.</span></div><div class="trace-legend"><span style="color:#4c9b79">■</span> Accelerate <span style="color:#8cb882">■</span> Ease <span style="color:#aac4b1">■</span> Coast <span style="color:#d4bd71">■</span> Slow <span style="color:#dfa95b">■</span> Brake <span style="color:#d57259">■</span> Hard</div></div>
+    </section>
+    <footer><span><b>Perception is simulated.</b> Jev receives front, side and rear object detections plus radar, not images. Outlines show detections; passed signs stay in memory.</span><div><span id="fallback-count">0 stale fallbacks</span><button id="export">Export session ↓</button></div></footer>
+  </main>
+  <dialog id="inspector"><div class="dialog-title"><div><div class="eyebrow">OPEN THE BLACK BOX</div><h2>What Jev actually sees</h2></div><button id="close-inspector" aria-label="Close inspector">✕</button></div><p>Four cameras produce idealized detections with range, field-of-view and vehicle-occlusion limits. The server sends this state and five independent questions to Jev. No rendered images are sent. Lane choice selects which speculative speed answer is applied.</p><div class="inspect-tabs"><button class="active" data-tab="state">Sensor state</button><button data-tab="answers">Jev response</button><button data-tab="questions">Questions</button><button data-tab="runs">Run results</button></div><pre id="inspector-content"></pre><p class="inspector-note">Collision detection, physics, a 1.8-second stale-command brake, and lifecycle resets run in code. There is no hidden obstacle-avoidance controller for the cyan car.</p></dialog>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "source": "Observed in the browser Run results panel on 2026-09-17; one live Jev run, not a benchmark",
+  "seed": 42,
+  "duration_seconds": 60,
+  "density": "normal",
+  "reason": "time",
+  "distance_m": 495.1,
+  "route_length_m": 540,
+  "decisions": 74,
+  "requests": 75,
+  "average_api_latency_ms": 358,
+  "lane_changes": 5,
+  "cars_overtaken": 1,
+  "crossings_passed": 2,
+  "collisions": 0,
+  "speeding_seconds": 5.67,
+  "max_overspeed_kmh": 9.4,
+  "signs_remembered": 5,
+  "minimum_forward_gap_m": 0.8,
+  "tokens": 284791,
+  "stale_fallbacks": 0,
+  "discarded_responses": 0,
+  "signs_passed": [
+    { "id": "sign-0", "limit_kmh": 50, "passed_at_s": 0.94 },
+    { "id": "sign-1", "limit_kmh": 30, "passed_at_s": 10.67 },
+    { "id": "sign-2", "limit_kmh": 50, "passed_at_s": 25.92 },
+    { "id": "sign-3", "limit_kmh": 30, "passed_at_s": 35.73 },
+    { "id": "sign-4", "limit_kmh": 50, "passed_at_s": 49.9 }
+  ]
+}

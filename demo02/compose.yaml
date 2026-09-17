@@ -1,0 +1,15 @@
+name: typesafe-demo02-driving
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:${DEMO02_PORT:-3002}:3000"
+    env_file:
+      - ../.env
+    environment:
+      PORT: "3000"
+      NODE_ENV: production
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]

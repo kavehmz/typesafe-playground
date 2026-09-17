@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#184d43">
+  <meta name="description" content="A hands-on experiment in small AI judgments and transparent software decisions.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23184d43'/%3E%3Cpath d='M11 13h18M20 13v16' stroke='%23d6f483' stroke-width='4'/%3E%3C/svg%3E">
+  <title>Decision Lab · TypeSafe demo 01</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Decision Lab home"><span class="brand-mark" aria-hidden="true">t<span>·</span></span><strong>TypeSafe <span class="brand-light">/ experiments</span></strong></a>
+    <div class="top-right"><span class="demo-label">DEMO 01</span><span class="connection" id="connection"><i></i>Connecting</span></div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow"><span class="tiny-cross">✳</span> THE DECISION LAB</p><h1>From message<br>to next move<span class="accent">.</span></h1></div>
+      <div class="intro-copy"><p>Give AI the small judgments.<br>Keep the decisions in your code.</p><span>One support ticket. Six questions. Three primitives.</span><a href="#how-it-works">How this experiment works <span aria-hidden="true">↗</span></a></div>
+    </section>
+
+    <div class="experiment-strip" id="how-it-works"><span><b>01</b> Write a message</span><i aria-hidden="true">→</i><span><b>02</b> Get typed judgments</span><i aria-hidden="true">→</i><span><b>03</b> Apply your rules</span><small>CODE STAYS IN CONTROL</small></div>
+
+    <div class="workspace">
+      <section class="panel input-panel" aria-labelledby="input-heading">
+        <div class="panel-heading"><div><span class="step">01 / INPUT</span><h2 id="input-heading">The customer’s message</h2></div><span class="small-square" aria-hidden="true">↗</span></div>
+        <p class="helper">Start with a sample, then change a few words.</p>
+        <div class="sample-grid" id="samples" aria-label="Sample messages"></div>
+        <form id="ticket-form">
+          <label class="field-label" for="message">MESSAGE <span id="character-count">0 / 8,000</span></label>
+          <textarea id="message" name="message" maxlength="8000" required placeholder="Paste a support request here…"></textarea>
+          <div class="context-fields"><div><label class="field-label" for="plan">ACCOUNT PLAN</label><select id="plan"><option>Starter</option><option>Pro</option><option>Enterprise</option></select></div><div><label class="field-label" for="service-status">KNOWN SERVICE STATUS</label><select id="service-status"><option value="unknown">Unknown</option><option value="operational">Operational</option><option value="incident">Confirmed incident</option></select></div></div>
+          <p class="context-note">Context is supplied by you. An incident is an observed fact, not a model prediction.</p>
+          <button class="primary-button" id="evaluate" type="submit" disabled><span>Evaluate message</span><span aria-hidden="true">↗</span></button>
+          <p class="request-note" id="request-note">One live API request · six independent questions</p>
+        </form>
+        <div class="error" id="error" role="alert" hidden></div>
+        <div class="input-footer"><span class="lock-symbol" aria-hidden="true">⌁</span><span>Submitted text goes to TypeSafe. Your API key stays on the server. This demo only previews routing.</span></div>
+      </section>
+
+      <div class="output-column">
+        <section class="decision-card" aria-labelledby="decision-heading">
+          <div class="decision-top"><span class="step">03 / CODE DECIDES</span><span class="decision-status" id="decision-status">WAITING FOR INPUT</span></div>
+          <div class="decision-main"><div><p id="decision-kicker">NEXT DESTINATION</p><h2 id="decision-heading">Your next move,<br>made visible.</h2></div><div class="decision-arrow" aria-hidden="true">↗</div></div>
+          <div class="decision-bottom"><span id="priority-pill" class="priority-pill">Run a message to begin</span><span id="route-summary">A rule you can inspect. A threshold you can change.</span></div>
+        </section>
+
+        <section class="judgments" aria-labelledby="judgments-heading">
+          <div class="section-heading"><div><span class="step">02 / MODEL JUDGMENTS</span><h2 id="judgments-heading">Six small answers</h2></div><span class="subtle-tag">Independent · parallel</span></div>
+          <div class="signal-grid" id="signals"></div>
+          <div class="metrics-bar" aria-live="polite"><span><i class="metric-dot"></i><b id="latency">—</b> <small>API round trip</small></span><span><b id="tokens">—</b> <small>tokens in / out</small></span><span><b id="calls">—</b> <small>HTTP attempts</small></span></div>
+        </section>
+      </div>
+    </div>
+
+    <section class="panel policy-panel" aria-labelledby="policy-heading">
+      <div class="policy-intro"><span class="step">YOUR RULES, IN CODE</span><h2 id="policy-heading">Move the threshold.<br>Keep the intelligence.</h2><p>These controls reuse the last answers.<br><strong>Zero new API calls.</strong></p></div>
+      <div class="sliders">
+        <div class="slider-control"><label for="confidence">Routing &amp; priority confidence <output id="confidence-value" for="confidence">75%</output></label><input id="confidence" type="range" min="0" max="1" step="0.01" value="0.75"><p>Below this, review the team or priority.</p></div>
+        <div class="slider-control"><label for="yes-probability">Yes / no probability threshold <output id="yes-value" for="yes-probability">80%</output></label><input id="yes-probability" type="range" min="0.51" max="0.99" step="0.01" value="0.80"><p id="yes-description">Yes ≥ 80% · no ≤ 20% · otherwise uncertain.</p></div>
+        <div class="slider-control"><label for="urgent-at">High-priority cutoff <output id="urgent-value" for="urgent-at">65%</output></label><input id="urgent-at" type="range" min="0" max="1" step="0.01" value="0.65"><p>Compare with urgency normalized from 0–3.</p></div>
+      </div>
+      <div class="rules-readout"><span class="field-label">DECISION TRACE</span><ul id="reasons"><li>Evaluate a message to see which rules fire.</li></ul><div class="flags" id="flags"></div></div>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="panel suite-panel"><div class="section-heading"><div><span class="step">TRY THE EDGES</span><h2>Six cases. Different outcomes.</h2></div><span class="small-square" aria-hidden="true">≋</span></div><p class="helper">Run all six samples and compare the selected team with hand-written expectations. A smoke test, not an accuracy benchmark.</p><button class="secondary-button" id="run-suite" disabled>Run sample suite <span>6 API requests ↗</span></button><p class="suite-summary" id="suite-summary" aria-live="polite"></p><div id="suite-results"></div></div>
+      <div class="panel notes-panel"><span class="step">READ THE OUTPUT CORRECTLY</span><h2>Typed doesn’t mean true.</h2><div class="primitive-note"><span class="type-tag choice">CHOICE</span><p>One option, with the probability of every alternative.</p></div><div class="primitive-note"><span class="type-tag noul">NOUL</span><p>Probability of yes. 50% means uncertainty, not medium intensity.</p></div><div class="primitive-note"><span class="type-tag score">SCORE</span><p>A position along defined levels, plus its distribution.</p></div><p class="footnote">Confidence summarizes the distribution. It is not an accuracy guarantee. The thresholds here are experimental.</p></div>
+    </section>
+
+    <details class="inspector panel" id="inspector"><summary><span><span class="code-icon" aria-hidden="true">{ }</span> Under the hood <small>Exact request, response &amp; decision</small></span><span aria-hidden="true">+</span></summary><div class="inspect-tabs" role="group" aria-label="Inspect data"><button class="active" data-view="request">Request</button><button data-view="response">Response</button><button data-view="decision">Code decision</button><button id="copy-json">Copy JSON</button></div><pre id="inspect-content">Loading question definitions…</pre></details>
+
+    <footer><span><b>TypeSafe</b> / Decision Lab <span class="footer-separator">·</span> Demo 01</span><a href="https://docs.typesafe.ai/concepts/how-to-build-with-system-one" target="_blank" rel="noreferrer">Explore the programming model ↗</a></footer>
+  </main>
+</body>
+</html>

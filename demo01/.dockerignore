@@ -1,0 +1,8 @@
+*
+!package.json
+!server.mjs
+!questions.mjs
+!public/
+!public/**
+!tests/
+!tests/**
