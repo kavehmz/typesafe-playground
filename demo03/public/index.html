@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev Drives</title>
+<link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div class="ui">
+<header class="topbar">
+  <div class="brand"><span class="logo">Jev</span><span class="word">Drives</span><small>TypeSafe System One chooses the manoeuvre. Code steers and brakes.</small></div>
+  <div class="controls">
+    <button id="startBtn" class="primary">Start driving</button>
+    <button id="restartBtn" title="Restart the same traffic (R)">Restart</button>
+    <button id="shuffleBtn" title="New random traffic (N)">New traffic</button>
+    <label>Traffic <select id="trafficSel"><option value="light">light</option><option value="normal" selected>normal</option><option value="dense">dense</option></select></label>
+    <label>Drive <select id="lengthSel"></select></label>
+    <label>Seed <input id="seedInput" type="number" min="1" max="99999" value="7"></label>
+    <label>View <select id="cameraSel"><option value="chase">chase</option><option value="aerial">aerial</option><option value="driver">driver</option></select></label>
+    <label class="check"><input id="overlayChk" type="checkbox" checked> sensors</label>
+    <label class="check"><input id="autoChk" type="checkbox" checked> auto-restart</label>
+    <button id="inspectBtn" title="Inspect what Jev received and answered (I)">Inspect</button>
+  </div>
+</header>
+
+<aside class="feeds">
+  <div class="panel-title">What the car senses</div>
+  <div class="feed" data-cam="front"><div class="feed-view"></div><div class="feed-label"><b>Front camera</b><span>200 m · 70°</span><em>0</em></div></div>
+  <div class="feed" data-cam="left"><div class="feed-view"></div><div class="feed-label"><b>Left camera</b><span>30 m · 170°</span><em>0</em></div></div>
+  <div class="feed" data-cam="right"><div class="feed-view"></div><div class="feed-label"><b>Right camera</b><span>30 m · 170°</span><em>0</em></div></div>
+  <div class="feed" data-cam="rear"><div class="feed-view"></div><div class="feed-label"><b>Rear camera</b><span>70 m · 100°</span><em>0</em></div></div>
+  <div class="sensor-summary">
+    <div class="radar"><b>Radar</b> <span id="radarText">—</span></div>
+    <div class="blind"><b>Blind spots</b> <span class="bs" id="bsLeft">L</span><span class="bs" id="bsRight">R</span></div>
+  </div>
+</aside>
+
+<aside class="jev">
+  <div class="jev-head"><span class="dot" id="jevDot"></span><b>Jev decides</b><span id="modelName">jev-latest</span><span id="latency">— ms</span></div>
+  <div class="decision"><div class="label">Manoeuvre</div><div class="big" id="maneuverBig">waiting for the first decision</div><div class="conf" id="maneuverConf"></div><div class="exec" id="execLine">car: centred in right lane · cruising to 50 km/h</div></div>
+  <ul class="probs" id="maneuverProbs"></ul>
+  <div class="row">
+    <div class="pace"><div class="label">Limit Jev applies</div><div class="pace-vals"><span data-pace="30">30</span><span data-pace="50">50</span></div><div class="small" id="paceConf"></div></div>
+    <div class="hazard"><div class="label">Hazard</div><div class="meter" id="hazardMeter" data-level="-1"><i></i><i></i><i></i><i></i></div><div class="small" id="hazardText">—</div></div>
+  </div>
+  <div class="attention"><span class="label">Attention on</span><span class="chip" id="attentionChip">—</span></div>
+  <div class="nouls">
+    <div class="noul"><span>Pass window open</span><div class="bar"><i id="passBar"></i></div><b id="passVal">—</b></div>
+    <div class="noul"><span>Must yield</span><div class="bar"><i id="yieldBar"></i></div><b id="yieldVal">—</b></div>
+  </div>
+  <div class="stats"><span><b id="decisions">0</b>decisions</span><span><b id="cadence">—</b>per s</span><span><b id="tokens">0</b>tokens</span><span><b id="cost">$0.0000</b>so far</span></div>
+</aside>
+
+<section class="dash">
+  <div class="speed"><div class="kmh" id="speedNum">30</div><div class="unit">km/h</div><div class="limit" id="limitRing">50</div><div class="posted" id="postedNote">posted 50</div></div>
+  <div class="signs"><div class="label">Speed signs · remembered</div><div class="sign-strip" id="signStrip"></div></div>
+  <div class="progress">
+    <div class="track" id="track"><i class="ego"></i></div>
+    <div class="meta"><span id="clock">0.0 s</span><span id="dist">0 m</span><span id="runInfo">seed 7 · normal</span></div>
+    <div class="metrics" id="metrics"></div>
+  </div>
+  <div class="timeline-wrap"><div class="label">Last 60 s of decisions</div><div class="timeline" id="timeline"></div>
+    <div class="legend"><i class="m-cruise"></i>cruise <i class="m-follow"></i>follow <i class="m-creep"></i>creep <i class="m-stop"></i>stop <i class="m-overtake"></i>overtake <i class="m-return_right"></i>return right <i class="m-abort_overtake"></i>abort <i class="m-emergency_brake"></i>emergency</div>
+  </div>
+</section>
+</div>
+
+<div class="banner" id="banner" hidden></div>
+<div class="modal" id="endCard" hidden>
+  <h2 id="endTitle"></h2>
+  <div class="end-body" id="endBody"></div>
+  <p id="endNote"></p>
+</div>
+<div class="drawer" id="inspector" hidden>
+  <div class="drawer-head"><b>Inspector</b>
+    <nav><button data-tab="situation" class="on">What Jev received</button><button data-tab="answers">What Jev answered</button><button data-tab="questions">Questions</button><button data-tab="run">Run log</button></nav>
+    <button id="exportBtn">Export session</button><button id="closeInspect" class="close">×</button>
+  </div>
+  <pre id="inspectorBody"></pre>
+</div>
+<script type="module" src="/public/app.mjs"></script>
+</body>
+</html>
