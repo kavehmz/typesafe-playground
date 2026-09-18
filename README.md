@@ -4,7 +4,7 @@ Small, interactive experiments with **TypeSafe Jev**: from understanding a suppo
 
 The aim is to make the inputs, model judgments and resulting behaviour visible—including hesitation and mistakes. These are experiments with real API calls, not polished benchmarks.
 
-## Demo03 preview
+## Self driving car by Jev
 
 ![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.png)
 
