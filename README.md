@@ -16,6 +16,12 @@ The aim is to make the inputs, model judgments and resulting behaviour visibleâ€
 
 In demo01, routing is a preview: no real support ticket is sent and no refund is issued. In the driving demos, the camera views are rendered for the audience; Jev receives structured simulated sensor observations rather than camera images. Simulation and vehicle mechanics run in code. The implementations are experiments, not real autonomous-driving systems.
 
+## Demo03 preview
+
+The Fable implementation: four camera feeds, radar and blind-spot readings, remembered speed signs, and Jev's decision panel. Captured before starting a run; the decision values have not yet been populated.
+
+![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.jpg)
+
 ## Run locally
 
 You need Docker with Docker Compose (or a compatible Podman setup) and a TypeSafe API key. Node and application dependencies run inside containers; no host npm installation is needed.
