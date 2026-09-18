@@ -6,7 +6,7 @@ The aim is to make the inputs, model judgments and resulting behaviour visibleâ€
 
 ## Demo03 preview
 
-![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.jpg)
+![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.png)
 
 The Fable implementation: four camera feeds, radar and blind-spot readings, remembered speed signs, and Jev's decision panel. Captured before starting a run; the decision values have not yet been populated.
 
