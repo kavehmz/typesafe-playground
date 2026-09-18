@@ -4,6 +4,12 @@ Small, interactive experiments with **TypeSafe Jev**: from understanding a suppo
 
 The aim is to make the inputs, model judgments and resulting behaviour visibleâ€”including hesitation and mistakes. These are experiments with real API calls, not polished benchmarks.
 
+## Demo03 preview
+
+![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.jpg)
+
+The Fable implementation: four camera feeds, radar and blind-spot readings, remembered speed signs, and Jev's decision panel. Captured before starting a run; the decision values have not yet been populated.
+
 ## The demos
 
 | Demo | What it explores | Local address |
@@ -15,12 +21,6 @@ The aim is to make the inputs, model judgments and resulting behaviour visibleâ€
 [driving-simulation.md](driving-simulation.md) is the consolidated driving brief: the intended experience and corrections, without prescribing an identical interface or implementation.
 
 In demo01, routing is a preview: no real support ticket is sent and no refund is issued. In the driving demos, the camera views are rendered for the audience; Jev receives structured simulated sensor observations rather than camera images. Simulation and vehicle mechanics run in code. The implementations are experiments, not real autonomous-driving systems.
-
-## Demo03 preview
-
-The Fable implementation: four camera feeds, radar and blind-spot readings, remembered speed signs, and Jev's decision panel. Captured before starting a run; the decision values have not yet been populated.
-
-![Demo03 built with Fable, showing the 3D road, four camera feeds, sensor readings, speed-sign memory and Jev decision panel](docs/images/demo03-fable.jpg)
 
 ## Run locally
 
