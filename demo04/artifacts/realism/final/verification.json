@@ -1,0 +1,1293 @@
+{
+  "checked_at": "2026-09-29T06:10:06.213Z",
+  "checks": [
+    {
+      "long_route_m": 5600,
+      "resources": {
+        "engine": "three.js r186",
+        "drawCalls": "2506",
+        "triangles": "2984198",
+        "geometries": "323",
+        "textures": "38"
+      }
+    },
+    {
+      "resets": 7,
+      "before": {
+        "engine": "three.js r186",
+        "drawCalls": "1366",
+        "triangles": "1683442",
+        "geometries": "304",
+        "textures": "38"
+      },
+      "after": {
+        "engine": "three.js r186",
+        "drawCalls": "1366",
+        "triangles": "1683442",
+        "geometries": "304",
+        "textures": "38"
+      }
+    },
+    {
+      "layout": "desktop",
+      "bounds": {
+        "w": 1600,
+        "doc": 1600,
+        "light": {
+          "x": 1114,
+          "y": 214,
+          "width": 87,
+          "height": 16,
+          "top": 214,
+          "right": 1201,
+          "bottom": 230,
+          "left": 1114
+        }
+      }
+    },
+    {
+      "layout": "laptop",
+      "bounds": {
+        "w": 1280,
+        "doc": 1280,
+        "light": {
+          "x": 794,
+          "y": 214,
+          "width": 87,
+          "height": 16,
+          "top": 214,
+          "right": 881,
+          "bottom": 230,
+          "left": 794
+        }
+      }
+    },
+    {
+      "layout": "mobile",
+      "bounds": {
+        "w": 390,
+        "doc": 390,
+        "light": {
+          "x": 278,
+          "y": 159,
+          "width": 80,
+          "height": 14,
+          "top": 159,
+          "right": 358,
+          "bottom": 173,
+          "left": 278
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "responses": [
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "choice": "overtake"
+    }
+  ],
+  "performance": {
+    "samples": 6082,
+    "average_fps": 60.000217034655485,
+    "median_frame_ms": 16.69999999999709,
+    "p95_frame_ms": 17.5,
+    "p99_frame_ms": 17.60000000000582,
+    "max_frame_ms": 17.79999999998836
+  },
+  "run": {
+    "run": {
+      "seed": 5,
+      "traffic": "normal",
+      "road_length_m": 840,
+      "target_seconds": 90,
+      "time_limit_s": 180,
+      "result": {
+        "reason": "finish",
+        "time_s": 94.08,
+        "distance_m": 840,
+        "success": true
+      },
+      "time_s": 94.08,
+      "distance_m": 840,
+      "decisions": 229,
+      "maneuver_changes": 12,
+      "lane_changes": 5,
+      "overtakes_completed": 2,
+      "seconds_in_left_lane": 12.3,
+      "min_gap_ahead_m": 4.2,
+      "min_oncoming_ttc_s": 4.2,
+      "speeding_seconds": 0,
+      "max_over_limit_kmh": 0,
+      "crossings_passed": 2,
+      "stops_at_crossings": 1,
+      "entered_occupied_crossing": 0,
+      "stale_decisions": 0,
+      "maneuver_counts": {
+        "cruise": 37,
+        "follow": 63,
+        "overtake": 30,
+        "return_right": 52,
+        "stop": 47
+      }
+    },
+    "requests": 230,
+    "tokens": 918634,
+    "estimated_cost_usd": 0.0386,
+    "average_latency_ms": 278,
+    "last_error": null
+  },
+  "resources": {
+    "engine": "three.js r186",
+    "drawCalls": "1372",
+    "triangles": "1834388",
+    "geometries": "439",
+    "textures": "40"
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "checked_at": "2026-09-29T05:12:42.382Z",
+  "layouts": [
+    {
+      "name": "desktop",
+      "w": 1440,
+      "doc": 1440,
+      "seed": "flex",
+      "signs": {
+        "x": 239,
+        "y": 656.5,
+        "width": 324,
+        "height": 65,
+        "top": 656.5,
+        "right": 563,
+        "bottom": 721.5,
+        "left": 239
+      },
+      "controls": [
+        {
+          "id": "trafficSel",
+          "x": 65.515625,
+          "y": 105,
+          "width": 70,
+          "height": 29,
+          "top": 105,
+          "right": 135.515625,
+          "bottom": 134,
+          "left": 65.515625
+        },
+        {
+          "id": "lengthSel",
+          "x": 202.1875,
+          "y": 105,
+          "width": 112,
+          "height": 29,
+          "top": 105,
+          "right": 314.1875,
+          "bottom": 134,
+          "left": 202.1875
+        },
+        {
+          "id": "seedInput",
+          "x": 362.984375,
+          "y": 105,
+          "width": 57,
+          "height": 29,
+          "top": 105,
+          "right": 419.984375,
+          "bottom": 134,
+          "left": 362.984375
+        },
+        {
+          "id": "restartBtn",
+          "x": 861.984375,
+          "y": 102,
+          "width": 54.3125,
+          "height": 35,
+          "top": 102,
+          "right": 916.296875,
+          "bottom": 137,
+          "left": 861.984375
+        },
+        {
+          "id": "shuffleBtn",
+          "x": 925.296875,
+          "y": 102,
+          "width": 72.484375,
+          "height": 35,
+          "top": 102,
+          "right": 997.78125,
+          "bottom": 137,
+          "left": 925.296875
+        }
+      ]
+    },
+    {
+      "name": "laptop",
+      "w": 1280,
+      "doc": 1280,
+      "seed": "flex",
+      "signs": {
+        "x": 239,
+        "y": 486.5,
+        "width": 258.53125,
+        "height": 65,
+        "top": 486.5,
+        "right": 497.53125,
+        "bottom": 551.5,
+        "left": 239
+      },
+      "controls": [
+        {
+          "id": "trafficSel",
+          "x": 65.515625,
+          "y": 105,
+          "width": 70,
+          "height": 29,
+          "top": 105,
+          "right": 135.515625,
+          "bottom": 134,
+          "left": 65.515625
+        },
+        {
+          "id": "lengthSel",
+          "x": 202.1875,
+          "y": 105,
+          "width": 112,
+          "height": 29,
+          "top": 105,
+          "right": 314.1875,
+          "bottom": 134,
+          "left": 202.1875
+        },
+        {
+          "id": "seedInput",
+          "x": 362.984375,
+          "y": 105,
+          "width": 57,
+          "height": 29,
+          "top": 105,
+          "right": 419.984375,
+          "bottom": 134,
+          "left": 362.984375
+        },
+        {
+          "id": "restartBtn",
+          "x": 701.984375,
+          "y": 102,
+          "width": 54.3125,
+          "height": 35,
+          "top": 102,
+          "right": 756.296875,
+          "bottom": 137,
+          "left": 701.984375
+        },
+        {
+          "id": "shuffleBtn",
+          "x": 765.296875,
+          "y": 102,
+          "width": 72.484375,
+          "height": 35,
+          "top": 102,
+          "right": 837.78125,
+          "bottom": 137,
+          "left": 765.296875
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "w": 820,
+      "doc": 820,
+      "seed": "flex",
+      "signs": {
+        "x": 154,
+        "y": 596.5,
+        "width": 100,
+        "height": 65,
+        "top": 596.5,
+        "right": 254,
+        "bottom": 661.5,
+        "left": 154
+      },
+      "controls": [
+        {
+          "id": "trafficSel",
+          "x": 48.84375,
+          "y": 105,
+          "width": 70,
+          "height": 29,
+          "top": 105,
+          "right": 118.84375,
+          "bottom": 134,
+          "left": 48.84375
+        },
+        {
+          "id": "lengthSel",
+          "x": 170.546875,
+          "y": 105,
+          "width": 112,
+          "height": 29,
+          "top": 105,
+          "right": 282.546875,
+          "bottom": 134,
+          "left": 170.546875
+        },
+        {
+          "id": "seedInput",
+          "x": 318,
+          "y": 105,
+          "width": 57,
+          "height": 29,
+          "top": 105,
+          "right": 375,
+          "bottom": 134,
+          "left": 318
+        },
+        {
+          "id": "restartBtn",
+          "x": 449.796875,
+          "y": 99,
+          "width": 19.65625,
+          "height": 41,
+          "top": 99,
+          "right": 469.453125,
+          "bottom": 140,
+          "left": 449.796875
+        },
+        {
+          "id": "shuffleBtn",
+          "x": 475.453125,
+          "y": 99,
+          "width": 18.546875,
+          "height": 41,
+          "top": 99,
+          "right": 494,
+          "bottom": 140,
+          "left": 475.453125
+        }
+      ]
+    },
+    {
+      "name": "mobile",
+      "w": 390,
+      "doc": 390,
+      "seed": "flex",
+      "signs": {
+        "x": 175,
+        "y": 515.5,
+        "width": 183,
+        "height": 64,
+        "top": 515.5,
+        "right": 358,
+        "bottom": 579.5,
+        "left": 175
+      },
+      "controls": [
+        {
+          "id": "trafficSel",
+          "x": 14,
+          "y": 97.5,
+          "width": 63,
+          "height": 22,
+          "top": 97.5,
+          "right": 77,
+          "bottom": 119.5,
+          "left": 14
+        },
+        {
+          "id": "lengthSel",
+          "x": 84,
+          "y": 97.5,
+          "width": 105,
+          "height": 22,
+          "top": 97.5,
+          "right": 189,
+          "bottom": 119.5,
+          "left": 84
+        },
+        {
+          "id": "seedInput",
+          "x": 196,
+          "y": 97.5,
+          "width": 57,
+          "height": 22,
+          "top": 97.5,
+          "right": 253,
+          "bottom": 119.5,
+          "left": 196
+        },
+        {
+          "id": "restartBtn",
+          "x": 295.796875,
+          "y": 86,
+          "width": 19.65625,
+          "height": 41,
+          "top": 86,
+          "right": 315.453125,
+          "bottom": 127,
+          "left": 295.796875
+        },
+        {
+          "id": "shuffleBtn",
+          "x": 321.453125,
+          "y": 86,
+          "width": 18.546875,
+          "height": 41,
+          "top": 86,
+          "right": 340,
+          "bottom": 127,
+          "left": 321.453125
+        }
+      ]
+    },
+    {
+      "name": "small-mobile",
+      "w": 360,
+      "doc": 360,
+      "seed": "flex",
+      "signs": {
+        "x": 175,
+        "y": 515.5,
+        "width": 153,
+        "height": 64,
+        "top": 515.5,
+        "right": 328,
+        "bottom": 579.5,
+        "left": 175
+      },
+      "controls": [
+        {
+          "id": "trafficSel",
+          "x": 14,
+          "y": 97.5,
+          "width": 63,
+          "height": 22,
+          "top": 97.5,
+          "right": 77,
+          "bottom": 119.5,
+          "left": 14
+        },
+        {
+          "id": "lengthSel",
+          "x": 84,
+          "y": 97.5,
+          "width": 105,
+          "height": 22,
+          "top": 97.5,
+          "right": 189,
+          "bottom": 119.5,
+          "left": 84
+        },
+        {
+          "id": "seedInput",
+          "x": 196,
+          "y": 97.5,
+          "width": 57,
+          "height": 22,
+          "top": 97.5,
+          "right": 253,
+          "bottom": 119.5,
+          "left": 196
+        },
+        {
+          "id": "restartBtn",
+          "x": 265.796875,
+          "y": 86,
+          "width": 19.65625,
+          "height": 41,
+          "top": 86,
+          "right": 285.453125,
+          "bottom": 127,
+          "left": 265.796875
+        },
+        {
+          "id": "shuffleBtn",
+          "x": 291.453125,
+          "y": 86,
+          "width": 18.546875,
+          "height": 41,
+          "top": 86,
+          "right": 310,
+          "bottom": 127,
+          "left": 291.453125
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "keyboard": "V/F/I work after clicking Start; Escape closes inspector",
+  "live_responses": 23
+}

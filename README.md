@@ -10,13 +10,16 @@ The aim is to make the inputs, model judgments and resulting behaviour visible�
 
 The Fable implementation: four camera feeds, radar and blind-spot readings, remembered speed signs, and Jev's decision panel. Captured before starting a run; the decision values have not yet been populated.
 
+**[Demo04 — Astra edition](demo04/README.md)** preserves Fable's driving stack and Jev questions, with a new countryside scene, automotive-style interface, camera filmstrip and focus view. Open it at [localhost:3004](http://localhost:3004).
+
 ## The demos
 
 | Demo | What it explores | Local address |
 | --- | --- | --- |
 | [demo01 — Decision Lab](demo01/README.md) | A support message becomes six independent judgments: owning team, human request, refund request, urgency, frustration and reproduction steps. Ordinary code combines the answers into an inspectable routing preview. | [localhost:3001](http://localhost:3001) |
 | [demo02 — Jev Driving Lab](demo02/README.md) | Jev chooses lane and target speed for a car on a two-way road. Random traffic, overtaking, oncoming cars, pedestrian crossings and remembered 30/50 km/h signs create changing situations. Four camera views, sensor overlays and a decision inspector show what is happening. Runs last 90, 120 or 180 seconds. | [localhost:3002](http://localhost:3002) |
-| [demo03 — Fable implementation](demo03/) | A separate implementation of the same driving concept, being built with **Fable** to test another AI's interpretation of the brief. **Currently under development and being tested.** Its current runtime also calls TypeSafe Jev for driving decisions. | [localhost:3003](http://localhost:3003) |
+| [demo03 — Fable implementation](demo03/) | The completed Fable implementation: six Jev judgments, sensor fusion, sign memory and smooth manoeuvre execution. The original driving demo used in the published post. | [localhost:3003](http://localhost:3003) |
+| [demo04 — Astra edition](demo04/README.md) | Fable's driving logic with GPT-6-Astra's interface and 3D presentation. The simulation, sensing, prompts and API integration are preserved. | [localhost:3004](http://localhost:3004) |
 
 [driving-simulation.md](driving-simulation.md) is the consolidated driving brief: the intended experience and corrections, without prescribing an identical interface or implementation.
 
@@ -43,8 +46,11 @@ docker compose -f demo01/compose.yaml up -d --build
 # Jev Driving Lab
 docker compose -f demo02/compose.yaml up -d --build
 
-# Fable implementation — work in progress
+# Fable implementation
 docker compose -f demo03/compose.yaml up -d --build
+
+# Astra edition — Fable's driving stack, redesigned presentation
+docker compose -f demo04/compose.yaml up -d --build
 ```
 
 Open the matching localhost address from the table. The demos use separate Compose projects and ports, so they can run side by side. Stop one with, for example:
@@ -65,6 +71,7 @@ Run local application tests inside a container:
 docker compose -f demo01/compose.yaml run --rm app npm test
 docker compose -f demo02/compose.yaml run --rm app npm test
 docker compose -f demo03/compose.yaml run --rm app npm test
+docker compose -f demo04/compose.yaml run --rm app npm test
 ```
 
 Those tests exercise application logic with fixtures; they do not establish model quality. Live sample suites and probe scripts call the actual API separately. Demo03's behaviour and validation are still evolving.

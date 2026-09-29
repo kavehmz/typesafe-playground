@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f4f3ed">
+<meta name="description" content="A small world. Real decisions. Watch TypeSafe Jev take the wheel.">
+<title>Jev Drives · Instinct in motion</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23df572b'/%3E%3Cpath d='M24 9v15a7 7 0 0 1-14 0' fill='none' stroke='%23fff' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/public/style.css">
+</head>
+<body>
+<canvas id="scene" aria-label="Live 3D driving simulation and camera previews"></canvas>
+<div class="ui">
+<header class="topbar">
+<a class="brand" href="/" aria-label="Jev Drives home"><span class="brand-mark">j.</span><span>jev<span class="brand-divider">/</span><strong>drives</strong></span><span class="edition">EXPERIMENT 04</span></a>
+<div class="header-note">A small world. Real decisions.</div>
+<div class="header-actions"><span class="run-status"><i id="runDot"></i><span id="runStatus">Ready to drive</span></span><button id="inspectBtn" class="quiet" title="Inspect requests and answers (I)">Inspect <span aria-hidden="true">↗</span></button><button id="startBtn" class="primary">Start driving</button></div>
+</header>
+<main class="drive-layout">
+<div class="drive-main">
+<section class="toolbar" aria-label="Drive setup">
+<div class="setup-fields"><label>Traffic<select id="trafficSel"><option value="light">Light</option><option value="normal" selected>Normal</option><option value="dense">Dense</option></select></label><label>Duration<select id="lengthSel"></select></label><label class="seed-field">Seed<input id="seedInput" type="number" min="1" max="99999" value="7"></label></div>
+<div class="setup-actions"><button id="restartBtn" class="text-button" title="Restart this traffic (R)"><span aria-hidden="true">↻</span> Restart</button><button id="shuffleBtn" class="text-button" title="Start with new random traffic (N)"><span aria-hidden="true">⤨</span> New traffic</button><label class="switch-label"><input id="autoChk" type="checkbox" checked><span class="switch"></span>Repeat</label></div>
+</section>
+<section class="world-view" id="worldView" aria-label="The drive">
+<div class="world-top"><div class="world-title"><span class="eyebrow">TYPESAFE / SYSTEM ONE</span><h1>Instinct,<br><em>in motion.</em></h1><p>Jev takes the wheel.</p></div><div class="world-options"><span class="scene-caption"><i></i> SIMULATED WORLD</span><label class="light-control"><span>Light</span><select id="lightSel" aria-label="Scene lighting"><option value="afternoon">Late afternoon</option><option value="morning">Clear morning</option><option value="golden">Golden hour</option></select></label></div></div>
+<div class="world-bottom"><span class="view-coordinate" id="scenePosition">0000 M / RIGHT LANE</span><div class="view-controls"><label class="switch-label"><input id="overlayChk" type="checkbox" checked><span class="switch"></span>Sensors</label><label class="view-select"><span class="sr-only">Camera view</span><select id="cameraSel"><option value="chase">Chase view</option><option value="aerial">Aerial view</option><option value="driver">Driver view</option></select></label><button id="focusBtn" class="icon-button" title="Focus on the drive (F)" aria-label="Enter focus view" aria-pressed="false">⛶</button></div></div><div class="world-frame" aria-hidden="true"></div>
+</section>
+<section class="dash" aria-label="Driving instruments">
+<div class="speed"><div class="speed-reading"><span class="kmh" id="speedNum">30</span><span class="unit">km/h</span></div><div class="speed-limit"><span class="limit" id="limitRing" title="Speed limit Jev is applying">50</span><span class="posted" id="postedNote">posted 50</span></div></div>
+<div class="signs"><div class="label">Sign memory</div><div class="sign-strip" id="signStrip"></div></div>
+<div class="progress"><div class="progress-heading"><span class="label">The journey</span><span id="dist">0 / 840 m</span></div><div class="track" id="track"><i class="ego"></i></div><div class="meta"><span id="clock">0.0 s</span><span id="runInfo">seed 7 · normal</span></div></div>
+</section>
+<section class="sensing" aria-label="Camera previews"><div class="section-heading"><h2><span class="section-number">01</span> Through the sensors</h2><div class="blind"><span>Blind spots</span><span class="bs" id="bsLeft">L</span><span class="bs" id="bsRight">R</span><small>Amber means occupied</small></div></div><div class="feeds">
+<div class="feed" data-cam="front"><div class="feed-view"></div><div class="feed-corner">F</div><div class="feed-label"><b>Front</b><span>200 m · 70°</span><em title="Detected objects">0</em></div></div>
+<div class="feed" data-cam="left" title="170° sensing; preview cropped to 120°"><div class="feed-view"></div><div class="feed-corner">L</div><div class="feed-label"><b>Left</b><span>30 m · 170°</span><em title="Detected objects">0</em></div></div>
+<div class="feed" data-cam="right" title="170° sensing; preview cropped to 120°"><div class="feed-view"></div><div class="feed-corner">R</div><div class="feed-label"><b>Right</b><span>30 m · 170°</span><em title="Detected objects">0</em></div></div>
+<div class="feed" data-cam="rear"><div class="feed-view"></div><div class="feed-corner">B</div><div class="feed-label"><b>Rear</b><span>70 m · 100°</span><em title="Detected objects">0</em></div></div>
+</div></section>
+</div>
+<aside class="jev" aria-label="Jev decisions and observations">
+<div class="panel-heading"><h2><span class="section-number">02</span> Behind the wheel</h2><span class="dot" id="jevDot" title="Decision status"></span></div><div class="model-line"><span id="modelName">jev-latest</span><span id="latency">— ms</span></div>
+<div class="decision"><span class="label">Jev's decision</span><div class="decision-title"><span class="decision-icon" id="decisionIcon" aria-hidden="true">↗</span><h3 class="big" id="maneuverBig">Ready when<br>you are.</h3></div><div class="conf" id="maneuverConf">Start a drive to see Jev decide.</div><div class="exec" id="execLine">Centred in the right lane.</div></div>
+<details class="distribution" open><summary>Manoeuvre probabilities<span>8 choices</span></summary><ul class="probs" id="maneuverProbs"></ul></details>
+<div class="judgments"><div class="row"><div class="pace"><div class="label">Chosen limit</div><div class="pace-row"><div class="pace-vals"><span data-pace="30">30</span><span data-pace="50">50</span></div><span class="small" id="paceConf">—</span></div></div><div class="hazard"><div class="label">Hazard level</div><div class="meter" id="hazardMeter" data-level="-1"><i></i><i></i><i></i><i></i></div><div class="small" id="hazardText">Awaiting judgment</div></div></div>
+<div class="attention"><span class="label">Watching</span><span class="chip" id="attentionChip">—</span></div>
+<div class="nouls"><div class="noul"><span>Pass window open</span><div class="bar"><i id="passBar"></i></div><b id="passVal">—</b></div><div class="noul"><span>Must yield</span><div class="bar"><i id="yieldBar"></i></div><b id="yieldVal">—</b></div></div></div>
+<details class="sensor-details"><summary>Radar readings<span>LIVE SENSING</span></summary><div class="radar" id="radarText">—</div></details>
+<div class="timeline-wrap"><div class="label">Decision history <span class="label-note">LAST 60 S</span></div><div class="timeline" id="timeline"></div><div class="legend"><span><i class="m-cruise"></i>Cruise</span><span><i class="m-follow"></i>Follow</span><span><i class="m-overtake"></i>Pass</span><span><i class="m-return_right"></i>Return</span><span><i class="m-stop"></i>Stop</span><span><i class="m-creep"></i>Creep</span><span><i class="m-abort_overtake"></i>Abort</span><span><i class="m-emergency_brake"></i>Brake</span></div></div>
+<div class="session-stats"><span class="label">This session</span><div class="stats"><span><b id="decisions">0</b>decisions</span><span><b id="cadence">—</b>per second</span><span><b id="tokens">0</b>tokens</span><span><b id="cost">$0.0000</b>est. cost</span></div></div>
+<details class="run-details"><summary>Run measurements<span>VIEW</span></summary><div class="metrics" id="metrics"></div></details><div class="panel-footnote">Jev chooses. Code carries it out.</div>
+</aside>
+</main>
+<footer class="footer"><span><strong>TypeSafe</strong><span class="footer-separator">/</span>Real Jev decisions · simulated sensing</span><span class="shortcuts"><kbd>SPACE</kbd> drive / pause <kbd>V</kbd> view <kbd>F</kbd> focus <kbd>I</kbd> inspect</span><span class="credit">Fable engineering <span>×</span> Astra design</span></footer>
+</div>
+<div class="banner" id="banner" role="status" hidden></div>
+<div class="modal" id="endCard" role="dialog" aria-labelledby="endTitle" hidden><span class="eyebrow">THE DRIVE / COMPLETE</span><h2 id="endTitle"></h2><div class="end-body" id="endBody"></div><p id="endNote"></p></div>
+<div class="drawer-backdrop" id="inspectorBackdrop" hidden></div>
+<section class="drawer" id="inspector" role="dialog" aria-modal="true" aria-labelledby="inspectorTitle" hidden><div class="drawer-head"><div><span class="eyebrow">UNDER THE BONNET</span><h2 id="inspectorTitle">Every decision, in the open.</h2></div><button id="closeInspect" class="close" aria-label="Close inspector">×</button></div><nav aria-label="Inspector tabs"><button data-tab="situation" class="on">Situation</button><button data-tab="answers">Answer</button><button data-tab="questions">Questions</button><button data-tab="run">Run log</button></nav><pre id="inspectorBody" tabindex="0"></pre><div class="drawer-footer"><span>The actual inputs and outputs of this session.</span><button id="exportBtn">Export session ↓</button></div></section>
+<script type="module" src="/public/app.mjs"></script>
+</body>
+</html>

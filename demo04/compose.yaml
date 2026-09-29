@@ -1,0 +1,15 @@
+name: typesafe-demo04-jev-drives
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:${DEMO04_PORT:-3004}:3000"
+    env_file:
+      - ../.env
+    environment:
+      PORT: "3000"
+      NODE_ENV: production
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]

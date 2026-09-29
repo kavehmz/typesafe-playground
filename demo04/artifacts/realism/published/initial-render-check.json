@@ -1,0 +1,15 @@
+{
+  "errors": [],
+  "fps": {
+    "fps": 60.00600060006003,
+    "p95": 17.400000000001455,
+    "max": 17.700000000000728
+  },
+  "stats": {
+    "engine": "three.js r186",
+    "drawCalls": "688",
+    "triangles": "844484",
+    "geometries": "343",
+    "textures": "40"
+  }
+}

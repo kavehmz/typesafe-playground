@@ -1,0 +1,3956 @@
+{
+ "exported_at": "2026-09-29T05:12:42.362Z",
+ "model": "jev-latest",
+ "run": {
+  "seed": 5,
+  "traffic": "normal",
+  "road_length_m": 840,
+  "target_seconds": 90,
+  "time_limit_s": 180,
+  "result": null,
+  "time_s": 9.38,
+  "distance_m": 124,
+  "decisions": 23,
+  "maneuver_changes": 2,
+  "lane_changes": 1,
+  "overtakes_completed": 0,
+  "seconds_in_left_lane": 0.4,
+  "min_gap_ahead_m": 37,
+  "min_oncoming_ttc_s": 11,
+  "speeding_seconds": 0,
+  "max_over_limit_kmh": 0,
+  "crossings_passed": 0,
+  "stops_at_crossings": 0,
+  "entered_occupied_crossing": 0,
+  "stale_decisions": 0,
+  "maneuver_counts": {
+   "cruise": 7,
+   "follow": 11,
+   "overtake": 5
+  }
+ },
+ "decisions": [
+  {
+   "time": 0.016700000000000045,
+   "applied_at": 0.5333000000000004,
+   "situation": {
+    "ego": {
+     "speed_kmh": 30,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 0,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 13,
+     "hard_stopping_distance_m": 8
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 105.1,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 13,
+     "time_headway_s": 12.5,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 169.8,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 69,
+      "seconds_until_meeting": 8.8
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "no sign passed yet; default 50",
+     "next_sign": {
+      "id": "sign-1",
+      "limit_kmh": 50,
+      "distance_m": 15,
+      "within_slowing_distance": true
+     },
+     "seen_ahead": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "distance_m": 15
+      }
+     ],
+     "recently_passed": []
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 350,
+     "car_travel_during_latency_m": 2.9,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.68,
+     "probabilities": {
+      "cruise": 0.72,
+      "follow": 0.08,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.2,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.42,
+     "confidence": 0.58,
+     "probabilities": {
+      "0": 0.6,
+      "1": 0.38,
+      "2": 0.02,
+      "3": 0
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.38,
+     "probabilities": {
+      "lead_car": 0.45999999999999996,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.38,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0.11,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.05
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.32
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3459,
+    "output_tokens": 257
+   },
+   "latency_ms": 527,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 0.5500000000000004,
+   "applied_at": 0.7998999999999991,
+   "situation": {
+    "ego": {
+     "speed_kmh": 36,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 0.6,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 18,
+     "hard_stopping_distance_m": 11
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 102.6,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 19,
+     "time_headway_s": 10.3,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 159.1,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 75,
+      "seconds_until_meeting": 7.6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "no sign passed yet; default 50",
+     "next_sign": {
+      "id": "sign-1",
+      "limit_kmh": 50,
+      "distance_m": 10,
+      "within_slowing_distance": true
+     },
+     "seen_ahead": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "distance_m": 10
+      }
+     ],
+     "recently_passed": []
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 403,
+     "car_travel_during_latency_m": 4,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.74,
+     "probabilities": {
+      "cruise": 0.78,
+      "follow": 0.06,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.16,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.57,
+     "confidence": 0.43,
+     "probabilities": {
+      "0": 0.49,
+      "1": 0.46,
+      "2": 0.05,
+      "3": 0
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.45,
+     "probabilities": {
+      "lead_car": 0.53,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.34,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0.07,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.06
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.28
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3460,
+    "output_tokens": 257
+   },
+   "latency_ms": 260,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 0.9665999999999988,
+   "applied_at": 1.383299999999997,
+   "situation": {
+    "ego": {
+     "speed_kmh": 40,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 22,
+     "hard_stopping_distance_m": 13
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 100.1,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 23,
+     "time_headway_s": 8.9,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 150.1,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 79,
+      "seconds_until_meeting": 6.8
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "no sign passed yet; default 50",
+     "next_sign": {
+      "id": "sign-1",
+      "limit_kmh": 50,
+      "distance_m": 6,
+      "within_slowing_distance": true
+     },
+     "seen_ahead": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "distance_m": 6
+      }
+     ],
+     "recently_passed": []
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 360,
+     "car_travel_during_latency_m": 4,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.66,
+     "probabilities": {
+      "cruise": 0.71,
+      "follow": 0.12,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.17,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.68,
+     "confidence": 0.53,
+     "probabilities": {
+      "0": 0.39,
+      "1": 0.54,
+      "2": 0.07,
+      "3": 0
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.48,
+     "probabilities": {
+      "lead_car": 0.56,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.34,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0.08,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.02
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.25
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3455,
+    "output_tokens": 257
+   },
+   "latency_ms": 428,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 1.3999999999999968,
+   "applied_at": 1.699799999999996,
+   "situation": {
+    "ego": {
+     "speed_kmh": 45,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 1.4,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 27,
+     "hard_stopping_distance_m": 16
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 97,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 28,
+     "time_headway_s": 7.8,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 140.2,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 84,
+      "seconds_until_meeting": 6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "no sign passed yet; default 50",
+     "next_sign": {
+      "id": "sign-1",
+      "limit_kmh": 50,
+      "distance_m": 0,
+      "within_slowing_distance": true
+     },
+     "seen_ahead": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "distance_m": 0
+      }
+     ],
+     "recently_passed": []
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 380,
+     "car_travel_during_latency_m": 4.7,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.56,
+     "probabilities": {
+      "cruise": 0.62,
+      "follow": 0.16,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.22,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.01,
+     "confidence": 0.58,
+     "probabilities": {
+      "0": 0.2,
+      "1": 0.6,
+      "2": 0.18,
+      "3": 0.02
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.56,
+     "probabilities": {
+      "lead_car": 0.62,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.35,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0.02,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.28
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.05
+    }
+   },
+   "usage": {
+    "input_tokens": 3454,
+    "output_tokens": 257
+   },
+   "latency_ms": 303,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 1.8156999999999957,
+   "applied_at": 2.0998999999999945,
+   "situation": {
+    "ego": {
+     "speed_kmh": 47,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 1.8,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 29,
+     "hard_stopping_distance_m": 17
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 93.6,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 30,
+     "time_headway_s": 7.2,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 130.4,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 86,
+      "seconds_until_meeting": 5.5
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 5 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 5
+      }
+     ]
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 357,
+     "car_travel_during_latency_m": 4.7,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.71,
+     "probabilities": {
+      "cruise": 0.76,
+      "follow": 0.08,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.16,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.01,
+     "confidence": 0.6,
+     "probabilities": {
+      "0": 0.19,
+      "1": 0.62,
+      "2": 0.18,
+      "3": 0.01
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.5,
+     "probabilities": {
+      "lead_car": 0.58,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.41,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.25
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.05
+    }
+   },
+   "usage": {
+    "input_tokens": 3427,
+    "output_tokens": 257
+   },
+   "latency_ms": 293,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 2.216599999999994,
+   "applied_at": 2.465599999999993,
+   "situation": {
+    "ego": {
+     "speed_kmh": 48,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 2.2,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 30,
+     "hard_stopping_distance_m": 17
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 90.1,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 31,
+     "time_headway_s": 6.7,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 120.7,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 87,
+      "seconds_until_meeting": 5
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 10 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 10
+      }
+     ]
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 338,
+     "car_travel_during_latency_m": 4.5,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.64,
+     "probabilities": {
+      "cruise": 0.7,
+      "follow": 0.1,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.2,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.14,
+     "confidence": 0.53,
+     "probabilities": {
+      "0": 0.16,
+      "1": 0.56,
+      "2": 0.25,
+      "3": 0.03
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.55,
+     "probabilities": {
+      "lead_car": 0.62,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.37,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.25
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3427,
+    "output_tokens": 257
+   },
+   "latency_ms": 264,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 2.633299999999992,
+   "applied_at": 3.0832999999999906,
+   "situation": {
+    "ego": {
+     "speed_kmh": 49,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 2.6,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 31,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 86.4,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 32,
+     "time_headway_s": 6.3,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 110.5,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 88,
+      "seconds_until_meeting": 4.5
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 16 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 16
+      }
+     ]
+    },
+    "overtake_estimate": null,
+    "timing": {
+     "decision_latency_ms": 316,
+     "car_travel_during_latency_m": 4.3,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "cruise",
+     "confidence": 0.67,
+     "probabilities": {
+      "cruise": 0.72,
+      "follow": 0.09,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.19,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.24,
+     "confidence": 0.49,
+     "probabilities": {
+      "0": 0.13,
+      "1": 0.53,
+      "2": 0.3,
+      "3": 0.04
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.44,
+     "probabilities": {
+      "lead_car": 0.53,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.46,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.22
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3429,
+    "output_tokens": 257
+   },
+   "latency_ms": 457,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 3.0999999999999903,
+   "applied_at": 3.4332999999999894,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "cruise",
+     "seconds_in_current_maneuver": 3.1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 82.1,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 6,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 99,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 4
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 22 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 22
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 98.1,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 13.6,
+     "distance_needed_m": 189,
+     "time_available_s": 4.1,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 358,
+     "car_travel_during_latency_m": 4.9,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.85,
+     "probabilities": {
+      "cruise": 0.13,
+      "follow": 0.87,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.04,
+     "confidence": 0.6,
+     "probabilities": {
+      "0": 0.18,
+      "1": 0.63,
+      "2": 0.16,
+      "3": 0.03
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.87,
+     "probabilities": {
+      "lead_car": 0.1,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.89,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.05
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3573,
+    "output_tokens": 259
+   },
+   "latency_ms": 338,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 3.5155999999999894,
+   "applied_at": 3.799999999999988,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 0.1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 78.3,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 5.7,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 88.7,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 3.6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 28 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 28
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 94.3,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 13.1,
+     "distance_needed_m": 182,
+     "time_available_s": 3.6,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 352,
+     "car_travel_during_latency_m": 4.9,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.94,
+     "probabilities": {
+      "cruise": 0.05,
+      "follow": 0.95,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.99,
+     "confidence": 0.46,
+     "probabilities": {
+      "0": 0.28,
+      "1": 0.52,
+      "2": 0.14,
+      "3": 0.06
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.86,
+     "probabilities": {
+      "lead_car": 0.11,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.88,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3577,
+    "output_tokens": 259
+   },
+   "latency_ms": 289,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 3.916699999999987,
+   "applied_at": 4.299899999999999,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 0.5,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 74.6,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 5.4,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 78.8,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 3.2
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 34 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 34
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 90.6,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 12.7,
+     "distance_needed_m": 176,
+     "time_available_s": 3.2,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 333,
+     "car_travel_during_latency_m": 4.6,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.94,
+     "probabilities": {
+      "cruise": 0.05,
+      "follow": 0.95,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.05,
+     "confidence": 0.49,
+     "probabilities": {
+      "0": 0.23,
+      "1": 0.55,
+      "2": 0.16,
+      "3": 0.06
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.86,
+     "probabilities": {
+      "lead_car": 0.1,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.89,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.05
+    }
+   },
+   "usage": {
+    "input_tokens": 3577,
+    "output_tokens": 259
+   },
+   "latency_ms": 390,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 4.333300000000001,
+   "applied_at": 4.599900000000014,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 0.9,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 19
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 70.7,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 5.1,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 68.4,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 2.8
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 39 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 39
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 86.7,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 12.3,
+     "distance_needed_m": 171,
+     "time_available_s": 2.8,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 350,
+     "car_travel_during_latency_m": 4.9,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.95,
+     "probabilities": {
+      "cruise": 0.04,
+      "follow": 0.96,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.18,
+     "confidence": 0.45,
+     "probabilities": {
+      "0": 0.18,
+      "1": 0.55,
+      "2": 0.18,
+      "3": 0.09
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.88,
+     "probabilities": {
+      "lead_car": 0.09,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.9,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3577,
+    "output_tokens": 259
+   },
+   "latency_ms": 274,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 4.733300000000021,
+   "applied_at": 5.033300000000035,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 1.3,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 67,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 4.8,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 58.5,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 2.4
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 45 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 45
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 83,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 11.9,
+     "distance_needed_m": 165,
+     "time_available_s": 2.4,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 327,
+     "car_travel_during_latency_m": 4.5,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.95,
+     "probabilities": {
+      "cruise": 0.04,
+      "follow": 0.96,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.24,
+     "confidence": 0.42,
+     "probabilities": {
+      "0": 0.17,
+      "1": 0.52,
+      "2": 0.2,
+      "3": 0.11
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.85,
+     "probabilities": {
+      "lead_car": 0.11,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.88,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.05
+    }
+   },
+   "usage": {
+    "input_tokens": 3573,
+    "output_tokens": 259
+   },
+   "latency_ms": 304,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 5.13330000000004,
+   "applied_at": 5.366600000000051,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 1.7,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 63.3,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 4.6,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 48.6,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 2
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 50 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 50
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 79.3,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 11.5,
+     "distance_needed_m": 160,
+     "time_available_s": 2,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 320,
+     "car_travel_during_latency_m": 4.4,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.93,
+     "probabilities": {
+      "cruise": 0.05,
+      "follow": 0.95,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.48,
+     "confidence": 0.28,
+     "probabilities": {
+      "0": 0.12,
+      "1": 0.47,
+      "2": 0.21,
+      "3": 0.2
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.94,
+     "probabilities": {
+      "lead_car": 0.05,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.95,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3573,
+    "output_tokens": 259
+   },
+   "latency_ms": 240,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 5.533300000000057,
+   "applied_at": 6.033200000000079,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 2.1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 59.6,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 4.3,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 38.6,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 1.6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 56 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 56
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 75.6,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 11.1,
+     "distance_needed_m": 154,
+     "time_available_s": 1.6,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 296,
+     "car_travel_during_latency_m": 4.1,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.93,
+     "probabilities": {
+      "cruise": 0.06,
+      "follow": 0.94,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.43,
+     "confidence": 0.29,
+     "probabilities": {
+      "0": 0.14,
+      "1": 0.47000000000000003,
+      "2": 0.21,
+      "3": 0.18
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.94,
+     "probabilities": {
+      "lead_car": 0.05,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.95,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3577,
+    "output_tokens": 259
+   },
+   "latency_ms": 509,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 6.049900000000081,
+   "applied_at": 6.2999000000000915,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 2.6,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 33,
+     "hard_stopping_distance_m": 19
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 54.8,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 3.9,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 25.8,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "left camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 1
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 63 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 63
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 70.8,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 10.6,
+     "distance_needed_m": 147,
+     "time_available_s": 1.1,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 360,
+     "car_travel_during_latency_m": 5,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.94,
+     "probabilities": {
+      "cruise": 0.04,
+      "follow": 0.95,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0.01
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.68,
+     "confidence": 0.09,
+     "probabilities": {
+      "0": 0.11,
+      "1": 0.36,
+      "2": 0.27,
+      "3": 0.26
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.94,
+     "probabilities": {
+      "lead_car": 0.05,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.95,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3578,
+    "output_tokens": 259
+   },
+   "latency_ms": 259,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 6.450000000000098,
+   "applied_at": 6.716600000000111,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 3,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 51.1,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 3.7,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 15.9,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "left camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 0.6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 69 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 69
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 67.1,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 10.2,
+     "distance_needed_m": 142,
+     "time_available_s": 0.7,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 330,
+     "car_travel_during_latency_m": 4.6,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.95,
+     "probabilities": {
+      "cruise": 0.04,
+      "follow": 0.95,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0.01
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.69,
+     "confidence": 0.06,
+     "probabilities": {
+      "0": 0.12,
+      "1": 0.35000000000000003,
+      "2": 0.25,
+      "3": 0.28
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.97,
+     "probabilities": {
+      "lead_car": 0.02,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.98,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3580,
+    "output_tokens": 259
+   },
+   "latency_ms": 271,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 6.850000000000116,
+   "applied_at": 7.266600000000133,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 3.4,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 47.3,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 3.4,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 5.9,
+      "speed_kmh": 39,
+      "seen_by": [
+       "front camera",
+       "left camera",
+       "front radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 0.2
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 74 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 74
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 63.3,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 9.8,
+     "distance_needed_m": 136,
+     "time_available_s": 0.3,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.5,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 312,
+     "car_travel_during_latency_m": 4.3,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.95,
+     "probabilities": {
+      "cruise": 0.02,
+      "follow": 0.97,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0.01
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 2.07,
+     "confidence": 0.07,
+     "probabilities": {
+      "0": 0.09,
+      "1": 0.22,
+      "2": 0.23,
+      "3": 0.45999999999999996
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.97,
+     "probabilities": {
+      "lead_car": 0.03,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.97,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3580,
+    "output_tokens": 259
+   },
+   "latency_ms": 427,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 7.283300000000135,
+   "applied_at": 7.566600000000148,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 3.9,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 19
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 43.3,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 3.1,
+     "gap_class": "comfortable",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-5",
+      "distance_m": 0,
+      "speed_kmh": 39,
+      "seen_by": [
+       "left camera",
+       "rear radar"
+      ],
+      "closing_speed_kmh": 89,
+      "seconds_until_meeting": 0
+     },
+     "second": {
+      "id": "car-6",
+      "distance_m": 288.1,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 80,
+      "seconds_until_meeting": 13
+     }
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": true,
+      "object": "car-5"
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 80 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 80
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 59.3,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 9.3,
+     "distance_needed_m": 129,
+     "time_available_s": 0.1,
+     "time_available_source": "nearest oncoming car car-5",
+     "margin_s": -9.2,
+     "margin_class": "deficit",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 347,
+     "car_travel_during_latency_m": 4.8,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "follow",
+     "confidence": 0.95,
+     "probabilities": {
+      "cruise": 0.03,
+      "follow": 0.96,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0.01
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 2.01,
+     "confidence": 0.01,
+     "probabilities": {
+      "0": 0.07,
+      "1": 0.24,
+      "2": 0.29,
+      "3": 0.4
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.97,
+     "probabilities": {
+      "lead_car": 0.03,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.97,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.04
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3637,
+    "output_tokens": 259
+   },
+   "latency_ms": 295,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 7.683300000000152,
+   "applied_at": 7.966600000000164,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "centred in right lane",
+     "current_maneuver": "follow",
+     "seconds_in_current_maneuver": 4.3,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-1",
+     "distance_m": 39.6,
+     "speed_kmh": 17,
+     "seen_by": [
+      "front camera",
+      "front radar"
+     ],
+     "closing_speed_kmh": 33,
+     "time_headway_s": 2.9,
+     "gap_class": "close",
+     "status": "moving"
+    },
+    "being_passed": null,
+    "oncoming": {
+     "nearest": {
+      "id": "car-6",
+      "distance_m": 279.2,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 80,
+      "seconds_until_meeting": 12.6
+     },
+     "second": null
+    },
+    "right_lane_return": null,
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 86 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 86
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 55.6,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 8.9,
+     "distance_needed_m": 124,
+     "time_available_s": 12.6,
+     "time_available_source": "nearest oncoming car car-6",
+     "margin_s": 3.7,
+     "margin_class": "moderate surplus",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 331,
+     "car_travel_during_latency_m": 4.6,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "overtake",
+     "confidence": 0.97,
+     "probabilities": {
+      "cruise": 0,
+      "follow": 0.02,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.98,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.93,
+     "confidence": 0.44,
+     "probabilities": {
+      "0": 0.04,
+      "1": 0.22,
+      "2": 0.5,
+      "3": 0.24
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "lead_car",
+     "confidence": 0.49,
+     "probabilities": {
+      "lead_car": 0.5700000000000001,
+      "car_being_passed": 0,
+      "oncoming_traffic": 0.42,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.94
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3572,
+    "output_tokens": 257
+   },
+   "latency_ms": 290,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 8.083300000000165,
+   "applied_at": 8.33280000000016,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "moving into left lane",
+     "current_maneuver": "overtake",
+     "seconds_in_current_maneuver": 0.1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": null,
+    "being_passed": {
+     "id": "car-1",
+     "speed_kmh": 17,
+     "position": "still ahead",
+     "centre_offset_m": 40.4,
+     "clear_distance_m": 35.9,
+     "our_rear_bumper_is_ahead_of_its_front_by_m": -44.9
+    },
+    "oncoming": {
+     "nearest": {
+      "id": "car-6",
+      "distance_m": 270.4,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 80,
+      "seconds_until_meeting": 12.2
+     },
+     "second": null
+    },
+    "right_lane_return": {
+     "zone_clear": true,
+     "bodies_in_zone": [],
+     "blind_spot_right_occupied": false,
+     "seconds_to_complete_return_at_current_speed": 2.8,
+     "next_car_ahead_in_right_lane": {
+      "id": "car-1",
+      "gap_m": 35.9,
+      "speed_kmh": 17
+     }
+    },
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 91 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 91
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 51.9,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 8.5,
+     "distance_needed_m": 118,
+     "time_available_s": 12.2,
+     "time_available_source": "nearest oncoming car car-6",
+     "margin_s": 3.7,
+     "margin_class": "moderate surplus",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 319,
+     "car_travel_during_latency_m": 4.4,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "overtake",
+     "confidence": 0.99,
+     "probabilities": {
+      "cruise": 0,
+      "follow": 0,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 1,
+      "return_right": 0,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.98,
+     "confidence": 0.82,
+     "probabilities": {
+      "0": 0.1,
+      "1": 0.83,
+      "2": 0.07,
+      "3": 0
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.69,
+     "probabilities": {
+      "lead_car": 0.01,
+      "car_being_passed": 0.25,
+      "oncoming_traffic": 0.74,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.95
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3646,
+    "output_tokens": 261
+   },
+   "latency_ms": 260,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 8.500000000000156,
+   "applied_at": 8.933200000000143,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "moving into left lane",
+     "current_maneuver": "overtake",
+     "seconds_in_current_maneuver": 0.5,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": null,
+    "being_passed": {
+     "id": "car-1",
+     "speed_kmh": 17,
+     "position": "still ahead",
+     "centre_offset_m": 36.4,
+     "clear_distance_m": 31.9,
+     "our_rear_bumper_is_ahead_of_its_front_by_m": -40.9
+    },
+    "oncoming": {
+     "nearest": {
+      "id": "car-6",
+      "distance_m": 260.8,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 80,
+      "seconds_until_meeting": 11.8
+     },
+     "second": null
+    },
+    "right_lane_return": {
+     "zone_clear": true,
+     "bodies_in_zone": [],
+     "blind_spot_right_occupied": false,
+     "seconds_to_complete_return_at_current_speed": 2.8,
+     "next_car_ahead_in_right_lane": {
+      "id": "car-1",
+      "gap_m": 31.9,
+      "speed_kmh": 17
+     }
+    },
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "off road",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 97 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 97
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 47.9,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 8.1,
+     "distance_needed_m": 112,
+     "time_available_s": 11.8,
+     "time_available_source": "nearest oncoming car car-6",
+     "margin_s": 3.7,
+     "margin_class": "moderate surplus",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 301,
+     "car_travel_during_latency_m": 4.2,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "overtake",
+     "confidence": 0.99,
+     "probabilities": {
+      "cruise": 0,
+      "follow": 0,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.99,
+      "return_right": 0.01,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 0.99,
+     "confidence": 0.83,
+     "probabilities": {
+      "0": 0.09,
+      "1": 0.84,
+      "2": 0.07,
+      "3": 0
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.74,
+     "probabilities": {
+      "lead_car": 0.01,
+      "car_being_passed": 0.2,
+      "oncoming_traffic": 0.78,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.94
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3646,
+    "output_tokens": 261
+   },
+   "latency_ms": 449,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 8.949900000000143,
+   "applied_at": 9.299900000000134,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "moving into left lane",
+     "current_maneuver": "overtake",
+     "seconds_in_current_maneuver": 1,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-2",
+     "distance_m": 172,
+     "speed_kmh": 13,
+     "seen_by": [
+      "front camera"
+     ],
+     "closing_speed_kmh": 37,
+     "time_headway_s": 12.5,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": {
+     "id": "car-1",
+     "speed_kmh": 17,
+     "position": "still ahead",
+     "centre_offset_m": 31.9,
+     "clear_distance_m": 27.4,
+     "our_rear_bumper_is_ahead_of_its_front_by_m": -36.4
+    },
+    "oncoming": {
+     "nearest": {
+      "id": "car-6",
+      "distance_m": 249,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 80,
+      "seconds_until_meeting": 11.3
+     },
+     "second": null
+    },
+    "right_lane_return": {
+     "zone_clear": true,
+     "bodies_in_zone": [],
+     "blind_spot_right_occupied": false,
+     "seconds_to_complete_return_at_current_speed": 2.8,
+     "next_car_ahead_in_right_lane": {
+      "id": "car-1",
+      "gap_m": 27.4,
+      "speed_kmh": 17
+     }
+    },
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "right",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 103 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 103
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 43.4,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 7.6,
+     "distance_needed_m": 106,
+     "time_available_s": 11.3,
+     "time_available_source": "nearest oncoming car car-6",
+     "margin_s": 3.7,
+     "margin_class": "moderate surplus",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 346,
+     "car_travel_during_latency_m": 4.8,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "overtake",
+     "confidence": 0.99,
+     "probabilities": {
+      "cruise": 0,
+      "follow": 0,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.99,
+      "return_right": 0.01,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.01,
+     "confidence": 0.79,
+     "probabilities": {
+      "0": 0.1,
+      "1": 0.79,
+      "2": 0.1,
+      "3": 0.01
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.8,
+     "probabilities": {
+      "lead_car": 0.01,
+      "car_being_passed": 0.15,
+      "oncoming_traffic": 0.83,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.95
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3723,
+    "output_tokens": 261
+   },
+   "latency_ms": 354,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  },
+  {
+   "time": 9.350000000000133,
+   "applied_at": 9.383300000000132,
+   "situation": {
+    "ego": {
+     "speed_kmh": 50,
+     "lane_status": "moving into left lane",
+     "current_maneuver": "overtake",
+     "seconds_in_current_maneuver": 1.4,
+     "speed_limit_in_use_kmh": 50,
+     "over_limit_by_kmh": 0,
+     "comfortable_stopping_distance_m": 32,
+     "hard_stopping_distance_m": 18
+    },
+    "lead": {
+     "id": "car-2",
+     "distance_m": 167.1,
+     "speed_kmh": 13,
+     "seen_by": [
+      "front camera"
+     ],
+     "closing_speed_kmh": 36,
+     "time_headway_s": 12.2,
+     "gap_class": "far",
+     "status": "moving"
+    },
+    "being_passed": {
+     "id": "car-1",
+     "speed_kmh": 17,
+     "position": "still ahead",
+     "centre_offset_m": 28,
+     "clear_distance_m": 23.5,
+     "our_rear_bumper_is_ahead_of_its_front_by_m": -32.5
+    },
+    "oncoming": {
+     "nearest": {
+      "id": "car-6",
+      "distance_m": 239.2,
+      "speed_kmh": 30,
+      "seen_by": [
+       "front radar"
+      ],
+      "closing_speed_kmh": 79,
+      "seconds_until_meeting": 10.9
+     },
+     "second": null
+    },
+    "right_lane_return": {
+     "zone_clear": true,
+     "bodies_in_zone": [],
+     "blind_spot_right_occupied": false,
+     "seconds_to_complete_return_at_current_speed": 2.8,
+     "next_car_ahead_in_right_lane": {
+      "id": "car-1",
+      "gap_m": 23.5,
+      "speed_kmh": 17
+     }
+    },
+    "rear": null,
+    "blind_spots": {
+     "left": {
+      "covers_lane": "left",
+      "occupied": false,
+      "object": null
+     },
+     "right": {
+      "covers_lane": "right",
+      "occupied": false,
+      "object": null
+     }
+    },
+    "crossing": null,
+    "markings": {
+     "centre_line_here": "broken",
+     "solid_section_starts_in_m": null,
+     "solid_section_ends_in_m": null
+    },
+    "signs": {
+     "active_limit_kmh": 50,
+     "active_because": "sign-1 (50) passed 109 m ago",
+     "next_sign": null,
+     "seen_ahead": [],
+     "recently_passed": [
+      {
+       "id": "sign-1",
+       "limit_kmh": 50,
+       "metres_ago": 109
+      }
+     ]
+    },
+    "overtake_estimate": {
+     "target": "car-1",
+     "target_speed_kmh": 17,
+     "relative_distance_still_needed_m": 39.5,
+     "pass_complete": false,
+     "possible": true,
+     "time_needed_s": 7.2,
+     "distance_needed_m": 100,
+     "time_available_s": 10.8,
+     "time_available_source": "nearest oncoming car car-6",
+     "margin_s": 3.6,
+     "margin_class": "moderate surplus",
+     "centre_line_conflict": "none",
+     "crossing_conflict": "none",
+     "speed_sign_conflict": "none"
+    },
+    "timing": {
+     "decision_latency_ms": 348,
+     "car_travel_during_latency_m": 4.8,
+     "next_decision_in_ms": 400
+    }
+   },
+   "answers": {
+    "maneuver": {
+     "type": "choice",
+     "choice": "overtake",
+     "confidence": 0.99,
+     "probabilities": {
+      "cruise": 0,
+      "follow": 0,
+      "creep": 0,
+      "stop": 0,
+      "overtake": 0.99,
+      "return_right": 0.01,
+      "abort_overtake": 0,
+      "emergency_brake": 0
+     }
+    },
+    "pace": {
+     "type": "choice",
+     "choice": "50",
+     "confidence": 1,
+     "probabilities": {
+      "30": 0,
+      "50": 1
+     }
+    },
+    "hazard": {
+     "type": "score",
+     "score": 1.04,
+     "confidence": 0.79,
+     "probabilities": {
+      "0": 0.09,
+      "1": 0.8,
+      "2": 0.1,
+      "3": 0.01
+     },
+     "legend": {
+      "0": "Clear: nothing near the car needs a reaction.",
+      "1": "Watch: something ahead, beside or behind needs attention within several seconds.",
+      "2": "Hazard: a conflict is developing that needs a change of speed or lane soon.",
+      "3": "Critical: a collision is likely within about two seconds unless the car brakes or steers now."
+     }
+    },
+    "attention": {
+     "type": "choice",
+     "choice": "oncoming_traffic",
+     "confidence": 0.74,
+     "probabilities": {
+      "lead_car": 0.01,
+      "car_being_passed": 0.21,
+      "oncoming_traffic": 0.77,
+      "pedestrian_or_crossing": 0,
+      "speed_sign": 0,
+      "rear_or_blind_spot": 0,
+      "nothing": 0.01
+     }
+    },
+    "pass_window_open": {
+     "type": "noul",
+     "noul": 0.95
+    },
+    "must_yield": {
+     "type": "noul",
+     "noul": 0.06
+    }
+   },
+   "usage": {
+    "input_tokens": 3727,
+    "output_tokens": 261
+   },
+   "latency_ms": 307,
+   "model": "jev-1.13.0",
+   "applied": {
+    "applied": true
+   }
+  }
+ ],
+ "latency_ms_average": 339,
+ "tokens": 87776
+}

@@ -1,0 +1,24 @@
+# Keep documented evidence; exploratory captures remain local.
+*
+!*/
+!/.gitignore
+!/astra-driving.png
+!/browser-verification.json
+!/desktop-ready.png
+!/drive-result.png
+!/final-smoke-session.json
+!/final-ui-check.json
+!/focus-ready.png
+!/inspector.png
+!/laptop-ready.png
+!/live-session-seed5.json
+!/realism/final/drive-result.png
+!/realism/final/live-dashboard.png
+!/realism/final/live-session-seed5.json
+!/realism/final/verification.json
+!/realism/published/bands-fixed.png
+!/realism/published/final-dashboard.png
+!/realism/published/final-hero.png
+!/realism/published/golden.png
+!/realism/published/initial-render-check.json
+!/small-mobile-ready.png
