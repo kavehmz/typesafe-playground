@@ -156,38 +156,6 @@ function grassTexture(anisotropy) {
   }
   return texture(c, anisotropy);
 }
-function distantTreeTexture(anisotropy, pine = false) {
-  const [c, ctx] = canvas(512, 768), rng = random(pine ? 82913 : 51794);
-  ctx.fillStyle = '#5e5d47'; ctx.beginPath(); ctx.moveTo(244, 761); ctx.lineTo(251, 234); ctx.lineTo(260, 234); ctx.lineTo(269, 761); ctx.fill();
-  if (pine) {
-    for (let level = 0; level < 17; level++) {
-      const y = 50 + level * 33, reach = 15 + level * 10.8;
-      for (let side = -1; side <= 1; side += 2) {
-        ctx.strokeStyle = '#575f40'; ctx.lineWidth = 4;
-        ctx.beginPath(); ctx.moveTo(255, y); ctx.lineTo(255 + reach * side, y + 24); ctx.stroke();
-        for (let j = 0; j < 300; j++) {
-          const t = rng(), x = 255 + side * t * reach, py = y + t * 27 + (rng() - .5) * (34 + t * 27);
-          ctx.fillStyle = ['#4a6847', '#597747', '#68804c', '#42613e'][Math.floor(rng() * 4)];
-          ctx.beginPath(); ctx.ellipse(x, py, 2 + rng() * 5, 1.4 + rng() * 3, rng() * TAU, 0, TAU); ctx.fill();
-        }
-      }
-    }
-  } else {
-    for (let limb = 0; limb < 16; limb++) {
-      const a = (limb / 16) * TAU, radius = 95 + rng() * 95;
-      const bx = 256 + Math.cos(a) * radius, by = 310 + Math.sin(a) * radius * 1.25;
-      ctx.strokeStyle = '#606044'; ctx.lineWidth = 3 + rng() * 4;
-      ctx.beginPath(); ctx.moveTo(256, 540); ctx.quadraticCurveTo(256, 360, bx, by); ctx.stroke();
-      for (let leaf = 0; leaf < 350; leaf++) {
-        const angle = rng() * TAU, rad = Math.sqrt(rng());
-        const x = bx + Math.cos(angle) * rad * (40 + rng() * 36), y = by + Math.sin(angle) * rad * (44 + rng() * 35);
-        ctx.fillStyle = ['#456637', '#557641', '#657f43', '#788c4b', '#58723c'][Math.floor(rng() * 5)];
-        ctx.beginPath(); ctx.ellipse(x, y, 2 + rng() * 4.5, 1.3 + rng() * 2.6, rng() * TAU, 0, TAU); ctx.fill();
-      }
-    }
-  }
-  return texture(c, anisotropy);
-}
 
 function windMaterial(map, clock, strength, options = {}) {
   const material = new THREE.MeshStandardMaterial({
@@ -234,36 +202,154 @@ function cylinderSegment(from, to, radius, shade = null) {
   return { matrix: temp.matrix.clone(), tint: shade };
 }
 
-// The first 25 m to either side are level, so scenery and crossing heights remain exact.
-function terrainHeight(x, z, phase) {
-  const a = Math.abs(x), slope = smooth(25, 140, a), hills = smooth(90, 570, a);
-  const rolling = 6 + 5 * Math.sin(x * .018 + z * .007 + phase) + 3.5 * Math.sin(z * .017 - x * .022);
-  const ridge = 25 + 18 * Math.sin(z * .0037 + x * .006 + phase) + 12 * Math.sin(z * .0071 - x * .005);
+// A level village corridor opens onto cultivated slopes and a wooded valley.
+// These heights are presentation only; road, people and house anchors stay exact.
+function hillHeight(x, z, phase) {
+  const a = Math.abs(x), slope = smooth(25, 145, a), hills = smooth(90, 600, a);
+  const rolling = 5 + 4.1 * Math.sin(x * .016 + z * .005 + phase) + 2.6 * Math.sin(z * .013 - x * .018);
+  const ridge = 29 + 17 * Math.sin(z * .0029 + x * .005 + phase) + 13 * Math.sin(z * .0052 - x * .008);
   return -.035 + slope * rolling + hills * ridge;
 }
+function pondFor(z, phase) {
+  const index = Math.round((z - 86) / 1040), side = index % 2 ? 1 : -1;
+  const x = side * (62 + Math.sin(index * 1.9 + phase) * 3), centreZ = 86 + index * 1040;
+  return { x, z: centreZ, rx: 18, rz: 26, y: hillHeight(x, centreZ, phase) - .16, phase: phase + index };
+}
+function pondRadius(x, z, pond) {
+  const dx = (x - pond.x) / pond.rx, dz = (z - pond.z) / pond.rz;
+  const angle = Math.atan2(dz, dx), wobble = 1 + .055 * Math.sin(angle * 3 + pond.phase) + .035 * Math.cos(angle * 7);
+  return Math.hypot(dx, dz) / wobble;
+}
+function terrainHeight(x, z, phase) {
+  const original = hillHeight(x, z, phase);
+  if (Math.abs(x) < 34) return original;
+  const pond = pondFor(z, phase), r = pondRadius(x, z, pond);
+  if (r > 1.45) return original;
+  const bed = pond.y - .16 - .8 * Math.max(0, 1 - r * r);
+  return mix(bed, original, smooth(.91, 1.45, r));
+}
 function buildTerrain(from, length, material, phase) {
-  const geo = new THREE.PlaneGeometry(1440, length, 96, 16);
-  geo.rotateX(-Math.PI / 2);
-  const positions = geo.attributes.position, uv = geo.attributes.uv, colors = [];
-  for (let i = 0; i < positions.count; i++) {
-    let x = positions.getX(i);
-    // Explicit vertices at the flat corridor edge prevent a large terrain triangle
-    // from lifting the ground underneath a house or crossing approach.
-    if (Math.abs(Math.abs(x) - 30) < .01) { x = Math.sign(x) * 25; positions.setX(i, x); }
-    const z = from + length / 2 - positions.getZ(i);
-    positions.setY(i, terrainHeight(x, z, phase));
-    uv.setXY(i, x / 14, z / 14);
+  const xs = [-720];
+  for (let x = -700; x < -100; x += 20) xs.push(x);
+  for (let x = -100; x <= -28; x += 3) xs.push(x);
+  xs.push(-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25);
+  for (let x = 28; x <= 100; x += 3) xs.push(x);
+  for (let x = 120; x <= 720; x += 20) xs.push(x);
+  const vertices = [], uvs = [], colors = [], indices = [], rows = 32;
+  for (let row = 0; row <= rows; row++) for (const x of xs) {
+    const z = from + row / rows * length;
+    vertices.push(x, terrainHeight(x, z, phase), -z); uvs.push(x / 14, z / 14);
     const patch = Math.sin(x * .048 + Math.sin(z * .014) * 3) * Math.sin(z * .037 - x * .006);
-    const field = .93 + patch * .17 + Math.sin(z * .009 + x * .025) * .09;
+    const field = .99 + patch * .09 + Math.sin(z * .009 + x * .025) * .055;
     // Irregular dry and freshly green meadow patches break the uniform lawn effect.
     const far = smooth(28, 90, Math.abs(x));
     const dry = smooth(-.08, .75, Math.sin(z * .019 + x * .038 + phase) * Math.cos(x * .017 - z * .006)) * far;
     const rich = smooth(.2, .9, Math.cos(z * .043 + x * .018)) * (1 - dry);
     colors.push(field * (1 + dry * .23 - rich * .09), field * (1 - dry * .04), field * (.88 + dry * .13 - rich * .08));
   }
+  for (let row = 0; row < rows; row++) for (let col = 0; col < xs.length - 1; col++) {
+    const a = row * xs.length + col, b = a + xs.length;
+    indices.push(a, a + 1, b, a + 1, b + 1, b);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2)); geo.setIndex(indices);
   geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); geo.computeVertexNormals();
-  const mesh = new THREE.Mesh(geo, material); mesh.position.z = -(from + length / 2);
+  const mesh = new THREE.Mesh(geo, material);
   mesh.receiveShadow = true; return mesh;
+}
+
+function cultivatedMeadow(map, phase) {
+  const material = new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale: .045, roughness: 1, vertexColors: true });
+  material.onBeforeCompile = shader => {
+    shader.uniforms.uLandPhase = { value: phase };
+    shader.vertexShader = `varying vec3 vLandPosition;\n${shader.vertexShader}`;
+    shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvLandPosition = position;');
+    shader.fragmentShader = `varying vec3 vLandPosition; uniform float uLandPhase;\n${shader.fragmentShader}`;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
+      #include <color_fragment>
+      float landX = abs(vLandPosition.x), landZ = -vLandPosition.z;
+      vec2 fieldUV = vec2((landX - 42.0 + sin(landZ * .014 + uLandPhase) * 9.0) / 96.0,
+                         (landZ + sin(landX * .009 + uLandPhase) * 23.0) / 182.0);
+      vec2 parcel = floor(fieldUV);
+      float crop = fract(sin(dot(parcel + vec2(sign(vLandPosition.x) * 3.7, uLandPhase), vec2(127.1,311.7))) * 43758.5453);
+      vec3 fieldTone = crop < .23 ? vec3(1.79,1.28,.96) : crop < .38 ? vec3(1.09,.79,.87) : crop < .72 ? vec3(.87,.99,.86) : vec3(1.20,1.13,.88);
+      vec2 edge = min(fract(fieldUV), 1.0 - fract(fieldUV));
+      float margin = smoothstep(.007,.035,min(edge.x,edge.y));
+      float arable = smoothstep(32.0,45.0,landX) * (1.0-smoothstep(245.0,420.0,landX));
+      // Fine planted rows disappear correctly in the distance instead of aliasing.
+      float rowCoord = landX * (crop < .38 ? .68 : 1.12) + sin(landZ * .012) * 1.7;
+      float rowAA = 1.0 - smoothstep(.25,.8,fwidth(rowCoord));
+      float rows = 1.0 - .075 * rowAA * (.5 + .5 * cos(rowCoord * 6.283185));
+      fieldTone *= mix(1.0,rows,crop < .72 ? 1.0 : .4);
+      diffuseColor.rgb *= mix(vec3(1.0),mix(vec3(.77,.9,.83),fieldTone,margin),arable);
+      float pondIndex = floor((landZ - 86.0) / 1040.0 + .5);
+      float pondSide = cos(pondIndex * 3.14159265) > 0.0 ? -1.0 : 1.0;
+      vec2 pondXY = vec2((vLandPosition.x - pondSide * (62.0 + sin(pondIndex * 1.9 + uLandPhase) * 3.0)) / 18.0,
+                         (landZ - 86.0 - pondIndex * 1040.0) / 26.0);
+      float bankAngle = atan(pondXY.y,pondXY.x);
+      float bankRadius = length(pondXY) / (1.0 + .055 * sin(bankAngle * 3.0 + uLandPhase + pondIndex) + .035 * cos(bankAngle * 7.0));
+      float bank = (1.0-smoothstep(1.08,1.23,bankRadius)) * smoothstep(.92,.99,bankRadius);
+      diffuseColor.rgb = mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.30,.88,.95),bank*.8);
+    `);
+  };
+  material.customProgramCacheKey = () => 'cultivated-meadow-v3';
+  return material;
+}
+
+// A textured, irregular volume gives the horizon actual depth under moving light.
+// Five differently scaled lobes form each crown; leaf sprays soften the closer trees.
+function canopyGeometry(detail = 1) {
+  const geometry = new THREE.IcosahedronGeometry(1, detail), p = geometry.attributes.position;
+  const normals=[];
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const r = 1 + .095 * Math.sin(x * 14 + y * 9) * Math.sin(z * 11 - y * 7) + .055 * Math.cos(x * 23 + z * 17);
+    p.setXYZ(i,x*r,y*r,z*r);
+    const length=Math.hypot(x,y,z);normals.push(x/length,y/length,z/length);
+  }
+  geometry.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));return geometry;
+}
+function canopyMaterial() {
+  const material = new THREE.MeshStandardMaterial({ color: 0x6b7c46, roughness: .96, emissive: 0x23371c, emissiveIntensity: .07 });
+  material.onBeforeCompile = shader => {
+    shader.vertexShader = `varying vec3 vCrownPosition;\n${shader.vertexShader}`;
+    shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvCrownPosition = position;');
+    shader.fragmentShader = `varying vec3 vCrownPosition;\n${shader.fragmentShader}`;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
+      #include <color_fragment>
+      float leafLight = sin(vCrownPosition.x * 33.0 + sin(vCrownPosition.y * 23.0)) * sin(vCrownPosition.z * 38.0 - vCrownPosition.y * 17.0);
+      diffuseColor.rgb *= .91 + leafLight * .12 + vCrownPosition.y * .13;
+    `);
+  };
+  material.customProgramCacheKey = () => 'volumetric-woodland-v3'; return material;
+}
+
+function waterMaterial(clock, anisotropy) {
+  const [c,ctx] = canvas(256), pixels = ctx.createImageData(256,256);
+  for(let y=0;y<256;y++)for(let x=0;x<256;x++) {
+    const i=(y*256+x)*4, a=Math.sin(x/256*TAU*7+y/256*TAU*3), b=Math.cos(y/256*TAU*9-x/256*TAU*2);
+    pixels.data[i]=128+a*23; pixels.data[i+1]=128+b*17; pixels.data[i+2]=251; pixels.data[i+3]=255;
+  }
+  ctx.putImageData(pixels,0,0);const normal=texture(c,anisotropy,true);normal.colorSpace=THREE.NoColorSpace;normal.repeat.set(6,8);
+  const material=new THREE.MeshPhysicalMaterial({color:0x506d65,metalness:.32,roughness:.19,normalMap:normal,normalScale:new THREE.Vector2(.34,.34),clearcoat:1,clearcoatRoughness:.12,envMapIntensity:1.1});
+  material.onBeforeCompile=shader=>{
+    shader.uniforms.uWaterTime=clock;
+    shader.fragmentShader=`uniform float uWaterTime;\n${shader.fragmentShader}`;
+    shader.fragmentShader=shader.fragmentShader.replace('texture2D( normalMap, vNormalMapUv )','texture2D( normalMap, vNormalMapUv + vec2(uWaterTime * .006, uWaterTime * .002))');
+  };
+  material.customProgramCacheKey=()=> 'quiet-pond-v3';return material;
+}
+function pondSurface(pond, material) {
+  const vertices=[pond.x,pond.y,-pond.z],uv=[.5,.5],indices=[],n=96;
+  for(let i=0;i<=n;i++){
+    const a=i/n*TAU, r=1+.055*Math.sin(a*3+pond.phase)+.035*Math.cos(a*7);
+    vertices.push(pond.x+Math.cos(a)*pond.rx*r,pond.y,-pond.z-Math.sin(a)*pond.rz*r);
+    uv.push(.5+Math.cos(a)*.5,.5+Math.sin(a)*.5);
+    if(i<n)indices.push(0,i+1,i+2);
+  }
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();
+  const mesh=new THREE.Mesh(geometry,material);mesh.receiveShadow=true;return mesh;
 }
 
 function treeDetails(tree, rng) {
@@ -336,7 +422,7 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
   const group = new THREE.Group(); group.name = 'Procedural countryside';
   const clock = { value: 0 }, worldSeed = seedOf(world.seed ?? 1), phase = (worldSeed % 1013) / 1013 * TAU;
   const groundMap = groundTexture(anisotropy);
-  const meadow = new THREE.MeshStandardMaterial({ map: groundMap, bumpMap: groundMap, bumpScale: .055, roughness: 1, vertexColors: true });
+  const meadow = cultivatedMeadow(groundMap, phase);
   const bark = [
     new THREE.MeshStandardMaterial({ map: barkTexture(anisotropy), color: 0xa99b82, roughness: 1 }),
     new THREE.MeshStandardMaterial({ map: barkTexture(anisotropy, true), roughness: .96 }),
@@ -345,7 +431,17 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
   bark[2] = bark[0];
   const leaves = [foliageTexture(anisotropy, 0), foliageTexture(anisotropy, 1), pineTexture(anisotropy)].map(map => windMaterial(map, clock, .055, { emissive: 0x283b12, emissiveIntensity: .11 }));
   const grassMaterial = windMaterial(grassTexture(anisotropy), clock, .09, { alphaTest: .4 });
-  const distantMaterials = [distantTreeTexture(anisotropy), distantTreeTexture(anisotropy, true)].map(map => new THREE.MeshStandardMaterial({ map, roughness: 1, alphaTest: .4, side: THREE.DoubleSide, color: 0xaaba93 }));
+  const crownMaterial = canopyMaterial(), crownGeometry = canopyGeometry(), roughCrownGeometry = canopyGeometry(0);
+  const rockMaterial = new THREE.MeshStandardMaterial({ color: 0x8d8c79, roughness: .98, vertexColors: true });
+  const rockGeometry = new THREE.IcosahedronGeometry(1, 1), stoneColors = [], rockPositions = rockGeometry.attributes.position;
+  for(let i=0;i<rockPositions.count;i++){
+    const x=rockPositions.getX(i),y=rockPositions.getY(i),z=rockPositions.getZ(i);
+    const noise=Math.sin(x*19.7+z*14.2+y*8.1),moss=smooth(.1,.85,y)*.24;
+    rockPositions.setXYZ(i,x*(1+noise*.1),y*(1+Math.sin(z*11)*.12),z*(1+noise*.1));
+    stoneColors.push(.91+noise*.055-moss*.5,.92+noise*.05-moss*.14,.9+noise*.05-moss*.7);
+  }
+  rockGeometry.setAttribute('color',new THREE.Float32BufferAttribute(stoneColors,3));rockGeometry.computeVertexNormals();
+  const pondMaterial=waterMaterial(clock,anisotropy);
   const branchGeometry = new THREE.CylinderGeometry(.25, 1, 1, 8, 1);
   const cardGeometry = new THREE.PlaneGeometry(1, 1);
   const grassGeometry = new THREE.PlaneGeometry(1, 1, 1, 2);
@@ -358,7 +454,7 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
   const houses = (world.scenery || []).filter(o => o.kind === 'house');
   const crossings = world.crossings || [];
   const obstructed = (x, z) => houses.some(h => {
-    const garden = Math.abs(h.x - x) < 5 * h.scale + 1.7 && Math.abs(h.z - z) < 5 * h.scale + 1.7;
+    const garden = Math.abs(h.x - x) < 6.3 * h.scale + 1 && Math.abs(h.z - z) < 6.3 * h.scale + 1;
     const path = Math.sign(x) === Math.sign(h.x) && Math.abs(x) < Math.abs(h.x) && Math.abs(h.z - z) < 1.35 * h.scale + .7;
     return garden || path;
   });
@@ -367,8 +463,8 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
     const from = ci * CHUNK_LENGTH, centre = from + CHUNK_LENGTH / 2;
     const chunk = new THREE.Group(); chunk.name = `Countryside ${ci}`; group.add(chunk);
     const terrain = buildTerrain(from, CHUNK_LENGTH, meadow, phase); chunk.add(terrain);
-    const trunkGroup = new THREE.Group(), near = new THREE.Group(), far = new THREE.Group(), grasses = new THREE.Group(), woods = new THREE.Group();
-    chunk.add(trunkGroup, near, far, grasses, woods);
+    const trunkGroup = new THREE.Group(), near = new THREE.Group(), far = new THREE.Group(), grasses = new THREE.Group(), woods = new THREE.Group(), woodlandNear = new THREE.Group(), woodlandFar = new THREE.Group(), fieldDetail = new THREE.Group();
+    woods.add(woodlandNear,woodlandFar); chunk.add(trunkGroup, near, far, grasses, woods, fieldDetail);
     const branchLists = [[], [], []], leafLists = [[], [], []], farLists = [[], [], []];
     for (const tree of treesByChunk.get(ci) || []) {
       const model = treeDetails(tree, random(seedOf(`${worldSeed}:tree:${tree.x.toFixed(3)}:${tree.z.toFixed(3)}`)));
@@ -379,12 +475,13 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
       instanceBatch(near, cardGeometry, leaves[s], leafLists[s], { shadows: true });
       instanceBatch(far, cardGeometry, leaves[s], farLists[s]);
     }
-    const rng = random(seedOf(`${worldSeed}:meadow:${ci}`)), grass = [], undergrowth = [], forest = [[], []];
-    for (let i = 0; i < 1280; i++) {
+    const rng = random(seedOf(`${worldSeed}:meadow:${ci}`)), grass = [], undergrowth = [], forestCrowns = [], forestTrunks = [], forestSprays = [[],[]], hedgeSprays = [], stones = [];
+    for (let i = 0; i < 1980; i++) {
       const side = i % 2 ? -1 : 1, z = from + rng() * CHUNK_LENGTH;
-      const nearRoad = i < 1040;
-      let x = side * (nearRoad ? 6.65 + Math.pow(rng(), 2.5) * 7 : 27 + rng() * 31);
+      const nearRoad = i < 1660;
+      let x = side * (nearRoad ? 6.65 + Math.pow(rng(), 2.15) * 8.4 : 27 + rng() * 25);
       if (obstructed(x, z) || crossings.some(c => Math.abs(c.z - z) < 4.5 && Math.abs(x) < 9)) continue;
+      if (pondRadius(x,z,pondFor(z,phase)) < 1.08) continue;
       const h = .18 + Math.pow(rng(), 2) * .35, rotation = rng() * TAU, width = h * (1.8 + rng());
       x = side * Math.max(6.15 + width * .55, Math.abs(x));
       const y = terrainHeight(x, z, phase) + h / 2;
@@ -406,20 +503,99 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
       }
     }
     instanceBatch(grasses, cardGeometry, leaves[0], undergrowth, { shadows: true });
-    // Groves leave open meadow between them. Their trunks follow the actual hillside surface.
-    for (let i = 0; i < 190; i++) {
-      const side = i % 2 ? -1 : 1, z = from + rng() * CHUNK_LENGTH;
-      const x = side * (52 + Math.pow(rng(), .78) * 410);
-      const grove = Math.sin(z * .013 + x * .009 + phase) + Math.cos(z * .026 - x * .011);
-      if (grove < -.35 || (Math.abs(x) < 95 && grove < .45)) continue;
-      const species = rng() < .29 ? 1 : 0, h = (species ? 9 : 7) + rng() * 6, w = h * (species ? .48 : .7);
-      const y = terrainHeight(x, z, phase) + h / 2;
-      const shade = new THREE.Color().setHSL(.24, .05, .8 + rng() * .2), angle = rng() * Math.PI;
-      forest[species].push({ x, y, z: -z, sx: w, sy: h, ry: angle, tint: shade });
-      forest[species].push({ x, y, z: -z, sx: w, sy: h, ry: angle + Math.PI / 2, tint: shade });
+    // Field-edge hawthorn hedges meander with the cultivated parcel boundary.
+    // Their gaps are deliberate farm accesses, with no decoration in the road corridor.
+    for(const side of [-1,1])for(let z=from;z<from+CHUNK_LENGTH;z+=1.75){
+      if(Math.sin(z*.022+side+phase)>.63||Math.abs((z+45)%182)<8)continue;
+      const x=side*(42-Math.sin(z*.014+phase)*9);
+      if(pondRadius(x,z,pondFor(z,phase))<1.48)continue;
+      const base=terrainHeight(x,z,phase), height=.92+rng()*.52, tint=new THREE.Color().setHSL(.21+rng()*.025,.17,.62+rng()*.18);
+      for(let j=0;j<24;j++)hedgeSprays.push({x:x+(rng()-.5)*1.35,y:base+.28+rng()*height*.5,z:-z+(rng()-.5)*1.75,sx:1.4,sy:1.35,rx:(rng()-.5)*2.2,ry:rng()*TAU,tint:0xd5d9bc});
     }
-    for (let s = 0; s < 2; s++) instanceBatch(woods, cardGeometry, distantMaterials[s], forest[s], { receiveShadow: false });
-    chunks.push({ centre, chunk, terrain, trunkGroup, near, far, grasses, woods });
+    // Occasional cross-field boundaries make the landscape feel worked over time.
+    const boundaryIndex=Math.ceil(from/182);
+    if(boundaryIndex*182<from+CHUNK_LENGTH&&boundaryIndex%3!==0)for(const side of [-1,1]){
+      for(let ax=43;ax<174;ax+=2.4){
+        const z=boundaryIndex*182-Math.sin(ax*.009+phase)*23;
+        if(z<from-25||z>from+CHUNK_LENGTH+25||Math.abs(ax-87)<5)continue;
+        const x=side*ax;if(pondRadius(x,z,pondFor(z,phase))<1.5)continue;
+        const h=.85+rng()*.45;
+        const y=terrainHeight(x,z,phase);
+        for(let j=0;j<20;j++)hedgeSprays.push({x:x+(rng()-.5)*2.0,y:y+.3+rng()*h*.5,z:-z+(rng()-.5)*1.2,sx:1.5,sy:1.35,rx:(rng()-.5)*2.1,ry:rng()*TAU,tint:0xc5cbb0});
+      }
+    }
+    instanceBatch(fieldDetail,cardGeometry,leaves[0],hedgeSprays,{shadows:true});
+
+    // Orchards sit in sheltered meadow pockets; crooked trunks and uneven crowns
+    // keep the rows recognisably planted without looking like repeated symbols.
+    if((ci+2)%4===0){
+      const side=ci%8===0?-1:1, orchardTrunks=[],orchardLeaves=[];
+      for(let row=0;row<3;row++)for(let col=0;col<4;col++){
+        const x=side*(48+row*7.7+(rng()-.5)),z=from+30+col*14+(rng()-.5)*1.4;
+        if(pondRadius(x,z,pondFor(z,phase))<1.48)continue;
+        const base=terrainHeight(x,z,phase),h=3.1+rng()*.8;
+        orchardTrunks.push(cylinderSegment(new THREE.Vector3(x,base,-z),new THREE.Vector3(x+.19,base+h*.76,-z+.13),.16));
+        for(let limb=0;limb<4;limb++){
+          const a=limb/4*TAU+.3;orchardTrunks.push(cylinderSegment(new THREE.Vector3(x,base+h*.42,-z),new THREE.Vector3(x+Math.cos(a)*1.3,base+h*.83,-z+Math.sin(a)*1.3),.074));
+        }
+        for(let j=0;j<140;j++){
+          const a=rng()*TAU,r=Math.sqrt(rng())*1.7,y=.9+rng()*1.65;
+          orchardLeaves.push({x:x+Math.cos(a)*r,y:base+h*.45+y,z:-z+Math.sin(a)*r,sx:1.18,sy:1.06,rx:(rng()-.5)*2.8,ry:rng()*TAU,rz:(rng()-.5)*1.6,tint:new THREE.Color().setHSL(.2,.09,.83+rng()*.12)});
+        }
+      }
+      instanceBatch(fieldDetail,branchGeometry,bark[0],orchardTrunks,{shadows:true});instanceBatch(fieldDetail,cardGeometry,leaves[0],orchardLeaves,{shadows:true});
+    }
+
+    // Groves now have lit, three-dimensional crowns rather than crossed silhouette cards.
+    for (let i = 0; i < 196; i++) {
+      const cluster=Math.floor(i/7),groveRng=random(seedOf(`${worldSeed}:grove:${ci}:${cluster}`));
+      const side = cluster % 2 ? -1 : 1;
+      const centreZ=from+groveRng()*CHUNK_LENGTH,centreX=side*(112+Math.pow(groveRng(),.8)*500);
+      const x=centreX+(rng()-.5)*32,z=centreZ+(rng()-.5)*31;
+      const grove = Math.sin(z * .013 + x * .009 + phase) + Math.cos(z * .026 - x * .011);
+      if (grove < -.12 || (Math.abs(x) < 180 && grove < .8)) continue;
+      const evergreen=rng()<.22,h=7.5+rng()*7.5,w=h*(evergreen?.22:.32),base=terrainHeight(x,z,phase);
+      const shade=new THREE.Color().setHSL(evergreen?.28:.22+rng()*.025,.13+rng()*.07,.68+rng()*.24);
+      forestTrunks.push(cylinderSegment(new THREE.Vector3(x,base,-z),new THREE.Vector3(x,base+h*.82,-z),.22+rng()*.15));
+      for(let lobe=0;lobe<6;lobe++){
+        const a=lobe*2.39996,f=lobe/5,spread=evergreen?(1-f)*w*.45:w*.49;
+        const rx=evergreen?w*(1-f*.77):w*(.53+rng()*.25),ry=evergreen?h*.16:h*(.18+rng()*.06);
+        const cx=x+Math.cos(a)*spread,cz=-z+Math.sin(a)*spread,cy=base+h*(evergreen?.35+f*.57:.63)+Math.sin(a*1.7)*h*.13;
+        if(!evergreen)forestCrowns.push({x:cx,y:cy,z:cz,sx:rx*.5,sy:ry*.5,sz:rx*(.86+rng()*.23)*.5,ry:a,tint:shade});
+        for(let spray=0;spray<22;spray++){
+          const sa=rng()*TAU,sr=.56+rng()*.42;
+          forestSprays[evergreen?1:0].push({x:cx+Math.cos(sa)*rx*sr,y:cy+(rng()-.4)*ry*1.7,z:cz+Math.sin(sa)*rx*sr,sx:rx*1.24,sy:ry*1.44,rx:rng()*TAU,ry:rng()*TAU,tint:0xc9d1b9});
+        }
+      }
+    }
+    instanceBatch(woodlandNear,crownGeometry,crownMaterial,forestCrowns,{shadows:false});
+    instanceBatch(woodlandFar,roughCrownGeometry,crownMaterial,forestCrowns.map(c=>({...c,sx:c.sx*1.1,sy:c.sy*1.1,sz:c.sz*1.1})),{shadows:false,receiveShadow:false});
+    instanceBatch(woods,branchGeometry,bark[0],forestTrunks,{shadows:false});
+    instanceBatch(woodlandNear,cardGeometry,leaves[0],forestSprays[0],{shadows:false});
+    instanceBatch(woodlandNear,cardGeometry,leaves[2],forestSprays[1],{shadows:false});
+    for(let s=0;s<2;s++)instanceBatch(woodlandFar,cardGeometry,leaves[s?2:0],forestSprays[s].filter((_,i)=>i%4===0).map(p=>({...p,sx:p.sx*1.3,sy:p.sy*1.3})),{shadows:false,receiveShadow:false});
+
+    for(let i=0;i<12;i++){
+      const side=i%2?-1:1,x=side*(34+rng()*78),z=from+rng()*CHUNK_LENGTH;
+      if(Math.sin(z*.017+x*.023)<.2||pondRadius(x,z,pondFor(z,phase))<1.2)continue;
+      const size=.16+Math.pow(rng(),2)*.7;
+      stones.push({x,y:terrainHeight(x,z,phase)+size*.18,z:-z,sx:size*1.4,sy:size*.62,sz:size,ry:rng()*TAU,rx:(rng()-.5)*.4,tint:0xffffff});
+    }
+    const pond=pondFor(centre,phase);
+    if(pond.z>=from&&pond.z<from+CHUNK_LENGTH){
+      fieldDetail.add(pondSurface(pond,pondMaterial));
+      const reeds=[];
+      for(let i=0;i<340;i++){
+        const a=rng()*TAU;if(Math.cos(a)>.7&&rng()>.23)continue;
+        const r=1+.055*Math.sin(a*3+pond.phase)+.035*Math.cos(a*7),rim=.96+rng()*.16;
+        const x=pond.x+Math.cos(a)*pond.rx*r*rim,z=pond.z+Math.sin(a)*pond.rz*r*rim,h=.65+rng()*.68;
+        reeds.push({x,y:terrainHeight(x,z,phase)+h*.45,z:-z,sx:h*.7,sy:h,ry:rng()*TAU,tint:0xb8bb8e});
+        if(i%4===0)stones.push({x:x+(rng()-.5)*2,y:terrainHeight(x,z,phase)+.02,z:-z,sx:.3+rng()*.65,sy:.15+rng()*.25,sz:.3+rng()*.6,ry:rng()*TAU,tint:0xbec0aa});
+      }
+      instanceBatch(fieldDetail,grassGeometry,grassMaterial,reeds,{shadows:true});
+    }
+    instanceBatch(fieldDetail,rockGeometry,rockMaterial,stones,{shadows:true});
+    chunks.push({ centre, chunk, terrain, trunkGroup, near, far, grasses, woods, woodlandNear, woodlandFar, fieldDetail });
   }
   group.userData.update = (egoZ, time = 0) => {
     clock.value = Number.isFinite(time) ? time : 0;
@@ -432,6 +608,9 @@ export function buildLandscape(world, { anisotropy = 8 } = {}) {
       item.far.visible = distance >= 185 && distance < 580;
       item.grasses.visible = distance < 120;
       item.woods.visible = distance < 920;
+      item.woodlandNear.visible = distance < 380;
+      item.woodlandFar.visible = distance >= 380;
+      item.fieldDetail.visible = distance < 480;
     }
   };
   group.userData.update(0, 0);

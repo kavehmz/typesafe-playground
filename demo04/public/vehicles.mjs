@@ -110,7 +110,7 @@ function plateTexture(ego, variant) {
   return texture;
 }
 
-function buildWheel(side, trim, alloy, brake, red) {
+function buildWheel(side, trim, alloy, brake, red, style = 0) {
   // Steering happens around local Y; rolling around local X happens in a child.
   const mount = new THREE.Group(), roll = new THREE.Group(); mount.add(roll);
   const b = batchBuilder(roll);
@@ -127,8 +127,9 @@ function buildWheel(side, trim, alloy, brake, red) {
   const rim = new THREE.TorusGeometry(0.239, 0.010, 5, 32); rim.rotateY(Math.PI / 2); b.add(rim, alloy, [side * 0.071, 0, 0]);
   const disc = new THREE.CylinderGeometry(0.202, 0.202, 0.010, 32); disc.rotateZ(Math.PI / 2); b.add(disc, brake, [side * 0.042, 0, 0]);
   // Split five-spoke forged alloy wheels, with a visibly recessed brake disc.
-  for (let k = 0; k < 5; k++) for (const split of [-1, 1]) {
-    const a = k * TAU / 5 + split * 0.095;
+  const spokes = style === 1 ? 7 : 5;
+  for (let k = 0; k < spokes; k++) for (const split of (style === 1 ? [0] : [-1, 1])) {
+    const a = k * TAU / spokes + split * 0.095;
     b.add(roundedBox(0.026, 0.158, 0.023, 0.005), alloy, [side * 0.073, Math.cos(a) * 0.143, Math.sin(a) * 0.143], [a + split * 0.12, 0, 0]);
   }
   const hub = new THREE.CylinderGeometry(0.058, 0.058, 0.031, 18); hub.rotateZ(Math.PI / 2); b.add(hub, alloy, [side * 0.067, 0, 0]);
@@ -224,9 +225,15 @@ export function makeCar(color, ego = false, variant = 0) {
   b.add(roundedBox(1.47, 0.055, 3.8), grille, [0, 0.259, 0]);
 
   // A continuous double-curved greenhouse, with painted roof and slender pillars.
-  const wagon = variant % 3 !== 2;
-  const rearRoof = wagon ? 0.93 : 0.63;
-  const cabin = [[-1.10, 0.793, 1.003], [-0.83, 0.750, 1.23], [-0.47, 0.675, 1.462], [-0.10, 0.661, 1.487], [rearRoof, 0.685, wagon ? 1.455 : 1.47], [1.18, 0.732, 1.285], [1.56, 0.800, 1.007]];
+  const style = ego ? 0 : variant % 3, wagon = style === 0;
+  const rearRoof = [0.93, 1.08, 0.54][style];
+  const cabin = style === 1
+    ? [[-1.10,.793,1.003],[-.82,.750,1.28],[-.46,.684,1.525],[-.10,.67,1.56],[rearRoof,.69,1.525],[1.38,.748,1.295],[1.66,.800,1.007]]
+    : style === 2
+      ? [[-1.10,.793,1.003],[-.79,.75,1.19],[-.39,.672,1.365],[-.08,.661,1.395],[rearRoof,.682,1.375],[1.18,.738,1.185],[1.56,.800,1.007]]
+      : [[-1.10,.793,1.003],[-.83,.750,1.23],[-.47,.675,1.462],[-.10,.661,1.487],[rearRoof,.685,1.455],[1.18,.732,1.285],[1.56,.800,1.007]];
+  const cabinRear = style === 1 ? 1.66 : 1.56;
+  car.userData.displayName = ego ? 'Jev · touring' : ['Touring car','Compact hatchback','Sport coupé'][style];
   const cabinW = z => atProfile(cabin, z, 1), cabinH = z => atProfile(cabin, z, 2);
   const greenhousePoint = (u, z) => {
     const t = u * 2 - 1, a = Math.abs(t);
@@ -235,10 +242,10 @@ export function makeCar(color, ego = false, variant = 0) {
     return [t * cabinW(z), roof - (roof - edge) * Math.pow(a, 2.5), z];
   };
   const sideWindowPoint = (side, z, t) => [side * lerp(0.795 - 0.008 * Math.cos(z), cabinW(z), t), lerp(1.005, Math.max(1.005, cabinH(z) - 0.085), t), z];
-  b.add(surface((u, v) => greenhousePoint(u, lerp(-1.10, 1.56, v)), 20, 48), glass);
+  b.add(surface((u, v) => greenhousePoint(u, lerp(-1.10, cabinRear, v)), 20, 48), glass);
   for (const side of [-1, 1]) {
     b.add(surface((u, v) => {
-      const z = lerp(-1.10, 1.56, v), roof = Math.max(1.005, cabinH(z) - 0.085);
+      const z = lerp(-1.10, cabinRear, v), roof = Math.max(1.005, cabinH(z) - 0.085);
       return [side * lerp(0.795 - 0.008 * Math.cos(z), cabinW(z), u), lerp(1.005, roof, u), z];
     }, 6, 52), glass);
     // Lower window surround and exterior belt line.
@@ -253,18 +260,18 @@ export function makeCar(color, ego = false, variant = 0) {
         p[0] += side * 0.005; return p;
       }, 3, 24), paint);
     }
-    for (const [z0, thickness, slope] of [[0.22, 0.055, -0.045], [1.02, 0.027, -0.10]]) {
+    for (const [z0, thickness, slope] of (style === 2 ? [[.69,.055,-.045]] : [[.22,.055,-.045],[1.02,.027,-.10]])) {
       b.add(surface((u, v) => {
         const z = z0 + (u - 0.5) * thickness + v * slope, p = sideWindowPoint(side, z, v);
         p[0] += side * 0.004; return p;
       }, 2, 12), trim);
     }
     // Flush handles, subtle door shut-lines, and a rising lower shoulder crease.
-    for (const [za, zb] of [[-0.90, 0.30], [0.33, 1.18]]) {
+    for (const [za, zb] of (style === 2 ? [[-.9,1.17]] : [[-.90,.30],[.33,1.18]])) {
       const end = zb > 1 ? [side * 0.924, 0.729, zb] : [side * 0.895, 0.35, zb];
       b.add(tube([[side * 0.909, 0.895, za], [side * 0.918, 0.81, za + 0.015], [side * 0.883, za < 0 ? 0.36 : 0.39, za + 0.04], end, [side * 0.920, 0.899, zb]], 0.0028, 30, 4), seam);
     }
-    for (const z of [0.08, 0.91]) {
+    for (const z of (style === 2 ? [.9] : [.08,.91])) {
       b.add(roundedBox(0.012, 0.039, 0.206, 0.004), seam, [side * 0.925, 0.863, z]);
       b.add(roundedBox(0.016, 0.026, 0.180, 0.004), chrome, [side * 0.925, 0.866, z]);
     }
@@ -307,7 +314,7 @@ export function makeCar(color, ego = false, variant = 0) {
     const x = (i / 12 * 2 - 1) * 0.638, z0 = rearRoof + 0.025;
     return [x, greenhousePoint((1 + x / cabinW(z0)) / 2, z0)[1] + 0.004, spoilerZ];
   }), 0.006, 24, 4), darkPaint);
-  b.add(roundedBox(0.082, 0.047, 0.144, 0.018), paint, [0, 1.51, 0.66]);
+  b.add(roundedBox(0.082, 0.047, 0.144, 0.018), paint, [0, cabinH(.66) + .028, .66]);
 
   // Layered front fascia: body-coloured bumper, dark air intake, fine horizontal
   // grille blades and a swept LED signature at the outer corners.
@@ -363,7 +370,7 @@ export function makeCar(color, ego = false, variant = 0) {
   for (const m of [paint, darkPaint, glass]) m.side = THREE.DoubleSide;
   const wheels = [];
   for (const z of [-1.4, 1.4]) for (const side of [-1, 1]) {
-    const wheel = buildWheel(side, trim, alloy, brakes, caliper);
+    const wheel = buildWheel(side, trim, alloy, brakes, caliper, style);
     wheel.position.set(side * 0.85, 0.334, z); body.add(wheel);
     wheel.userData.front = z < 0; wheels.push(wheel);
   }
@@ -400,83 +407,5 @@ export function updateCarVisual(car, state, dt = 0, time = 0) {
   d.lastSpeed = speed; d.lastTime = time;
 }
 
-function torsoGeometry() {
-  const profile = [[0.96, 0.147, 0.10], [1.04, 0.155, 0.104], [1.23, 0.188, 0.122], [1.35, 0.205, 0.112], [1.405, 0.156, 0.087], [1.425, 0.089, 0.068]];
-  return surface((u, v) => {
-    const y = lerp(0.96, 1.425, v), a = u * TAU;
-    return [Math.sin(a) * atProfile(profile, y, 1), y, Math.cos(a) * atProfile(profile, y, 2)];
-  }, 18, 18);
-}
-function limb(parent, upperLength, lowerLength, upperMat, lowerMat, handMat, isArm = false) {
-  const joint = new THREE.Group(); parent.add(joint);
-  const a = batchBuilder(joint), r = isArm ? 0.064 : 0.080;
-  a.add(new THREE.CylinderGeometry(r, r * 0.81, upperLength, 10), upperMat, [0, -upperLength / 2, 0]);
-  a.add(new THREE.SphereGeometry(r, 10, 7), upperMat, [0, 0, 0], [0, 0, 0], [1, 0.72, 1]);
-  a.finish();
-  const lower = new THREE.Group(); lower.position.y = -upperLength; joint.add(lower);
-  const b = batchBuilder(lower);
-  b.add(new THREE.SphereGeometry(r * 0.80, 10, 7), lowerMat, [0, -0.014, 0]);
-  b.add(new THREE.CylinderGeometry(r * 0.79, r * 0.49, lowerLength, 10), lowerMat, [0, -lowerLength / 2, 0]);
-  if (isArm) b.add(new THREE.SphereGeometry(0.041, 10, 8), handMat, [0, -lowerLength - 0.017, -0.002], [0, 0, 0], [0.85, 1.35, 0.7]);
-  else {
-    b.add(roundedBox(0.109, 0.079, 0.214, 0.025), handMat, [0, -lowerLength - 0.025, -0.044]);
-    b.add(roundedBox(0.114, 0.021, 0.225, 0.006), material(0xb6b8ae, 0.9), [0, -lowerLength - 0.063, -0.046]);
-  }
-  b.finish(); joint.userData.lower = lower; return joint;
-}
-
-export function makePerson(color, variant = 0) {
-  variant = Math.abs(Math.floor(Number(variant) || 0));
-  const person = new THREE.Group(), torso = new THREE.Group(); person.add(torso);
-  const skins = [0xc99371, 0x986f55, 0xe0b391, 0x76513e, 0xcf9b7b];
-  const skin = material(skins[variant % skins.length], 0.77);
-  const coat = material(color, 0.89), trouser = material([0x253239, 0x444846, 0x233748][variant % 3], 0.97);
-  const shoe = material(0x252b2c, 0.8), hair = material([0x49392c, 0x292727, 0x8c7b67, 0x474643][variant % 4], 0.96);
-  const detail = material(0x3c3b36, 0.83), light = material(0xc4c4b6, 0.88);
-  const b = batchBuilder(torso);
-  const clothing = torsoGeometry(); coat.side = THREE.DoubleSide; b.add(clothing, coat);
-  b.add(new THREE.SphereGeometry(0.161, 14, 10), trouser, [0, 0.94, 0], [0, 0, 0], [1, 0.64, 0.65]);
-  b.add(new THREE.CylinderGeometry(0.044, 0.052, 0.10, 10), skin, [0, 1.455, 0]);
-  // Collar, jacket zip and pockets make a clothed person rather than a pawn.
-  b.add(tube([[-0.078, 1.415, -0.052], [0, 1.392, -0.084], [0.078, 1.415, -0.052]], 0.009, 12, 4), detail);
-  b.add(tube([[0, 1.385, -0.090], [0, 1.20, -0.125], [0, 1.016, -0.111]], 0.0035, 15, 4), light);
-  for (const side of [-1, 1]) b.add(tube([[side * 0.087, 1.105, -0.1], [side * 0.137, 1.062, -0.081]], 0.003, 4, 4), detail);
-  b.finish();
-  const head = new THREE.Group(); head.position.y = 1.585; torso.add(head);
-  const h = batchBuilder(head);
-  h.add(new THREE.SphereGeometry(0.118, 16, 12), skin, [0, 0, 0], [0, 0, 0], [0.85, 1.19, 0.91]);
-  h.add(new THREE.SphereGeometry(0.122, 16, 10, 0, TAU, 0, Math.PI * 0.51), hair, [0, 0.015, 0.011], [0, 0, 0], [0.87, 1.13, 0.96]);
-  h.add(new THREE.SphereGeometry(0.023, 10, 8), skin, [0, 0.016, -0.104], [0, 0, 0], [0.67, 1.08, 1.0]);
-  for (const side of [-1, 1]) {
-    h.add(new THREE.SphereGeometry(0.023, 8, 6), skin, [side * 0.098, 0.005, 0], [0, 0, 0], [0.43, 1, 0.69]);
-    h.add(new THREE.SphereGeometry(0.006, 7, 5), detail, [side * 0.037, 0.032, -0.099], [0, 0, 0], [1, 0.67, 0.6]);
-  }
-  h.add(tube([[-0.024, -0.038, -0.101], [0, -0.041, -0.105], [0.024, -0.038, -0.101]], 0.0025, 6, 4), detail);
-  h.finish();
-  const legs = [], arms = [];
-  for (const side of [-1, 1]) {
-    const leg = limb(person, 0.405, 0.384, trouser, trouser, shoe); leg.position.set(side * 0.09, 0.873, 0); legs.push(leg);
-    const arm = limb(torso, 0.265, 0.258, coat, skin, skin, true); arm.position.set(side * 0.211, 1.347, 0);
-    arm.rotation.z = side * 0.095; arms.push(arm);
-  }
-  person.userData.legs = legs; person.userData.arms = arms; person.userData.torso = torso; person.userData.head = head;
-  person.userData.variant = variant;
-  return person;
-}
-
-export function updatePersonVisual(mesh, person, time = 0) {
-  const d = mesh.userData, walking = person.state === 'crossing';
-  const phase = time * Math.max(0.1, person.walkSpeed || 1.2) * 5.1 + d.variant * 0.7;
-  const stride = walking ? Math.sin(phase) : 0;
-  for (let i = 0; i < 2; i++) {
-    const s = i === 0 ? 1 : -1, leg = d.legs[i], arm = d.arms[i];
-    leg.rotation.x = stride * s * 0.47;
-    leg.userData.lower.rotation.x = walking ? -Math.max(0, -Math.sin(phase + s * 0.4) * s) * 0.59 : 0;
-    arm.rotation.x = -stride * s * 0.38;
-    arm.userData.lower.rotation.x = -0.12 - (walking ? Math.max(0, stride * s) * 0.12 : 0);
-  }
-  d.torso.position.y = walking ? Math.abs(Math.sin(phase)) * 0.015 : 0;
-  d.torso.rotation.y = walking ? stride * 0.025 : 0;
-  // The only walking animation is driven by the real crossing state.
-  mesh.rotation.y = (person.kerbSide || 1) * Math.PI / 2;
-}
+// Compatibility exports; pedestrian modelling and gait live in one dedicated module.
+export { makePerson, updatePersonVisual } from '/public/pedestrians.mjs';

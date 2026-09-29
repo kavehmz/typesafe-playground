@@ -1,0 +1,41 @@
+{
+  "stats": {
+    "buildMs": 468.29999999701977,
+    "averageMs": 0.24117647056632183,
+    "info": {
+      "frame": 41,
+      "calls": 114,
+      "triangles": 705286,
+      "points": 0,
+      "lines": 0
+    },
+    "memory": {
+      "geometries": 19,
+      "textures": 11
+    }
+  },
+  "errors": [],
+  "validation": {
+    "world_unchanged": true,
+    "flatVertices": 15972,
+    "incorrectFlatVertices": 0,
+    "resourceSamples": [
+      {
+        "geometries": 19,
+        "textures": 11
+      },
+      {
+        "geometries": 19,
+        "textures": 11
+      },
+      {
+        "geometries": 19,
+        "textures": 11
+      },
+      {
+        "geometries": 19,
+        "textures": 11
+      }
+    ]
+  }
+}

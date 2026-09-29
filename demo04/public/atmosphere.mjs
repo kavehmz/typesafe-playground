@@ -2,9 +2,9 @@
 import * as THREE from '/vendor/three.module.js';
 
 export const LIGHTING = {
-  afternoon: { name: 'Late afternoon', zenith: 0x6194c3, horizon: 0xd8ddd5, haze: 0xd1d4c5, ground: 0x485c35, sun: 0xffe0b0, sunPower: 3.2, hemi: 1.12, exposure: 1.04, sunPosition: [-0.65, 0.55, 0.38], warmth: 0.025 },
-  morning: { name: 'Clear morning', zenith: 0x4c91cd, horizon: 0xcbdfea, haze: 0xc6d8dd, ground: 0x485b3e, sun: 0xfff2db, sunPower: 3.15, hemi: 1.35, exposure: 1.0, sunPosition: [0.5, 0.82, -0.3], warmth: 0.0 },
-  golden: { name: 'Golden hour', zenith: 0x759cbd, horizon: 0xe6ccac, haze: 0xd8c5a2, ground: 0x565437, sun: 0xffc27c, sunPower: 3.3, hemi: 0.9, exposure: 1.12, sunPosition: [-0.75, 0.28, -0.55], warmth: 0.055 }
+  afternoon: { name: 'Late afternoon', zenith: 0x4d87ba, horizon: 0xbcd2db, haze: 0xd1d4c5, ground: 0x485c35, sun: 0xffe0b0, sunPower: 3.2, hemi: 1.12, exposure: 1.04, sunPosition: [-0.65, 0.55, 0.38], warmth: 0.025 },
+  morning: { name: 'Clear morning', zenith: 0x3f83c0, horizon: 0xb2cfdf, haze: 0xc6d8dd, ground: 0x485b3e, sun: 0xfff2db, sunPower: 3.15, hemi: 1.35, exposure: 1.0, sunPosition: [0.5, 0.82, -0.3], warmth: 0.0 },
+  golden: { name: 'Golden hour', zenith: 0x759cbd, horizon: 0xe6ccac, haze: 0xd8c5a2, ground: 0x565437, sun: 0xffc27c, sunPower: 3.3, hemi: 0.9, exposure: 1.12, sunPosition: [-0.36, 0.23, -0.91], warmth: 0.055 }
 };
 
 export class Atmosphere {
@@ -34,11 +34,15 @@ export class Atmosphere {
           color+=sunColor*(pow(sunDot,18.0)*.16+pow(sunDot,260.0)*.26+pow(sunDot,12000.0)*18.0);
           if(d.y>0.005){
             vec2 p=d.xz/(d.y+.16)*1.8+vec2(time*.002,0.0);
-            float n=fbm(p);float detail=fbm(p*3.1+19.0);
-            float clouds=smoothstep(.56,.76,n*.84+detail*.16)*smoothstep(.0,.13,d.y);
-            vec3 cloudColor=mix(horizon*.86,vec3(1.52,1.5,1.43),smoothstep(.56,.8,n));
-            cloudColor=mix(cloudColor,sunColor*1.45,pow(sunDot,5.0)*.4);
-            color=mix(color,cloudColor,clouds*.88);
+            vec2 warp=vec2(fbm(p*.43+5.0),fbm(p*.43+17.0))*.65;
+            float n=fbm(p+warp);float detail=fbm(p*3.1+19.0);
+            float clouds=smoothstep(.52,.74,n*.84+detail*.16)*smoothstep(.0,.13,d.y);
+            // Offset density provides a sun-facing rim and a shaded cloud body.
+            float litDensity=fbm(p+warp+sunDirection.xz*.24);
+            float rim=clamp((n-litDensity)*4.6+.48,.12,1.0);
+            vec3 cloudColor=mix(horizon*.74,vec3(1.7,1.67,1.59),rim);
+            cloudColor=mix(cloudColor,sunColor*1.58,pow(sunDot,5.0)*.5);
+            color=mix(color,cloudColor,clouds*.94);
             float cirrus=smoothstep(.73,.9,fbm(p*vec2(.55,6.0)+vec2(11.,time*.001)))*.15;
             color=mix(color,vec3(1.2),cirrus*elevation);
           }
@@ -114,6 +118,15 @@ export class CameraFinish {
         vec2 vignette=vUv*(1.0-vUv);float edge=pow(clamp(vignette.x*vignette.y*16.0,0.0,1.0),.16);
         color*=mix(.88,1.0,edge);
         color*=vec3(1.0+warmth,.999,1.0-warmth*.8);
+        // Only exceptional highlights bloom; road detail and foliage stay crisp.
+        vec3 glow=vec3(0.0);
+        for(int i=0;i<4;i++){
+          float a=float(i)*1.570796+.785398;vec2 offset=vec2(cos(a),sin(a))*3.0/resolution;
+          vec3 sampleColor=texture2D(colorMap,vUv+offset).rgb;
+          float luma=dot(sampleColor,vec3(.2126,.7152,.0722));
+          glow+=sampleColor*max(luma-1.8,0.0)/max(luma,.01);
+        }
+        color+=glow*.025;
         gl_FragColor=vec4(color,1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>

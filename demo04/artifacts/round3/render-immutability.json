@@ -1,0 +1,19 @@
+{
+  "errors": [],
+  "cases": [
+    {
+      "seed": 5,
+      "unchanged": true,
+      "invalid": 0,
+      "geometries": 349,
+      "textures": 51
+    },
+    {
+      "seed": 7,
+      "unchanged": true,
+      "invalid": 0,
+      "geometries": 323,
+      "textures": 45
+    }
+  ]
+}

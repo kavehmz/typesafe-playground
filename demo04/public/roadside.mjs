@@ -81,6 +81,43 @@ function makeWindowTexture(anisotropy) {
   }, anisotropy);
 }
 
+function makeSlateTexture(anisotropy) {
+  return canvasTexture(512, (ctx, n) => {
+    const rng = random(801); ctx.fillStyle = '#343a3d'; ctx.fillRect(0, 0, n, n);
+    for (let row = -1; row < 12; row++) for (let col = -1; col < 10; col++) {
+      const x = col * 64 + row % 2 * 32, y = row * 48, v = .8 + rng() * .42;
+      ctx.fillStyle = `rgb(${91*v},${102*v},${105*v})`; ctx.fillRect(x + 1, y + 1, 62, 46);
+      ctx.fillStyle = 'rgba(198,199,182,.14)'; ctx.fillRect(x + 2, y + 2, 59, 1.5);
+      for (let k = 0; k < 45; k++) { ctx.fillStyle = rng() < .5 ? 'rgba(28,38,41,.13)' : 'rgba(178,182,162,.10)'; ctx.fillRect(x + rng() * 61, y + rng() * 44, 1 + rng() * 11, .6); }
+    }
+  }, anisotropy);
+}
+function makeStoneTexture(anisotropy) {
+  return canvasTexture(512, (ctx, n) => {
+    const rng = random(319); ctx.fillStyle = '#9a9686'; ctx.fillRect(0, 0, n, n);
+    for (let row = 0; row < 9; row++) {
+      let x = -70 + (row % 2) * 45;
+      while (x < n) {
+        const w = 48 + rng() * 65, y = row * 57, v = .85 + rng() * .27;
+        ctx.fillStyle = `rgb(${177*v},${171*v},${147*v})`; ctx.beginPath(); ctx.moveTo(x + 3, y + 3); ctx.lineTo(x + w - 4, y + 2); ctx.lineTo(x + w - 2, y + 51); ctx.lineTo(x + 5, y + 54); ctx.closePath(); ctx.fill();
+        for (let k = 0; k < 110; k++) { ctx.fillStyle = rng() < .5 ? 'rgba(44,51,38,.07)' : 'rgba(255,250,229,.10)'; ctx.fillRect(x + 5 + rng() * (w - 9), y + 4 + rng() * 46, rng() * 4 + .5, rng() * 2 + .5); }
+        ctx.strokeStyle = 'rgba(68,72,57,.15)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + 4, y + 52); ctx.lineTo(x + w - 2, y + 51); ctx.stroke(); x += w;
+      }
+    }
+  }, anisotropy);
+}
+function apertureWall(width, height, openings, gableRise = 0) {
+  const shape = new THREE.Shape(); shape.moveTo(-width / 2, .32); shape.lineTo(width / 2, .32); shape.lineTo(width / 2, height);
+  if (gableRise) shape.lineTo(0, height + gableRise);
+  shape.lineTo(-width / 2, height); shape.closePath();
+  for (const o of openings) {
+    const hole = new THREE.Path(), left = o.u - o.w / 2, bottom = o.y - o.h / 2;
+    // Openings genuinely penetrate the wall. Window glass and joinery sit inside.
+    hole.moveTo(left, bottom); hole.lineTo(left, bottom + o.h); hole.lineTo(left + o.w, bottom + o.h); hole.lineTo(left + o.w, bottom); hole.closePath(); shape.holes.push(hole);
+  }
+  const g = new THREE.ExtrudeGeometry(shape, { depth: .24, bevelEnabled: false }); g.translate(0, 0, -.24); return g;
+}
+
 // Each spatial chunk merges all repeated boxes and poles into material batches.
 // This keeps rich facades cheap in the main view and all four sensor cameras.
 class Batch {
@@ -99,19 +136,19 @@ class Batch {
     this.entries.clear();
   }
 }
-function roofGeometry(hipped = false) {
+function roofGeometry(hipped = false, config = {}) {
   // Shallow real corrugation catches the sun; the repeating texture provides courses.
-  const p = [], uv = [], idx = [], width = 3.45, rise = 2.05, length = 8.0;
-  const nx = 14, nz = 112;
+  const p = [], uv = [], idx = [], width = config.width ?? 3.45, rise = config.rise ?? 2.05, length = config.length ?? 8.0, eave = config.eave ?? 3.52;
+  const nx = 12, nz = config.slate ? 42 : 84;
   for (const side of [-1, 1]) {
     const start = p.length / 3;
     for (let i = 0; i <= nx; i++) for (let j = 0; j <= nz; j++) {
       const t = i / nx, z = (j / nz - 0.5) * length;
-      const ridge = Math.sin((j % 4) / 4 * Math.PI) * 0.026;
+      const ridge = config.slate ? 0 : Math.sin((j % 4) / 4 * Math.PI) * 0.026;
       const overlap = i < nx ? 0.012 : 0;
       const roofHeight = Math.min(rise * (1 - t), hipped ? (length / 2 - Math.abs(z)) / 1.75 * rise : rise);
-      p.push(side * width * t, 3.52 + roofHeight + ridge + overlap, z);
-      uv.push(j / nz * 3.5, t * 2.35);
+      p.push(side * width * t, eave + roofHeight + ridge + overlap, z);
+      uv.push(j / nz * length / 2.3, t * width / 1.47);
     }
     for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
       const a = start + i * (nz + 1) + j, b = a + nz + 1;
@@ -120,16 +157,9 @@ function roofGeometry(hipped = false) {
   }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals(); return g;
 }
-function wallGeometry() {
-  const shape = new THREE.Shape();
-  const halfWidth = 2.98, halfHeight = 1.57;
-  shape.moveTo(-halfWidth, -halfHeight); shape.lineTo(halfWidth, -halfHeight); shape.lineTo(halfWidth, halfHeight); shape.lineTo(-halfWidth, halfHeight); shape.closePath();
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: 7.06, bevelEnabled: true, bevelSize: .02, bevelThickness: .02, bevelSegments: 1, steps: 1 });
-  geo.translate(0, 0, -3.53); return geo;
-}
-function gableGeometry() {
-  const shape = new THREE.Shape(); shape.moveTo(-3.0, 0); shape.lineTo(3, 0); shape.lineTo(0, 1.79); shape.closePath();
-  return new THREE.ExtrudeGeometry(shape, { depth: 0.16, bevelEnabled: false });
+function smallGable(halfWidth, bottom, top, depth) {
+  const shape = new THREE.Shape(); shape.moveTo(-halfWidth, bottom); shape.lineTo(halfWidth, bottom); shape.lineTo(0, top); shape.closePath();
+  const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false }); g.translate(0, 0, -depth / 2); return g;
 }
 
 export function buildRoadside(world, { anisotropy = 8 } = {}) {
@@ -160,11 +190,16 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
   const reflector = mat(0xf4e4b8, { emissive: 0xd9be86, emissiveIntensity: .1, roughness: .3 });
   const markerWhite = mat(0xeeeadd, { roughness: .71 });
   const terracottaMap = makeTileTexture(anisotropy);
-  const roofMats = [mat(0xd6b1a0, { map: terracottaMap, bumpMap: terracottaMap, bumpScale: .052, side: THREE.DoubleSide }), mat(0xc4c4bd, { map: terracottaMap, bumpMap: terracottaMap, bumpScale: .048, side: THREE.DoubleSide }), mat(0x9da49c, { map: terracottaMap, bumpMap: terracottaMap, bumpScale: .045, side: THREE.DoubleSide })];
+  const slateMap = makeSlateTexture(anisotropy);
+  const roofMats = [mat(0xd6b1a0, { map: terracottaMap, bumpMap: terracottaMap, bumpScale: .052, side: THREE.DoubleSide }), mat(0xa6acae, { map: slateMap, bumpMap: slateMap, bumpScale: .035, side: THREE.DoubleSide }), mat(0xa4aaad, { map: terracottaMap, bumpMap: terracottaMap, bumpScale: .045, side: THREE.DoubleSide })];
   const stucco = noiseSurface(256, [207, 200, 180], 24, 88, anisotropy);
   const walls = [0xe6dac1, 0xdccbb1, 0xd5d8cb, 0xeee5d0].map(c => mat(c, { map: stucco, bumpMap: stucco, bumpScale: .014 }));
-  const brickMap = makeBrickTexture(anisotropy); brickMap.repeat.set(.4, .9);
+  const brickMap = makeBrickTexture(anisotropy); brickMap.repeat.set(.65, 1.3);
   const brick = mat(0xd1b3a2, { map: brickMap, bumpMap: brickMap, bumpScale: .035 });
+  const stoneMap = makeStoneTexture(anisotropy); stoneMap.repeat.set(.62, .62);
+  const stone = mat(0xd3cdb8, { map: stoneMap, bumpMap: stoneMap, bumpScale: .065 });
+  const darkTimber = mat(0x544838), warmWood = mat(0x99856b);
+  const soil = mat(0x625c42, { roughness: 1 });
   const frame = mat(0xd7d7c9, { roughness: .65 });
   const recess = mat(0x383e37);
   const window = mat(0xbfd2d5, { map: makeWindowTexture(anisotropy), metalness: .22, roughness: .2 });
@@ -178,7 +213,6 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
   const flowers = [0xb15f55, 0xdebd85, 0xac9cbd].map(c => mat(c));
   const drain = mat(0x454d46, { metalness: .42, roughness: .85 });
   const tileRidge = mat(0x95664c);
-  const gable = gableGeometry(), roof = roofGeometry(), hipRoof = roofGeometry(true), houseWall = wallGeometry();
   const hedgeGeo = new THREE.IcosahedronGeometry(1, 1);
   const clippedHedge = new THREE.SphereGeometry(1, 10, 8);
   const hedgePosition = clippedHedge.attributes.position;
@@ -196,9 +230,25 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
   };
   const base = new Batch(root);
   const road = new THREE.Mesh(new THREE.PlaneGeometry(7.8, L + 260), asphalt); road.rotation.x = -Math.PI / 2; road.position.set(0, .001, -L / 2 - 30); road.receiveShadow = true; root.add(road);
-  // Tapered gravel shoulders replace the original uninterrupted raised kerbs.
+  // The pavement boundary is exact; the aggregate outside it breaks into the verge.
+  const edgeMap = canvasTexture(512, (ctx, n) => {
+    const rng = random(983), pixels = ctx.createImageData(n, n);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const i = (y * n + x) * 4, grit = (rng() - .5) * 55, alpha = clamp((.97 - x / n + .05 * Math.sin(y * .073)) / .28, 0, 1);
+      pixels.data[i] = 144 + grit; pixels.data[i+1] = 139 + grit; pixels.data[i+2] = 114 + grit; pixels.data[i+3] = 255 * alpha * (x > n * .79 && rng() > .85 ? .25 : 1);
+    }
+    ctx.putImageData(pixels, 0, 0);
+  }, anisotropy); edgeMap.repeat.set(1, (L + 260) / 3.6);
+  const shoulderMat = mat(0xc7c2a7, { map: edgeMap, transparent: true, alphaTest: .13, roughness: 1, depthWrite: false, side: THREE.DoubleSide });
   for (const side of [-1, 1]) {
-    const shoulder = new THREE.Mesh(new THREE.PlaneGeometry(1.35, L + 260), gravel); shoulder.rotation.x = -Math.PI / 2; shoulder.position.set(side * 4.565, -.005, -L / 2 - 30); shoulder.receiveShadow = true; root.add(shoulder);
+    const p = [], uv = [], idx = [], steps = Math.ceil((L + 260) / 2);
+    for (let i = 0; i <= steps; i++) {
+      const z = -100 + (L + 260) * i / steps, edge = 5.12 + .10 * Math.sin(z * .17 + side) + .07 * Math.sin(z * .61);
+      p.push(side * 3.89, .0005, -z, side * edge, .0005, -z); uv.push(0, i / steps, 1, i / steps);
+      if (i < steps) { const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+    const shoulder = new THREE.Mesh(g, shoulderMat); shoulder.receiveShadow = true; root.add(shoulder);
     base.add(plane, white, side * 3.45, .014, -L / 2 - 30, .12, L + 260, 1, -Math.PI / 2, 0, 0, false);
   }
   // Very faint longitudinal wear is translucent; it does not add road markings.
@@ -226,6 +276,15 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
     // Split only for render culling; endpoints are kept identical to the simulation.
     for (let from = n.from; from < n.to; from += 90) { const to = Math.min(from + 90, n.to); chunkAt(from).add(plane, amber, 0, .016, -(from + to) / 2, .16, to - from, 1, -Math.PI / 2, 0, 0, false); }
   }
+  const crossingMap = canvasTexture(256, ctx => {
+    ctx.fillStyle = '#2b6592'; ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = '#eeeae0'; ctx.beginPath(); ctx.moveTo(128, 23); ctx.lineTo(235, 220); ctx.lineTo(21, 220); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#243336';
+    for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(57 + i * 31, 195); ctx.lineTo(72 + i * 31, 195); ctx.lineTo(65 + i * 31, 204); ctx.lineTo(47 + i * 31, 204); ctx.fill(); }
+    ctx.beginPath(); ctx.arc(133, 88, 11, 0, TAU); ctx.fill(); ctx.lineCap = 'round'; ctx.strokeStyle = '#243336'; ctx.lineWidth = 11;
+    ctx.beginPath(); ctx.moveTo(129, 109); ctx.lineTo(116, 142); ctx.lineTo(99, 184); ctx.moveTo(119, 139); ctx.lineTo(145, 159); ctx.lineTo(162, 185); ctx.moveTo(126, 114); ctx.lineTo(150, 131); ctx.lineTo(169, 134); ctx.moveTo(126, 114); ctx.lineTo(104, 124); ctx.lineTo(91, 145); ctx.stroke();
+  }, anisotropy);
+  const crossingSign = mat(0xffffff, { map: crossingMap, roughness: .65 });
   for (const c of world.crossings) {
     const b = chunkAt(c.z);
     for (let i = 0; i < 7; i++) b.add(plane, white, -3 + i, .018, -c.z, .55, 3.2, 1, -Math.PI / 2, 0, 0, false);
@@ -237,6 +296,20 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
       b.add(unit, concrete, side * 4.78, .135, -c.z, .5, .035, 2.9, 0, 0, 0, false);
       for (let row = 0; row < 4; row++) for (let col = 0; col < 18; col++) b.add(round, markerWhite, side * (4.6 + row * .095), .164, -c.z - 1.3 + col * .15, .015, .014, .015, 0, 0, 0, false);
       for (const offset of [-2.6, 2.6]) { b.add(unit, drain, side * 3.73, .011, -c.z + offset, .25, .025, .8, 0, 0, 0, false); for (let k = 0; k < 7; k++) b.add(unit, galvanized, side * 3.73, .028, -c.z + offset - .33 + k * .11, .22, .011, .035, 0, 0, 0, false); }
+      // Only real world crossings receive a sign; these are visual furniture,
+      // outside the waiting and walking corridor used by the pedestrians.
+      const signZ = -c.z + side * 2.85, signX = side * 5.72;
+      b.add(cylinder, galvanized, signX, 1.36, signZ, .039, 2.72, .039);
+      b.add(unit, galvanized, signX, 2.61, signZ, .77, .77, .055);
+      b.add(plane, crossingSign, signX, 2.61, signZ + side * .03, .72, .72, 1, 0, side < 0 ? Math.PI : 0, 0, false);
+      // A low bollard and slatted bench sit well behind the footway, not in it.
+      const seatX = side * 7.2, seatZ = -c.z - side * 3.3;
+      for (const dz of [-.61, .61]) b.add(unit, metalDark, seatX, .27, seatZ + dz, .48, .54, .07);
+      for (let slat = 0; slat < 4; slat++) b.add(unit, warmWood, seatX - .18 + slat * .12, .54, seatZ, .10, .065, 1.6);
+      for (const dz of [-.61, .61]) b.add(unit, metalDark, seatX + side * .21, .72, seatZ + dz, .047, .55, .047);
+      for (const y of [.79, .98]) b.add(unit, warmWood, seatX + side * .21, y, seatZ, .065, .14, 1.62);
+      b.add(cylinder, metalDark, side * 6.54, .44, -c.z + side * 3.36, .065, .88, .065);
+      b.add(cylinder, reflector, side * 6.54, .79, -c.z + side * 3.36, .067, .045, .067, 0, 0, 0, false);
     }
   }
   const signMats = new Map();
@@ -272,129 +345,255 @@ export function buildRoadside(world, { anisotropy = 8 } = {}) {
     b.add(unit, metalDark, o.x, 1.22, -o.z + .052, .075, .24, .027, 0, 0, 0, false);
   }
 
+  // Four shared construction kits, not four recolours of the same house. Aperture
+  // geometries and roof meshes are reused across every property on a long route.
+  const houseTypes = [
+    { a: 3.02, l: 3.65, eave: 3.45, rise: 2.12, wall: walls[0], roof: roofMats[0], dormer: true, shutter: shutters[0] },
+    { a: 3.50, l: 3.80, eave: 3.12, rise: 2.12, wall: stone, roof: roofMats[1], slate: true, shutter: shutters[2] },
+    { a: 2.92, l: 4.05, eave: 3.60, rise: 2.25, wall: brick, roof: roofMats[0], timbered: true, shutter: shutters[3] },
+    { a: 3.15, l: 3.85, eave: 5.18, rise: 2.02, wall: walls[2], roof: roofMats[1], hip: true, slate: true, shutter: shutters[1] }
+  ];
+  for (const h of houseTypes) {
+    const upper = h.eave > 4, y = upper ? 1.76 : 1.88;
+    h.frontWindows = [-2.25, 2.25].map(u => ({ u, y, w: 1.10, h: 1.32 }));
+    if (upper) for (const u of [-2.25, 0, 2.25]) h.frontWindows.push({ u, y: 4.02, w: 1.02, h: 1.23 });
+    h.backWindows = [-2.1, .1, 2.1].map(u => ({ u, y, w: .96, h: 1.23 }));
+    if (upper) for (const u of [-2.1, .1, 2.1]) h.backWindows.push({ u, y: 4.02, w: .96, h: 1.23 });
+    h.endWindows = [-1.48, 1.48].map(u => ({ u, y, w: .99, h: 1.27 }));
+    if (upper) for (const u of [-1.48, 1.48]) h.endWindows.push({ u, y: 4.02, w: .92, h: 1.19 });
+    else h.endWindows.push({ u: 0, y: h.eave + .72, w: .70, h: .83 });
+    h.door = { u: 0, y: 1.42, w: 1.0, h: 2.12 };
+    h.frontGeo = apertureWall(h.l * 2, h.eave, [...h.frontWindows, h.door]);
+    h.backGeo = apertureWall(h.l * 2, h.eave, h.backWindows);
+    h.endGeo = apertureWall(h.a * 2, h.eave, h.endWindows, h.hip ? 0 : h.rise - .17);
+    h.roofGeo = roofGeometry(h.hip, { width: h.a + .39, rise: h.rise, length: h.l * 2 + .84, eave: h.eave + .02, slate: h.slate });
+  }
+  const gardenRoof = roofGeometry(false, { width: 1.25, rise: .65, length: 2.65, eave: 1.70, slate: true });
+  const dormerRoof = roofGeometry(false, { width: .83, rise: .56, length: 1.42, eave: .84, slate: true });
+  const dormerGable = smallGable(.67, .91, 1.38, 1.32), shedGable = smallGable(1.12, 1.69, 2.32, 2.28);
+  let houseIndex = 0;
   for (const o of world.scenery) if (o.kind === 'house') {
-    const b = chunkAt(o.z), s = o.scale, side = o.x < 0 ? 1 : -1, variant = o.color % 4, rng = random(Math.floor(o.z * 79 + Math.abs(o.x) * 991));
-    const houseYaw = (rng() - .5) * .11;
-    b.transform = new THREE.Matrix4().makeTranslation(o.x, 0, -o.z).multiply(new THREE.Matrix4().makeRotationY(houseYaw)).multiply(new THREE.Matrix4().makeTranslation(-o.x, 0, o.z));
-    const X = x => o.x + x * s, Y = y => y * s, Z = z => -o.z + z * s;
-    const box = (material, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0, shadow = true) => b.add(unit, material, X(x), Y(y), Z(z), w * s, h * s, d * s, rx, ry, rz, shadow);
-    const pole = (material, x, y, z, radius, length, rx = 0, ry = 0, rz = 0) => b.add(cylinder, material, X(x), Y(y), Z(z), radius * s, length * s, radius * s, rx, ry, rz);
-    const wall = walls[variant], shutter = shutters[variant], roofMat = roofMats[variant === 2 ? 2 : variant === 1 ? 1 : 0], hipped = variant === 1;
-    box(concrete, 0, .17, 0, 6.13, .34, 7.25);
-    b.add(houseWall, wall, X(0), Y(1.93), Z(0), s, s, s);
-    // The dark stone plinth and corner quoins reveal the thickness of the walls.
-    box(concrete, 0, .43, 0, 6.08, .22, 7.17);
-    for (const x of [-2.94, 2.94]) for (const z of [-3.5, 3.5]) for (let y = .76; y < 3.3; y += .42) box(frame, x, y, z, .19, .37, .2, 0, 0, 0, false);
-    if (!hipped) {
-      b.add(gable, wall, X(0), Y(3.51), Z(3.42), s, s, s);
-      b.add(gable, wall, X(0), Y(3.51), Z(-3.58), s, s, s);
-    }
-    b.add(hipped ? hipRoof : roof, roofMat, X(0), 0, Z(0), s, s, s);
-    // Bargeboards outline the pitched roof; the underside stays visibly recessed.
-    const angle = Math.atan2(2.05, 3.45), slope = Math.hypot(3.45, 2.05);
-    for (const z of [-4.01, 4.01]) {
-      if (hipped) { box(timber, 0, 3.48, z, 6.95, .17, .13); pole(galvanized, 0, 3.44, z, .065, 6.96, 0, 0, Math.PI / 2); }
-      else for (const sign of [-1, 1]) box(timber, sign * 1.725, 4.54, z, slope, .12, .115, 0, 0, -sign * angle);
-    }
-    if (hipped) for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-      const direction = new THREE.Vector3(sx * 3.45, -2.05, sz * 1.75), length = direction.length();
-      const rotation = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize()));
-      for (let t = 0; t < 1; t += .08) pole(tileRidge, sx * 3.45 * t, 5.59 - 2.05 * t, sz * (2.25 + 1.75 * t), .09, length * .085, rotation.x, rotation.y, rotation.z);
-    }
-    if (variant === 0 || variant === 2) {
-      // A rooflight, set into the street-facing pitch with a restrained metal surround.
-      const y = 3.52 + 2.05 * (1 - 1.7 / 3.45);
-      box(metalDark, side * 1.7, y + .045, .88, 1.18, .065, .97, 0, 0, -side * angle);
-      box(window, side * 1.7, y + .087, .88, 1.05, .029, .84, 0, 0, -side * angle, false);
-      box(frame, side * 1.7, y + .11, .88, .04, .025, .83, 0, 0, -side * angle, false);
-    }
-    for (const x of [-3.42, 3.42]) {
-      box(timber, x, 3.48, 0, .13, .17, 8.0);
-      pole(galvanized, x, 3.44, 0, .065, 8.05, Math.PI / 2);
-      for (const z of [-3.43, 3.43]) {
-        pole(galvanized, x > 0 ? 3.11 : -3.11, 1.8, z, .045, 3.37);
-        box(galvanized, x > 0 ? 3.26 : -3.26, 3.39, z, .34, .07, .07);
-        for (const y of [.61, 2.68]) box(metalDark, x > 0 ? 3.11 : -3.11, y, z, .11, .038, .12, 0, 0, 0, false);
+    const b = chunkAt(o.z), s = o.scale, side = o.x < 0 ? 1 : -1;
+    const variant = (o.color + houseIndex++) % 4, h = houseTypes[variant], rng = random(Math.floor(o.z * 79 + Math.abs(o.x) * 991));
+    const yaw = (rng() - .5) * .085;
+    const houseTransform = new THREE.Matrix4().makeTranslation(o.x, 0, -o.z).multiply(new THREE.Matrix4().makeRotationY(yaw)).multiply(new THREE.Matrix4().makeScale(s, s, s));
+    b.transform = houseTransform;
+    const box = (material, x, y, z, w, height, d, rx = 0, ry = 0, rz = 0, shadow = true) => b.add(unit, material, x, y, z, w, height, d, rx, ry, rz, shadow);
+    const pole = (material, x, y, z, r, length, rx = 0, ry = 0, rz = 0) => b.add(cylinder, material, x, y, z, r, length, r, rx, ry, rz);
+    const ball = (material, x, y, z, sx, sy, sz, shadow = true) => b.add(hedgeGeo, material, x, y, z, sx, sy, sz, 0, rng() * TAU, 0, shadow);
+    // Continuous foundation and shadowed interior, visible through actual wall reveals.
+    box(concrete, 0, .17, 0, h.a * 2 + .13, .34, h.l * 2 + .13);
+    box(recess, 0, h.eave / 2, 0, h.a * 2 - .75, h.eave - .50, h.l * 2 - .75, 0, 0, 0, false);
+    box(concrete, 0, .39, 0, h.a * 2 + .035, .14, h.l * 2 + .035);
+    // A facade's local horizontal vector is perpendicular to its outward normal.
+    function facade(nx, nz, x, z, geometry, windows, front = false) {
+      const angle = Math.atan2(nx, nz);
+      b.add(geometry, h.wall, x, 0, z, 1, 1, 1, 0, angle);
+      const bit = (material, u, v, n, w, height, d, shadow = false) => box(material, x + u * nz + n * nx, v, z - u * nx + n * nz, w, height, d, 0, angle, 0, shadow);
+      for (const w of windows) {
+        const upper = w.y > 3.2, shuttersOn = front && (!upper || variant === 3) && variant !== 1;
+        bit(window, w.u, w.y, -.155, w.w - .025, w.h - .025, .024);
+        for (const sign of [-1, 1]) {
+          bit(frame, w.u + sign * (w.w / 2 - .034), w.y, -.077, .069, w.h, .12);
+          bit(frame, w.u, w.y + sign * (w.h / 2 - .032), -.077, w.w, .065, .12);
+        }
+        bit(frame, w.u, w.y, -.065, .045, w.h, .047);
+        bit(frame, w.u, w.y + .05, -.063, w.w, .034, .05);
+        bit(concrete, w.u, w.y - w.h / 2 - .07, .01, w.w + .22, .12, .39, true);
+        bit(variant === 2 ? stone : concrete, w.u, w.y + w.h / 2 + .082, -.005, w.w + .25, .15, .29);
+        if (shuttersOn) for (const sign of [-1, 1]) {
+          bit(h.shutter, w.u + sign * (w.w * .76 + .055), w.y, .056, w.w * .41, w.h + .11, .075, true);
+          for (let y = -.54; y < .6; y += .125) bit(darkTimber, w.u + sign * (w.w * .76 + .055), w.y + y, .098, w.w * .35, .018, .014);
+          for (const dy of [-.4, .4]) bit(metalDark, w.u + sign * (w.w * .76 + .055), w.y + dy, .104, w.w * .37, .023, .015);
+        }
+        // A restrained flower box on some, rather than every, downstairs window.
+        if (front && !upper && (variant === 0 || variant === 2)) {
+          bit(timber, w.u, w.y - w.h / 2 - .22, .15, w.w + .1, .20, .32, true);
+          for (let k = 0; k < 7; k++) {
+            const u = w.u - w.w * .43 + k * w.w / 7, v = w.y - w.h / 2 - .07;
+            ball(hedgeMats[k % 3], x + u * nz + .19 * nx, v, z - u * nx + .19 * nz, .11, .13, .11, false);
+            ball(flowers[variant % 3], x + u * nz + .23 * nx, v + .1, z - u * nx + .23 * nz, .043, .045, .044, false);
+          }
+        }
+      }
+      if (front) {
+        bit(h.shutter, 0, h.door.y, -.12, .91, 2.05, .095, true);
+        for (const u of [-.535, .535]) bit(frame, u, 1.43, -.008, .10, 2.28, .15, true);
+        bit(frame, 0, 2.555, -.008, 1.16, .105, .15);
+        bit(window, 0, 2.08, -.064, .57, .46, .022);
+        for (const u of [-.21, .21]) for (const y of [.91, 1.41]) bit(darkTimber, u, y, -.064, .31, .37, .026);
+        bit(galvanized, .33, 1.42, .004, .13, .03, .055);
+        bit(metalDark, -.83, 1.66, .067, .24, .33, .18, true);
+        bit(galvanized, -.83, 1.70, .165, .16, .027, .01);
+        bit(metalDark, .82, 2.19, .16, .19, .31, .21, true);
+        bit(reflector, .82, 2.20, .274, .12, .19, .012);
       }
     }
-    for (let z = hipped ? -2.14 : -3.85; z < (hipped ? 2.26 : 4); z += .32) pole(tileRidge, 0, 5.595, z, .105, .34, Math.PI / 2);
-    box(brick, 1.55, 4.99, -1.87, .64, 1.53, .69);
-    box(concrete, 1.55, 5.78, -1.87, .82, .14, .87);
-    for (const z of [-2.04, -1.71]) { pole(tileRidge, 1.55, 5.96, z, .115, .25); pole(black, 1.55, 6.09, z, .088, .012); }
-    // Windows are complete shallow assemblies, including reveals, seals and sills.
-    function windowAt(x, y, z, w, h, orientation = 0, openShutters = true) {
-      const transform = (u, v, n) => orientation ? [x + n * orientation, y + v, z + u] : [x + u, y + v, z + n * (z < 0 ? -1 : 1)];
-      function bit(material, u, v, n, width, height, depth, shadow = false) {
-        const p = transform(u, v, n); box(material, ...p, orientation ? depth : width, height, orientation ? width : depth, 0, 0, 0, shadow);
+    facade(side, 0, side * h.a, 0, h.frontGeo, h.frontWindows, true);
+    facade(-side, 0, -side * h.a, 0, h.backGeo, h.backWindows);
+    facade(0, 1, 0, h.l, h.endGeo, h.endWindows);
+    facade(0, -1, 0, -h.l, h.endGeo, h.endWindows);
+    // Contrasting quoins, a slim string course, and selective half timbering.
+    if (variant === 0 || variant === 3) {
+      for (const x of [-h.a, h.a]) for (const z of [-h.l, h.l]) for (let y = .73; y < h.eave - .1; y += .43) box(concrete, x, y, z, .17, .37, .17, 0, 0, 0, false);
+      if (variant === 3) box(concrete, 0, 2.86, 0, h.a * 2 + .08, .12, h.l * 2 + .08);
+    }
+    if (h.timbered) for (const sign of [-1, 1]) {
+      const z = sign * (h.l + .032);
+      box(darkTimber, 0, h.eave + .04, z, h.a * 2, .16, .1);
+      box(darkTimber, 0, h.eave + 1.12, z, .13, 2.08, .10);
+      for (const x of [-1.42, 1.42]) box(darkTimber, x, h.eave + .47, z, .11, .88, .09);
+      for (const direction of [-1, 1]) box(darkTimber, direction * 1.45, h.eave + .48, z, 1.7, .11, .10, 0, 0, direction * -.53);
+    }
+    b.add(h.roofGeo, h.roof, 0, 0, 0);
+    const a = h.a + .39, roofL = h.l + .42, roofAngle = Math.atan2(h.rise, a), slope = Math.hypot(a, h.rise);
+    for (const x of [-a, a]) {
+      box(darkTimber, x, h.eave - .04, 0, .13, .18, roofL * 2);
+      pole(galvanized, x, h.eave - .10, 0, .052, roofL * 2 + .1, Math.PI / 2);
+      for (const z of [-h.l + .22, h.l - .22]) {
+        pole(galvanized, Math.sign(x) * (h.a + .08), (h.eave - .18) / 2, z, .037, h.eave - .38);
+        box(galvanized, Math.sign(x) * (h.a + .22), h.eave - .15, z, .30, .06, .065);
+        for (const y of [.7, h.eave - .7]) box(metalDark, Math.sign(x) * (h.a + .09), y, z, .1, .03, .11, 0, 0, 0, false);
       }
-      bit(recess, 0, 0, .012, w + .2, h + .2, .07);
-      bit(window, 0, 0, .058, w, h, .04);
-      for (const u of [-w / 2 - .035, w / 2 + .035]) bit(frame, u, 0, .088, .07, h + .14, .095);
-      for (const v of [-h / 2 - .035, h / 2 + .035]) bit(frame, 0, v, .088, w + .14, .07, .095);
-      bit(frame, 0, 0, .096, .046, h, .047);
-      bit(frame, 0, .03, .098, w, .038, .048);
-      bit(concrete, 0, -h / 2 - .12, .095, w + .32, .12, .32, true);
-      bit(concrete, 0, h / 2 + .14, .032, w + .32, .16, .17);
-      if (openShutters) for (const sign of [-1, 1]) {
-        bit(shutter, sign * (w * .74 + .11), 0, .047, w * .4, h + .16, .08, true);
-        for (let slat = -h / 2 + .07; slat < h / 2; slat += .13) bit(timber, sign * (w * .74 + .11), slat, .094, w * .35, .02, .018);
-        bit(metalDark, sign * (w * .74 + .11), -.31, .106, w * .36, .025, .018);
-      }
     }
-    for (const z of [-1.95, 1.95]) windowAt(side * 3.02, 2.0, z, 1.12, 1.35, side);
-    for (const x of [-1.76, 1.76]) {
-      windowAt(x, 2.0, 3.565, 1.07, 1.28);
-      windowAt(x, 2.0, -3.565, 1.07, 1.28, 0, false);
+    for (const z of [-roofL, roofL]) {
+      if (!h.hip) for (const sign of [-1, 1]) box(darkTimber, sign * a / 2, h.eave + h.rise / 2, z, slope, .12, .13, 0, 0, -sign * roofAngle);
+      else { box(darkTimber, 0, h.eave - .04, z, a * 2, .17, .12); pole(galvanized, 0, h.eave - .10, z, .052, a * 2, 0, 0, Math.PI / 2); }
     }
-    if (!hipped) windowAt(0, 4.38, 3.59, .62, .72, 0, false);
-    // Entry faces the road, with a small timber canopy and two stone steps.
-    box(recess, side * 3.041, 1.44, 0, .06, 2.25, 1.04);
-    box(shutter, side * 3.09, 1.43, 0, .07, 2.1, .87);
-    for (const z of [-.47, .47]) box(frame, side * 3.13, 1.45, z, .13, 2.23, .08);
-    box(frame, side * 3.13, 2.56, 0, .13, .11, 1.05);
-    box(window, side * 3.132, 2.1, 0, .027, .54, .57, 0, 0, 0, false);
-    box(timber, side * 3.134, 1.18, 0, .025, .91, .58, 0, 0, 0, false);
-    box(galvanized, side * 3.19, 1.37, -.3, .045, .035, .15, 0, 0, 0, false);
-    box(concrete, side * 3.56, .26, 0, 1.03, .22, 1.53);
-    box(concrete, side * 4.02, .12, 0, .58, .15, 1.78);
-    box(timber, side * 3.65, 2.77, 0, 1.3, .12, 1.76, 0, 0, side * .14);
-    box(roofMat, side * 3.65, 2.85, 0, 1.36, .08, 1.82, 0, 0, side * .14);
-    for (const z of [-.73, .73]) box(timber, side * 4.09, 1.56, z, .075, 2.42, .075);
-    // Small mail slot, a porch lantern and rain barrel add domestic scale.
-    box(metalDark, side * 3.17, 1.55, .83, .13, .29, .22);
-    box(reflector, side * 3.24, 2.08, .81, .08, .17, .12, 0, 0, 0, false);
-    if (variant % 2) { pole(shutter, -side * 3.58, .47, 2.72, .36, .86); pole(metalDark, -side * 3.58, .92, 2.72, .375, .035); }
-    // A path stays on the garden side of the road; no unmodelled driveway crosses lanes.
-    const roadwardEdge = X(side * 4.25), outer = side === -1 ? 6.2 : -6.2;
-    const pathLength = Math.max(0, Math.abs(roadwardEdge - outer));
-    if (pathLength > 0) {
-      b.add(unit, concrete, (roadwardEdge + outer) / 2, .005, -o.z, pathLength, .04, 1.32 * s, 0, 0, 0, false);
-      for (let p = 1; p < pathLength / .8; p++) b.add(unit, gravel, roadwardEdge + side * p * .8, .028, -o.z, .016, .009, 1.3 * s, 0, 0, 0, false);
+    const ridgeEnd = h.hip ? roofL - 1.75 : roofL;
+    for (let z = -ridgeEnd; z < ridgeEnd; z += .36) pole(h.slate ? metalDark : tileRidge, 0, h.eave + h.rise + .065, z, h.slate ? .062 : .095, .38, Math.PI / 2);
+    if (h.hip) for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      const dir = new THREE.Vector3(sx * a, -h.rise, sz * 1.75), len = dir.length(), rot = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize()));
+      pole(metalDark, sx * a / 2, h.eave + h.rise / 2 + .04, sz * (ridgeEnd + .875), .055, len, rot.x, rot.y, rot.z);
     }
-    const fx = side * 5.6;
+    const chimneyX = -side * 1.17, chimneyZ = -h.l * .55, chimneyTop = h.eave + h.rise + .53;
+    box(variant === 1 ? stone : brick, chimneyX, chimneyTop - .72, chimneyZ, .67, 1.44, .72);
+    box(concrete, chimneyX, chimneyTop + .05, chimneyZ, .81, .13, .86);
+    for (const dz of [-.17, .17]) { pole(tileRidge, chimneyX, chimneyTop + .27, chimneyZ + dz, .108, .30); pole(black, chimneyX, chimneyTop + .423, chimneyZ + dz, .079, .008); }
+    // Flashing interrupts roof tiles at the chimney instead of a floating stack.
+    box(metalDark, chimneyX, h.eave + h.rise * (1 - 1.17 / a) + .055, chimneyZ, .88, .025, .95, 0, 0, side * roofAngle, false);
+    if (h.dormer) {
+      const dx = side * 1.70, dy = h.eave + .68;
+      box(walls[0], dx, dy + .46, -.32, 1.22, .92, 1.37);
+      // Turn a small gable so its window faces the road.
+      const m = new THREE.Matrix4().makeTranslation(dx, dy, -.32).multiply(new THREE.Matrix4().makeRotationY(side * Math.PI / 2));
+      b.transform = houseTransform.clone().multiply(m);
+      b.add(dormerRoof, h.roof, 0, 0, 0);
+      b.add(dormerGable, walls[0], 0, 0, 0);
+      box(recess, 0, .46, .692, .87, .69, .027, 0, 0, 0, false);
+      box(window, 0, .46, .716, .74, .60, .02, 0, 0, 0, false);
+      for (const u of [-.405, .405, 0]) box(frame, u, .46, .74, .045, .66, .045, 0, 0, 0, false);
+      for (const v of [.135, .785]) box(frame, 0, v, .74, .86, .047, .045, 0, 0, 0, false);
+      box(concrete, 0, .08, .735, .96, .075, .24);
+      b.transform = houseTransform;
+    }
+    // Porches differ with the building: broad stone stoop, timber verandah or a
+    // small metal-supported shelter. Doorways always face the original road.
+    const porchDepth = variant === 1 ? 1.28 : .92;
+    box(concrete, side * (h.a + porchDepth / 2), .25, 0, porchDepth + .08, .22, 1.55);
+    box(stone, side * (h.a + porchDepth + .18), .11, 0, .46, .15, 1.83);
+    if (variant !== 1) {
+      const canopyWidth = variant === 2 ? 2.70 : 1.85;
+      box(darkTimber, side * (h.a + .61), 2.81, 0, 1.36, .12, canopyWidth, 0, 0, side * .13);
+      box(h.roof, side * (h.a + .61), 2.90, 0, 1.44, .06, canopyWidth + .09, 0, 0, side * .13);
+      if (variant !== 3) for (const z of [-1, 1]) { box(darkTimber, side * (h.a + 1.15), 1.58, z * (canopyWidth / 2 - .14), .09, 2.46, .09); box(darkTimber, side * (h.a + .89), 2.52, z * (canopyWidth / 2 - .14), .075, .73, .075, 0, 0, -side * .65); }
+    }
+    // Subtle moss and flower pots anchor the foundation in the ground.
+    for (const z of [-1.13, 1.18]) {
+      pole(tileRidge, side * (h.a + .53), .24, z, .23, .37);
+      pole(soil, side * (h.a + .53), .435, z, .21, .018);
+      ball(hedgeMats[1], side * (h.a + .53), .56, z, .25, .23, .25);
+      for (let k = 0; k < 4; k++) ball(flowers[variant % 3], side * (h.a + .53) + (rng() - .5) * .28, .7 + rng() * .07, z + (rng() - .5) * .28, .043, .041, .05, false);
+    }
+    if (variant !== 3) { pole(h.shutter, -side * (h.a + .48), .46, h.l - .70, .32, .85); pole(metalDark, -side * (h.a + .48), .91, h.l - .70, .34, .035); }
+    // Front property edges have a gate-sized opening. Stone, timber and clipped
+    // hedges alternate; the roofline no longer sits in a copy-pasted picket box.
+    const fx = side * (h.a + 2.23), fz = h.l + 1.18;
     for (const direction of [-1, 1]) {
-      for (let z = 1.16; z < 5.31; z += .45) {
-        box(fenceMat, fx, .53, direction * z, .064, 1.0, .075);
+      const extent = fz - 1.05, centre = direction * (fz + 1.05) / 2;
+      if (variant === 1) {
+        box(stone, fx, .36, centre, .35, .72, extent);
+        box(concrete, fx, .755, centre, .43, .09, extent + .03);
+      } else if (variant === 3) {
+        for (let z = 1.30; z < fz; z += .68) b.add(clippedHedge, hedgeMats[0], fx, .54, direction * z, .43, .54, .43, 0, (rng() - .5) * .09, 0);
+      } else {
+        for (let z = 1.2; z < fz; z += .37) box(warmWood, fx, .54, direction * z, .071, 1.00, .080);
+        for (const y of [.32, .76]) box(timber, fx, y, centre, .09, .072, extent);
       }
-      box(fenceMat, fx, .37, direction * 3.05, .09, .075, 4.5);
-      box(fenceMat, fx, .77, direction * 3.05, .09, .075, 4.5);
-      for (let x = -2.7; x < 4.9; x += .72) {
-        const hx = x * side;
-        b.add(clippedHedge, hedgeMats[variant % 3], X(hx), Y(.49 + rng() * .025), Z(direction * 5.07), .52 * s, .49 * s, .5 * s, 0, (rng() - .5) * .08, 0);
+      for (const z of [direction * 1.02, direction * fz]) { box(variant === 1 ? stone : darkTimber, fx, .56, z, variant === 1 ? .46 : .15, 1.10, variant === 1 ? .46 : .15); box(concrete, fx, 1.135, z, variant === 1 ? .53 : .19, .08, variant === 1 ? .53 : .19); }
+      for (let x = -h.a + .45; x < h.a + 1.8; x += .76) b.add(clippedHedge, hedgeMats[variant % 3], side * x, .45 + rng() * .04, direction * fz, .50, .47, .47, 0, (rng() - .5) * .1, 0);
+    }
+    // Partly open gate, a letterbox and stepping-stone path into the property.
+    const gatePivot = new THREE.Matrix4().makeTranslation(fx, 0, -1.01).multiply(new THREE.Matrix4().makeRotationY(side * -.37));
+    b.transform = houseTransform.clone().multiply(gatePivot);
+    for (let z = .10; z < 1.85; z += .27) box(variant === 3 ? metalDark : warmWood, 0, .48, z, .072, .91, .052);
+    for (const y of [.26, .69]) box(variant === 3 ? metalDark : timber, 0, y, .94, .065, .06, 1.93);
+    b.transform = houseTransform;
+    box(h.shutter, fx + side * .13, 1.03, 1.05, .31, .34, .38);
+    box(metalDark, fx + side * .297, 1.13, 1.05, .024, .022, .27, 0, 0, 0, false);
+    box(metalDark, fx + side * .13, 1.23, 1.05, .35, .065, .42);
+    // Garden soil and planted rows are close to the house, outside actor space.
+    if (variant === 1 || variant === 2) {
+      const gx = -side * (h.a + 1.42);
+      for (const gz of [-1.46, 1.0]) {
+        box(timber, gx, .11, gz, 1.66, .20, 1.95);
+        box(soil, gx, .23, gz, 1.50, .045, 1.79, 0, 0, 0, false);
+        for (let row = 0; row < 3; row++) for (let col = 0; col < 4; col++) ball(hedgeMats[row % 3], gx - .47 + row * .47, .36, gz - .62 + col * .4, .17, .15 + rng() * .06, .16, false);
+      }
+    } else {
+      // A compact garden table and slatted bench tell a domestic story at scale.
+      const gx = -side * (h.a + 1.35);
+      box(timber, gx, .72, .6, 1.02, .075, 1.27);
+      for (const x of [-.38, .38]) for (const z of [.13, 1.07]) box(darkTimber, gx + x, .36, z, .058, .69, .058);
+      for (const z of [-.34, 1.58]) {
+        for (let k = -1; k <= 1; k++) box(warmWood, gx, .42, z + k * .10, 1.29, .055, .086);
+        for (const x of [-.47, .47]) box(metalDark, gx + x, .22, z, .054, .42, .23);
       }
     }
-    // Low planted flower boxes sit beneath the front windows.
-    for (const z of [-1.95, 1.95]) {
-      box(timber, side * 3.2, 1.14, z, .37, .19, 1.08);
-      for (let k = 0; k < 6; k++) {
-        b.add(hedgeGeo, hedgeMats[k % 3], X(side * 3.26), Y(1.29), Z(z - .43 + k * .17), .14 * s, .13 * s, .14 * s, 0, 0, 0, false);
-        b.add(hedgeGeo, flowers[variant % 3], X(side * 3.3), Y(1.4 + rng() * .04), Z(z - .4 + k * .17), .065 * s, .055 * s, .07 * s, 0, 0, 0, false);
-      }
+    // A few properties have a small timber shed, with a pitched felt roof.
+    if (variant === 2 && Math.abs(o.x) > 16) {
+      const shedX = -side * (h.a + 2.0), shedZ = h.l + .24;
+      box(timber, shedX, .84, shedZ, 2.24, 1.68, 2.28);
+      for (let z = -1.02; z < 1.06; z += .22) box(darkTimber, shedX + side * 1.127, .85, shedZ + z, .017, 1.6, .018, 0, 0, 0, false);
+      box(darkTimber, shedX + side * 1.15, .72, shedZ, .045, 1.39, .75);
+      box(galvanized, shedX + side * 1.18, .78, shedZ + .25, .025, .027, .10);
+      b.add(gardenRoof, roofMats[1], shedX, 0, shedZ);
+      b.add(shedGable, timber, shedX, 0, shedZ);
     }
     b.transform = null;
+    // World-space garden access ends outside the shoulder. Cosmetic paving never
+    // crosses driving lanes and does not invent an extra junction for the model.
+    const front = new THREE.Vector3(side * (h.a + 1.59), 0, 0).applyMatrix4(houseTransform), roadward = side === -1 ? 5.85 : -5.85;
+    const pathLength = Math.abs(front.x - roadward);
+    if (pathLength > 0) {
+      b.add(unit, gravel, (front.x + roadward) / 2, .017, front.z, pathLength, .025, 1.35 * s, 0, 0, 0, false);
+      const count = Math.max(1, Math.ceil(pathLength / .88));
+      for (let i = 0; i < count; i++) b.add(unit, concrete, front.x + (roadward - front.x) * (i + .5) / count, .037, front.z, pathLength / count - .035, .028, 1.21 * s, 0, 0, 0, false);
+    }
   }
   base.finish();
   for (const c of allChunks.values()) c.batch.finish();
+  // Render-only support height for actors. The crossing is built from stepped
+  // slabs above: 120 mm landing, 70 mm approaches and 152.5 mm tactile plate.
+  // A sole-width margin outside each slab eases the body's step down while its
+  // feet straddle an edge; inside the footprint the concrete's exact top is used.
+  // Tiny tactile studs and painted stripes are surface detail, not body motion.
+  root.userData.surfaceHeight = (x, simZ) => {
+    const ax = Math.abs(x), soleMargin = .16;
+    let height = ax <= 3.9 ? .001 : 0;
+    const support = (cx, cz, halfWidth, halfLength, top) => {
+      const outside = Math.hypot(Math.max(0, Math.abs(ax - cx) - halfWidth), Math.max(0, Math.abs(simZ - cz) - halfLength));
+      const t = clamp(1 - outside / soleMargin, 0, 1);
+      height = Math.max(height, top * t * t * (3 - 2 * t));
+    };
+    for (const c of world.crossings) {
+      if (Math.abs(simZ - c.z) > 2 + soleMargin || ax < 4.11 - soleMargin || ax > 6.5 + soleMargin) continue;
+      support(5.4, c.z, 1.1, 2, .12);
+      for (let p = -2; p <= 2; p++) support(4.26, c.z + p * .76, .15, .36, .07);
+      support(4.78, c.z, .25, 1.45, .1525);
+    }
+    return height;
+  };
   root.userData.update = egoZ => {
     for (const c of allChunks.values()) c.group.visible = Math.abs(c.z - egoZ) < 590;
   };

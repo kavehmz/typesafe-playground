@@ -1,0 +1,98 @@
+[
+  {
+    "seed": 1,
+    "length": 840,
+    "buildMs": 55,
+    "instances": 9914,
+    "meshes": 476,
+    "geometries": 37,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      9,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  },
+  {
+    "seed": 1,
+    "length": 5600,
+    "buildMs": 84,
+    "instances": 52198,
+    "meshes": 2629,
+    "geometries": 71,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      10,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  },
+  {
+    "seed": 7,
+    "length": 840,
+    "buildMs": 49,
+    "instances": 9626,
+    "meshes": 500,
+    "geometries": 37,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      9,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  },
+  {
+    "seed": 7,
+    "length": 5600,
+    "buildMs": 70,
+    "instances": 58205,
+    "meshes": 2778,
+    "geometries": 71,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      10,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  },
+  {
+    "seed": 240,
+    "length": 840,
+    "buildMs": 45,
+    "instances": 9171,
+    "meshes": 475,
+    "geometries": 37,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      9,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  },
+  {
+    "seed": 240,
+    "length": 5600,
+    "buildMs": 85,
+    "instances": 53242,
+    "meshes": 2721,
+    "geometries": 71,
+    "materials": 42,
+    "visibleChunks": [
+      6,
+      10,
+      6
+    ],
+    "worldUnchanged": true,
+    "invalid": 0
+  }
+]

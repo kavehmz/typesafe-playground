@@ -1,0 +1,1253 @@
+{
+  "checked_at": "2026-09-29T06:56:14.149Z",
+  "errors": [],
+  "responses": [
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "return_right"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "stop"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "cruise"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "follow"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    },
+    {
+      "status": 200,
+      "model": "jev-1.13.0",
+      "maneuver": "overtake"
+    }
+  ],
+  "checks": [
+    {
+      "explore": "actual pedestrian and two cars selected; drag, zoom, follow-Jev work"
+    },
+    {
+      "long_route_m": 5600,
+      "stats": {
+        "engine": "three.js r186",
+        "drawCalls": "2902",
+        "triangles": "8465864",
+        "geometries": "331",
+        "textures": "47"
+      }
+    },
+    {
+      "resets": 7,
+      "before": {
+        "engine": "three.js r186",
+        "drawCalls": "1629",
+        "triangles": "4084862",
+        "geometries": "385",
+        "textures": "52"
+      },
+      "after": {
+        "engine": "three.js r186",
+        "drawCalls": "2686",
+        "triangles": "7938594",
+        "geometries": "323",
+        "textures": "45"
+      }
+    },
+    {
+      "layout": "desktop",
+      "width": 1600,
+      "document": 1600
+    },
+    {
+      "layout": "laptop",
+      "width": 1280,
+      "document": 1280
+    },
+    {
+      "layout": "mobile",
+      "width": 390,
+      "document": 390
+    }
+  ],
+  "performance": {
+    "samples": 6084,
+    "fps": 60.00023668732421,
+    "median_ms": 16.69999999999709,
+    "p95_ms": 17.40000000000873,
+    "p99_ms": 17.60000000000582,
+    "max_ms": 17.80000000000291
+  },
+  "run": {
+    "run": {
+      "seed": 5,
+      "traffic": "normal",
+      "road_length_m": 840,
+      "target_seconds": 90,
+      "time_limit_s": 180,
+      "result": {
+        "reason": "finish",
+        "time_s": 94.12,
+        "distance_m": 840,
+        "success": true
+      },
+      "time_s": 94.12,
+      "distance_m": 840,
+      "decisions": 229,
+      "maneuver_changes": 13,
+      "lane_changes": 5,
+      "overtakes_completed": 2,
+      "seconds_in_left_lane": 11.9,
+      "min_gap_ahead_m": 4.2,
+      "min_oncoming_ttc_s": 4.2,
+      "speeding_seconds": 0,
+      "max_over_limit_kmh": 0,
+      "crossings_passed": 2,
+      "stops_at_crossings": 1,
+      "entered_occupied_crossing": 0,
+      "stale_decisions": 0,
+      "maneuver_counts": {
+        "cruise": 42,
+        "follow": 63,
+        "overtake": 29,
+        "return_right": 29,
+        "stop": 66
+      }
+    },
+    "requests": 230,
+    "tokens": 918721,
+    "estimated_cost_usd": 0.0386,
+    "average_latency_ms": 285,
+    "last_error": null
+  }
+}

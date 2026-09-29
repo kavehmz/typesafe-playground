@@ -3,7 +3,9 @@
 import * as THREE from '/vendor/three.module.js';
 import { CAMERAS, BLIND_ZONE } from '/sim/sensors.mjs';
 import { evalPath } from '/sim/dynamics.mjs';
-import { makeCar, makePerson, updateCarVisual, updatePersonVisual } from '/public/vehicles.mjs';
+import { makeCar, updateCarVisual } from '/public/vehicles.mjs';
+import { makePerson, updatePersonVisual } from '/public/pedestrians.mjs';
+import { CameraDirector } from '/public/cameras.mjs';
 import { buildLandscape } from '/public/landscape.mjs';
 import { buildRoadside } from '/public/roadside.mjs';
 import { Atmosphere, CameraFinish, LIGHTING } from '/public/atmosphere.mjs';
@@ -14,9 +16,9 @@ const EGO_COLOR=0xc55429, PAGE_COLOR=0xf4f3ed;
 const SENSOR_COLORS={front:0x6bbea3,left:0x84c3d3,right:0x84c3d3,rear:0xb3a1cf,radar:0xb3a1cf,blind:0xefa94e};
 const toThree=(x,z,y=0)=>new THREE.Vector3(x,y,-z);
 function disposeTree(group){
-  const geometries=new Set(),materials=new Set(),textures=new Set(),instances=[];
-  group.traverse(o=>{if(o.isInstancedMesh)instances.push(o);if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});
-  for(const o of instances)o.dispose();for(const t of textures)t.dispose();for(const m of materials)m.dispose();for(const g of geometries)g.dispose();group.clear();
+  const geometries=new Set(),materials=new Set(),textures=new Set(),skeletons=new Set(),instances=[];
+  group.traverse(o=>{if(o.isSkinnedMesh&&o.skeleton)skeletons.add(o.skeleton);if(o.isInstancedMesh)instances.push(o);if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});
+  for(const o of instances)o.dispose();for(const skeleton of skeletons)skeleton.dispose();for(const t of textures)t.dispose();for(const m of materials)m.dispose();for(const g of geometries)g.dispose();group.clear();
 }
 function finishMarker(length){
   const group=new THREE.Group(),canvas=document.createElement('canvas');canvas.width=256;canvas.height=64;
@@ -86,6 +88,8 @@ export class Scene {
     this.reflectionCamera=new THREE.CubeCamera(.4,800,this.reflectionTarget);
     this.lastReflection=-Infinity;this.reflectionPending=true;
     this.view='chase';this.overlays=true;this.lighting='afternoon';this.resize();
+    this.ego.userData.entityKind='car';this.ego.userData.entityId='ego';
+    this.director=new CameraDirector(document.getElementById('worldView'),this.camera,()=>[this.ego,...this.carMeshes.values(),...this.personMeshes.values()]);
   }
   setLighting(mode){
     if(!LIGHTING[mode])return;
@@ -99,9 +103,9 @@ export class Scene {
     disposeTree(this.worldGroup);this.carMeshes.clear();this.personMeshes.clear();
     const anisotropy=Math.min(8,this.renderer.capabilities.getMaxAnisotropy());
     this.landscape=buildLandscape(world,{anisotropy});this.roadside=buildRoadside(world,{anisotropy});this.worldGroup.add(this.landscape,this.roadside,finishMarker(world.length));
-    for(const car of world.cars){const m=makeCar(CAR_COLORS[car.color%CAR_COLORS.length],false,car.color%3);this.worldGroup.add(m);this.carMeshes.set(car.id,m);}
-    for(const p of world.pedestrians){const m=makePerson(PEOPLE_COLORS[p.color%PEOPLE_COLORS.length],p.color);this.worldGroup.add(m);this.personMeshes.set(p.id,m);}
-    this.first=true;this.reflectionPending=true;this.lastReflection=-Infinity;
+    for(const car of world.cars){const m=makeCar(CAR_COLORS[car.color%CAR_COLORS.length],false,Number(car.id.split('-')[1])||car.color);m.userData.entityKind='car';m.userData.entityId=car.id;this.worldGroup.add(m);this.carMeshes.set(car.id,m);}
+    for(const p of world.pedestrians){const m=makePerson(PEOPLE_COLORS[p.color%PEOPLE_COLORS.length],p.color);m.userData.groundHeight=this.roadside.userData.surfaceHeight;m.userData.entityKind='person';m.userData.entityId=p.id;m.userData.displayName=`Person ${p.id.split('-')[1]}${m.userData.displayName?' · '+m.userData.displayName:''}`;this.worldGroup.add(m);this.personMeshes.set(p.id,m);}
+    this.first=true;this.reflectionPending=true;this.lastReflection=-Infinity;this.director.reset();
   }
   outline(index,w,l,x,z,color){
     let o=this.outlinePool[index];if(!o){o=edgesBox(1,1,1,0xffffff);this.scene.add(o);this.outlinePool[index]=o;}
@@ -109,18 +113,19 @@ export class Scene {
   }
   update(sim,dt){
     const e=sim.ego,w=sim.world;this.simTime=sim.time;this.egoState=e;
+    const focusZ=this.view==='explore'&&this.director.focus?-this.director.focus.position.z:e.z;
     this.ego.position.set(e.x,0,-e.z);this.ego.rotation.y=-e.heading;updateCarVisual(this.ego,e,dt,sim.time);
-    for(const car of w.cars){const m=this.carMeshes.get(car.id);if(!m)continue;m.position.set(car.x,0,-car.z);m.rotation.y=-car.heading;m.visible=Math.abs(car.z-e.z)<700;updateCarVisual(m,car,dt,sim.time);}
-    for(const p of w.pedestrians){const m=this.personMeshes.get(p.id);if(!m)continue;m.position.set(p.x,0,-p.z);m.rotation.y=p.kerbSide===1?Math.PI/2:-Math.PI/2;m.visible=Math.abs(p.z-e.z)<450;updatePersonVisual(m,p,sim.time);}
+    for(const car of w.cars){const m=this.carMeshes.get(car.id);if(!m)continue;m.position.set(car.x,0,-car.z);m.rotation.y=-car.heading;m.visible=Math.min(Math.abs(car.z-e.z),Math.abs(car.z-focusZ))<700;updateCarVisual(m,car,dt,sim.time);}
+    for(const p of w.pedestrians){const m=this.personMeshes.get(p.id);if(!m)continue;m.position.set(p.x,this.roadside?.userData.surfaceHeight?.(p.x,p.z)||0,-p.z);m.rotation.y=p.kerbSide===1?Math.PI/2:-Math.PI/2;m.visible=Math.min(Math.abs(p.z-e.z),Math.abs(p.z-focusZ))<450;updatePersonVisual(m,p,sim.time);}
     this.landscape?.userData.update?.(e.z,sim.time);this.roadside?.userData.update?.(e.z,sim.time);
-    this.atmosphere.update(e,sim.time);
-    const s=Math.sin(e.heading),c=Math.cos(e.heading);let want,look;
-    if(this.view==='aerial'){want=toThree(e.x+18,e.z-26,38);look=toThree(e.x,e.z+20,0);}
-    else if(this.view==='driver'){want=toThree(e.x-.36*c-.2*s,e.z+.15,1.22);look=toThree(e.x+s*45,e.z+c*45,1.17);}
-    else{want=toThree(e.x-s*10.5+c*2.9,e.z-c*10.5-s*2.9,3.7);look=toThree(e.x+s*7,e.z+c*7,1.0);}
-    const fov=this.view==='driver'?66:this.view==='aerial'?51:48;
+    const {want,look,fov,shadowAnchor}=this.director.update(this.view,sim,this.ego);
+    this.shadowAnchor=shadowAnchor;this.atmosphere.update(shadowAnchor,sim.time);
+    const probeSubject=this.view==='explore'&&this.director.focus||this.ego;
+    if(probeSubject!==this.probeSubject){this.probeSubject=probeSubject;this.reflectionPending=true;}
     if(this.camera.fov!==fov){this.camera.fov=fov;this.camera.updateProjectionMatrix();}
-    const k=this.first||this.view==='driver'?1:1-Math.exp(-dt*3.3);this.first=false;this.camPos.lerp(want,k);this.camTarget.lerp(look,k);this.camera.position.copy(this.camPos);this.camera.lookAt(this.camTarget);
+    const largeSelectionJump=this.view==='explore'&&this.director.selectionVersion!==this.cameraSelectionVersion&&this.camTarget.distanceTo(look)>80;
+    this.cameraSelectionVersion=this.director.selectionVersion;
+    const k=this.first||this.view==='driver'||largeSelectionJump?1:1-Math.exp(-dt*(this.view==='cinematic'?2.1:4.4));this.first=false;this.camPos.lerp(want,k);this.camTarget.lerp(look,k);this.camera.position.copy(this.camPos);this.camera.lookAt(this.camTarget);
     this.overlayGroup.visible=this.overlays;
     const sensed=sim.refreshPerception();for(const o of this.outlinePool)o.visible=false;
     if(this.overlays){
@@ -135,8 +140,8 @@ export class Scene {
   captureReflections(){
     if(!this.egoState||(!this.reflectionPending&&this.simTime-this.lastReflection<8))return;
     const r=this.renderer;
-    const temporary=[this.ego,this.pathLine,this.stopMarker,...this.outlinePool];const visibility=temporary.map(x=>x.visible);temporary.forEach(x=>x.visible=false);
-    this.reflectionCamera.position.set(this.egoState.x,1.8,-this.egoState.z);
+    const temporary=[...new Set([this.ego,this.probeSubject,this.pathLine,this.stopMarker,...this.outlinePool].filter(Boolean))];const visibility=temporary.map(x=>x.visible);temporary.forEach(x=>x.visible=false);
+    this.reflectionCamera.position.set(this.probeSubject.position.x,1.8,this.probeSubject.position.z);
     const before=r.getRenderTarget(),autoClear=r.autoClear;r.setScissorTest(false);r.shadowMap.needsUpdate=false;
     try{
       // CubeCamera renders six faces; each needs fresh colour AND depth.
@@ -150,12 +155,16 @@ export class Scene {
   }
   render(feedRects){
     const r=this.renderer,W=window.innerWidth,H=window.innerHeight;r.info.reset();
+    const visualZ=this.view==='explore'&&this.director.focus?-this.director.focus.position.z:this.egoState.z;
+    this.landscape?.userData.update?.(visualZ,this.simTime);this.roadside?.userData.update?.(visualZ,this.simTime);
     this.captureReflections();
     r.setRenderTarget(null);r.setScissorTest(false);r.setViewport(0,0,W,H);r.setClearColor(PAGE_COLOR,1);r.clear();
     const rect=document.getElementById('worldView')?.getBoundingClientRect()||{left:0,top:0,right:W,bottom:H,width:W,height:H};
     const viewport=rect=>{const left=Math.max(0,rect.left),right=Math.min(W,rect.right),top=Math.max(0,rect.top),bottom=Math.min(H,rect.bottom);if(right<=left||bottom<=top||rect.width<2||rect.height<2)return false;r.setViewport(rect.left,H-rect.bottom,rect.width,rect.height);r.setScissor(left,H-bottom,right-left,bottom-top);return true;};
     this.ego.userData.bodyGroup.visible=this.view!=='driver';r.shadowMap.needsUpdate=true;
     if(rect.width>2&&rect.height>2&&rect.bottom>0&&rect.top<H){const a=rect.width/rect.height;if(this.camera.aspect!==a){this.camera.aspect=a;this.camera.updateProjectionMatrix();}this.cameraFinish.render(this.scene,this.camera,rect,this.lighting);}
+    this.landscape?.userData.update?.(this.egoState.z,this.simTime);this.roadside?.userData.update?.(this.egoState.z,this.simTime);
+    this.atmosphere.update(this.egoState,this.simTime);r.shadowMap.needsUpdate=Math.abs(this.shadowAnchor.z-this.egoState.z)>30;
     r.setScissorTest(true);const overlaysWere=this.overlayGroup.visible;this.overlayGroup.visible=false;this.ego.userData.bodyGroup.visible=false;
     for(const[name,rect]of Object.entries(feedRects)){const cam=this.feedCams[name];if(!cam||rect.width<10||!viewport(rect))continue;cam.aspect=rect.width/rect.height;cam.fov=2*Math.atan(Math.tan(cam.userData.hfov*Math.PI/360)/cam.aspect)*180/Math.PI;cam.updateProjectionMatrix();r.clear();r.render(this.scene,cam);}
     this.overlayGroup.visible=overlaysWere;this.ego.userData.bodyGroup.visible=true;r.setScissorTest(false);

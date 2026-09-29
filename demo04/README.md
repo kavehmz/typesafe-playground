@@ -2,9 +2,11 @@
 
 The driving system from **demo03, built by Fable**, with a new interface and 3D presentation by **GPT-6-Astra**. This edition preserves the simulation, sensing, memory, Jev questions, decision validation and vehicle execution from the original. Jev still makes the driving decisions through real TypeSafe API requests.
 
-![Demo04 realism pass: detailed vehicles, trees, houses, textured road and physical lighting in focus view.](artifacts/realism/published/final-hero.png)
+![Demo04 third pass: actual crossing pedestrians, varied vehicles and village architecture in Cinematic view.](artifacts/round3/final/cinematic-crossing-final.png)
 
 The second visual pass adds sculpted vehicles, animated pedestrians, dense trees, grass verges, detailed countryside buildings, textured asphalt, reflections and three lighting moods. See [the visual build notes](REALISM.md) and [measured verification](VERIFICATION.md).
+
+The [third presentation pass](ROUND3.md) adds more natural people and walking, varied home and vehicle styles, orchards and ponds, plus **Cinematic** and **Explore** cameras. In Explore, select a **Subject** to inspect a car or pedestrian; drag to rotate and scroll or pinch to zoom.
 
 ## Run it
 
